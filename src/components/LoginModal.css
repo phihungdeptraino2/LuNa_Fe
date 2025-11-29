@@ -1,0 +1,153 @@
+/* Nền đen mờ che phủ toàn màn hình */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu đen mờ 50% */
+  display: flex;
+  justify-content: center; /* Căn giữa ngang */
+  align-items: center; /* Căn giữa dọc */
+  z-index: 1000; /* Luôn nằm trên cùng */
+  backdrop-filter: blur(2px);
+}
+
+/* Hộp Modal chính */
+.modal-container {
+  background: white;
+  width: 400px;
+  padding: 40px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Nút tắt X */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Input Styles */
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+}
+
+.modal-input:focus {
+  border-color: #5a02c2; /* Màu tím Luna */
+  box-shadow: 0 0 0 2px rgba(90, 2, 194, 0.1);
+}
+
+/* Password Eye */
+.password-wrapper {
+  position: relative;
+}
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+
+/* Error Message */
+.error-msg {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Actions (Remember me & Forgot pass) */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.forgot-pass {
+  color: #5a02c2;
+  text-decoration: underline;
+}
+
+/* Login Button */
+.modal-login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #6200ea; /* Màu tím đậm giống ảnh */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-login-btn:hover {
+  background-color: #4a00b0;
+}
+
+/* Footer Register Link */
+.modal-footer {
+  margin-top: 25px;
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.register-link {
+  color: #6200ea;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 15px;
+}
+.register-link:hover {
+  text-decoration: underline;
+}

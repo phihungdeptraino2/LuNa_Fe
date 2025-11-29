@@ -1,0 +1,20 @@
+/* src/index.css */
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 100vw; /* Chiều rộng bằng 100% màn hình */
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%; /* Bắt buộc React chiếm hết chiều rộng */
+  margin: 0;
+  padding: 0;
+  text-align: left; /* Căn trái mặc định */
+}
