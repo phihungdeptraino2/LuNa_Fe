@@ -10,14 +10,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 import HomePage from "./pages/home/HomePage";
 
-;
 import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage";
 
 // Import Admin Components (Giờ đã có file rồi nên không lỗi nữa)
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductManager from "./pages/admin/AdminProductManager";
-
+import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
 // --- COMPONENT BẢO VỆ ROUTE ADMIN ---
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -52,6 +51,7 @@ function App() {
           >
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProductManager />} />
+            <Route path="discounts" element={<AdminDiscountManager />} />
             {/* Nếu vào /admin khơi khơi thì nhảy về dashboard */}
             <Route index element={<Navigate to="dashboard" />} />
           </Route>
