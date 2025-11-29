@@ -1,12 +1,17 @@
 import axios from '../utils/axiosConfig';
 
 export const getAllProducts = async () => {
-    // Backend trả về ApiResponse, dữ liệu thực nằm trong response.data.data
-    const response = await axios.get('/products');
-    return response.data.data; 
+  try {
+    const response = await axios.get("http://localhost:8081/api/products");
+    return response.data.data; // vì API trả về {status, message, data}
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
 };
 
 export const getProductById = async (id) => {
     const response = await axios.get(`/products/${id}`);
     return response.data.data;
 };
+
