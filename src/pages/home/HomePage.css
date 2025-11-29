@@ -25,6 +25,36 @@ body {
   font-size: 14px;
   letter-spacing: 0.5px;
 }
+/* Giữ thanh header luôn cố định */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: white;
+}
+
+/* Giữ luôn cả thanh category */
+.category-bar {
+  position: sticky;
+  top: 70px; /* chiều cao header trên */
+  z-index: 998;
+  background: white;
+}
+.category-bar span {
+  cursor: pointer;        /* Hiển thị con trỏ tay */
+  transition: color 0.2s; /* Hiệu ứng đổi màu mượt */
+}
+
+.category-bar span:hover {
+  color: #ccc;            /* Màu khi hover */
+}
+
+.category-bar .active-link {
+  color: #5bc0de;         /* Màu khi menu đang chọn */
+}
+
+
+
 
 /* =========================================
    2. HEADER SECTION
@@ -52,6 +82,10 @@ body {
   justify-content: space-between;
   padding: 20px 40px;
   background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.category-bar {
+  border-bottom: 1px solid #eee;
 }
 
 .logo {
@@ -660,3 +694,298 @@ body {
 .app-buttons img { height: 40px; cursor: pointer; }
 
 .copyright p { font-size: 12px; margin-bottom: 5px; color: #888; }
+
+
+/*Product*/
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  padding: 20px;
+}
+
+.product-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  box-shadow: 0 0 12px rgba(90,2,194,0.3);
+  transform: translateY(-3px);
+}
+
+.card-img-container {
+  width: 100%;
+  height: 150px;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.card-img-placeholder {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.card-info {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-info h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  min-height: 42px; /* cố định chiều cao tên */
+}
+.card-info h5 {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #222;
+}
+.card-info .price {
+  color: #5a02c2;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.card-info .brand-category {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 5px;
+}
+
+.card-info .attributes {
+  font-size: 11px;
+  color: #555;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 800;
+  color: #e91e63;
+}
+
+.stock {
+  font-size: 12px;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.brand-category {
+  font-size: 12px;
+  color: #777;
+}
+
+.attr-list {
+  font-size: 12px;
+  color: #555;
+  list-style-type: disc;
+  margin: 5px 0;
+  padding-left: 18px;
+}
+
+.card-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cart, .btn-details {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-cart {
+  background-color: #5a02c2;
+  color: white;
+}
+
+.btn-cart:hover {
+  background-color: #3f018c;
+}
+
+.btn-details {
+  background-color: #eee;
+  color: #333;
+}
+
+.btn-details:hover {
+  background-color: #ddd;
+}
+/**/
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+.pagination button {
+  padding: 6px 10px;
+  border: none;
+  background-color: #eee;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover {
+  background-color: #5a02c2;
+  color: #fff;
+}
+
+.pagination .active-page {
+  background-color: #5a02c2;
+  color: #fff;
+}
+.product-section-wrapper {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Cột filter */
+.filter-column {
+  width: 220px;
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  height: fit-content;
+  position: sticky; /* luôn dính khi cuộn */
+  top: 80px;
+}
+
+.filter-column h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+  text-align: center;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Cột sản phẩm */
+.products-column {
+  flex: 1;
+}
+
+
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 sản phẩm 1 dòng */
+  gap: 15px;
+}
+
+.products-container.small-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 card / dòng */
+  gap: 15px;
+}
+
+/* --- Card sản phẩm --- */
+.product-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.product-card.small-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  height: 280px; /* cố định chiều cao card */
+}
+
+.product-card.small-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-img-container {
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.card-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #ddd;
+  color: #555;
+  font-size: 14px;
+}
+
+.filter-group input {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.filter-group input:hover {
+  border-color: #5a02c2;
+}
+
+.filter-group input {
+  margin-bottom: 5px;
+}

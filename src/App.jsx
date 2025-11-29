@@ -12,6 +12,12 @@ import HomePage from "./pages/home/HomePage";
 
 import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage";
 
+import AboutSection from "./components/menuSections/AboutSection";
+import CategorySection from "./components/menuSections/CategorySection";
+import ProductSection from "./components/menuSections/ProductSection";
+import ServiceSection from "./components/menuSections/ServiceSection";
+import ContactSection from "./components/menuSections/ContactSection";
+
 // Import Admin Components (Giờ đã có file rồi nên không lỗi nữa)
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -39,6 +45,13 @@ function App() {
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
+
+          {/* --- MENU ROUTES TRONG HOMEPAGE --- */}
+          <Route path="/about" element={<AboutSection />} />
+          <Route path="/category" element={<CategorySection />} />
+          <Route path="/products" element={<ProductSection />} />
+          <Route path="/services" element={<ServiceSection />} />
+          <Route path="/contact" element={<ContactSection />} />
 
           {/* --- ADMIN ROUTES (ĐƯỢC BẢO VỆ) --- */}
           <Route
