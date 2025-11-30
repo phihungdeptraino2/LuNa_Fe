@@ -195,3 +195,35 @@
   margin-top: 100px;
   font-size: 18px;
 }
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #1e90ff; /* màu xanh tươi */
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.back-btn:hover {
+  background-color: #0f75d1;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.back-btn:active {
+  transform: scale(0.98);
+}
+
+/* Nếu muốn nút luôn ở trên cùng bên trái khi scroll */
+.back-btn-fixed {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+}

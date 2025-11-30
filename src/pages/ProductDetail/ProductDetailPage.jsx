@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
 import { getProductById } from "../../services/productService";
 import "./ProductDetailPage.css";
 import {
@@ -12,16 +11,14 @@ import {
   FaShieldAlt,
 } from "react-icons/fa";
 
-const ProductDetailPage = () => {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+const ProductDetailPage = ({ product: initialProduct, onBack }) => {
+  const [product, setProduct] = useState(initialProduct || null);
+  const [loading, setLoading] = useState(!initialProduct);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
 
   // Dummy data phòng khi API lỗi
   const DUMMY_DETAIL = {
-    id,
     name: "Fender Player Stratocaster",
     price: 849.99,
     description:
@@ -29,59 +26,21 @@ const ProductDetailPage = () => {
     stockQuantity: 20,
     category: { name: "Electric Guitar (Guitar Điện)" },
     brand: { name: "Fender" },
-    productImages: [
-      {
-        imageUrl:
-          "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/prod/432093.jpg",
-      },
-      {
-        imageUrl:
-          "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/prod/432093_2.jpg",
-      },
-      {
-        imageUrl:
-          "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/prod/432093_3.jpg",
-      },
-    ],
-    productAttributes: [
-      { attribute: { name: "Màu sắc" }, value: "3-Color Sunburst" },
-      { attribute: { name: "Chất liệu thân" }, value: "Alder" },
-      { attribute: { name: "Số dây/Số phím" }, value: "6 dây" },
-      { attribute: { name: "Xuất xứ" }, value: "Mexico" },
-    ],
-    reviews: [
-      {
-        id: 1,
-        reviewText: "Cây đàn tuyệt vời, đúng chất Fender!",
-        rating: 5,
-        userName: "Nguyễn Văn A",
-      },
-    ],
+    productImages: [],
+    productAttributes: [],
+    reviews: [],
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getProductById(id);
-        if (data) {
-          setProduct(data);
-          if (data.productImages && data.productImages.length > 0) {
-            setMainImage(data.productImages[0].imageUrl);
-          }
-        } else {
-          setProduct(DUMMY_DETAIL);
-          setMainImage(DUMMY_DETAIL.productImages[0].imageUrl);
-        }
-      } catch (error) {
-        console.error("Lỗi tải sản phẩm:", error);
-        setProduct(DUMMY_DETAIL);
-        setMainImage(DUMMY_DETAIL.productImages[0].imageUrl);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [id]);
+    if (!initialProduct) {
+      // nếu product chưa có sẵn, fetch từ API hoặc dùng dummy
+      setProduct(DUMMY_DETAIL);
+      setMainImage(DUMMY_DETAIL.productImages[0]?.imageUrl || "");
+      setLoading(false);
+    } else {
+      setMainImage(initialProduct.productImages[0]?.imageUrl || "");
+    }
+  }, [initialProduct]);
 
   if (loading)
     return <div className="loading">Đang tải chi tiết sản phẩm...</div>;
@@ -90,7 +49,7 @@ const ProductDetailPage = () => {
 
   const handleQuantityChange = (amount) => {
     const newQty = quantity + amount;
-    if (newQty >= 1 && newQty <= product.stockQuantity) setQuantity(newQty);
+    if (newQty >= 1 && newQty <= (product.stockQuantity || 100)) setQuantity(newQty);
   };
 
   const formatPrice = (price) =>
@@ -101,24 +60,30 @@ const ProductDetailPage = () => {
 
   return (
     <div className="product-detail-container">
+      {/* Back Button */}
+      {onBack && (
+        <button className="back-btn" onClick={onBack}>
+          ← Quay lại
+        </button>
+      )}
+
       {/* Breadcrumb */}
       <div className="breadcrumb">
-        <Link to="/">Trang chủ</Link> <span>/</span>
-        <Link to="#">{product.category?.name || "Sản phẩm"}</Link> <span>/</span>
-        <span>{product.name}</span>
+        <span>{product.category?.name || "Sản phẩm"}</span> / <span>{product.name}</span>
       </div>
 
       <div className="product-main-section">
         {/* LEFT COLUMN: IMAGE */}
         <div className="left-column">
           <div className="main-image-wrapper">
-            <img
-              src={mainImage || "https://via.placeholder.com/500"}
-              alt={product.name}
-            />
+            {mainImage ? (
+              <img src={mainImage} alt={product.name} />
+            ) : (
+              <div className="no-image">No Image</div>
+            )}
           </div>
           <div className="thumbnail-list">
-            {product.productImages.map((img, index) => (
+            {product.productImages?.map((img, index) => (
               <img
                 key={index}
                 src={img.imageUrl}
@@ -138,27 +103,23 @@ const ProductDetailPage = () => {
           <div className="rating-row">
             <div className="stars">
               {[...Array(5)].map((_, i) => (
-                <FaStar key={i} color={i < (product.reviews[0]?.rating || 0) ? "#FFD700" : "#ccc"} />
+                <FaStar
+                  key={i}
+                  color={i < (product.reviews?.[0]?.rating || 0) ? "#FFD700" : "#ccc"}
+                />
               ))}
             </div>
-            <span className="review-count">
-              ({product.reviews.length} đánh giá)
-            </span>
-            <span className="product-code">Mã SP: {product.id}</span>
+            <span className="review-count">({product.reviews?.length || 0} đánh giá)</span>
           </div>
 
-          {/* Price */}
           <div className="price-section">
             <span className="current-price">{formatPrice(product.price)}</span>
-            <span className="vat-text">Đã bao gồm VAT & Phí vận chuyển</span>
           </div>
 
-          {/* Stock */}
           <div className="stock-status">
-            <FaCheck /> Còn hàng ({product.stockQuantity})
+            <FaCheck /> Còn hàng ({product.stockQuantity || 0})
           </div>
 
-          {/* Quantity & Actions */}
           <div className="actions-row">
             <div className="quantity-selector">
               <button onClick={() => handleQuantityChange(-1)}>-</button>
@@ -177,23 +138,10 @@ const ProductDetailPage = () => {
               <FaHeart /> Yêu thích
             </button>
           </div>
-
-          {/* Trust Info */}
-          <div className="product-trust">
-            <div>
-              <FaTruck /> Miễn phí vận chuyển toàn quốc
-            </div>
-            <div>
-              <FaShieldAlt /> Bảo hành chính hãng 3 năm
-            </div>
-            <div>
-              <FaUndo /> Đổi trả trong vòng 30 ngày
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Bottom Section: Attributes & Description & Reviews */}
+      {/* Bottom Section */}
       <div className="product-bottom-section">
         <h2>Thông số kỹ thuật</h2>
         <table>
@@ -206,7 +154,7 @@ const ProductDetailPage = () => {
               <td>Danh mục</td>
               <td>{product.category?.name || "Đang cập nhật"}</td>
             </tr>
-            {product.productAttributes.map((attr, i) => (
+            {product.productAttributes?.map((attr, i) => (
               <tr key={i}>
                 <td>{attr.attribute?.name}</td>
                 <td>{attr.value}</td>
@@ -219,7 +167,7 @@ const ProductDetailPage = () => {
         <p>{product.description}</p>
 
         <h2>Đánh giá sản phẩm</h2>
-        {product.reviews.map((rev) => (
+        {product.reviews?.map((rev) => (
           <div key={rev.id} className="review-card">
             <div className="review-header">
               <strong>{rev.userName || "Người dùng ẩn danh"}</strong>

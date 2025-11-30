@@ -3,7 +3,7 @@ import { getAllProducts } from "../../services/productService";
 import "../../pages/home/HomePage.css";
 import ProductCard from "../../components/ProductCard";
 
-const ProductSection = () => {
+const ProductSection = ({ onSelectProduct }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,7 +126,11 @@ const ProductSection = () => {
       <div className="products-column">
         <div className="products-container">
           {currentProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              onSelect={onSelectProduct} 
+            />
           ))}
         </div>
 

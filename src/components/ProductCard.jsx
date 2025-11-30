@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ProductCard = ({ product }) => (
-  <Link to={`/products/${product.id}`} className="product-card-link">
-    <div className="product-card">
+const ProductCard = ({ product, onSelect }) => (
+    <div 
+      className="product-card"
+      onClick={() => onSelect && onSelect(product)} 
+      style={{ cursor: "pointer" }}>
       <div className="card-img-container">
         {product.productImages.length > 0 ? (
           <img src={product.productImages[0]} alt={product.name} className="card-img" />
@@ -17,7 +19,6 @@ const ProductCard = ({ product }) => (
         <p className="price">${product.price.toFixed(2)}</p>
       </div>
     </div>
-  </Link>
 );
 
 export default ProductCard;

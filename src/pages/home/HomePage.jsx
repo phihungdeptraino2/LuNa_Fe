@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getAllProducts } from "../../services/productService";
 import { useAuth } from "../../context/AuthContext";
 import LoginModal from "../../components/LoginModal";
 import Header from "../../components/common/Header";
@@ -12,88 +13,21 @@ import CategorySection from "../../components/menuSections/CategorySection";
 import ProductSection from "../../components/menuSections/ProductSection";
 import ServiceSection from "../../components/menuSections/ServiceSection";
 import ContactSection from "../../components/menuSections/ContactSection";
+import ProductDetailPage from "../../pages/ProductDetail/ProductDetailPage";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState("Trang Chủ");
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const { user, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-      const CATEGORY_LIST = [
-    {
-      name: "Guitars and Basses",
-      img: "https://cdn-icons-png.flaticon.com/512/4430/4430537.png",
-    },
-    {
-      name: "Drums and Percussion",
-      img: "https://cdn-icons-png.flaticon.com/512/1255/1255799.png",
-    },
-    {
-      name: "Keys",
-      img: "https://cdn-icons-png.flaticon.com/512/2895/2895537.png",
-    },
-    {
-      name: "Studio and Recording",
-      img: "https://cdn-icons-png.flaticon.com/512/9385/9385244.png",
-    },
-    {
-      name: "Software",
-      img: "https://cdn-icons-png.flaticon.com/512/2285/2285564.png",
-    },
-    {
-      name: "PA Equipment",
-      img: "https://cdn-icons-png.flaticon.com/512/3233/3233499.png",
-    },
-    {
-      name: "Lighting and Stage",
-      img: "https://cdn-icons-png.flaticon.com/512/3159/3159313.png",
-    },
-    {
-      name: "DJ Equipment",
-      img: "https://cdn-icons-png.flaticon.com/512/3067/3067272.png",
-    },
-    {
-      name: "Broadcast & Video",
-      img: "https://cdn-icons-png.flaticon.com/512/3660/3660412.png",
-    },
-    {
-      name: "Microphones",
-      img: "https://cdn-icons-png.flaticon.com/512/3065/3065873.png",
-    },
-    {
-      name: "Effect & Signal Proc.",
-      img: "https://cdn-icons-png.flaticon.com/512/5900/5900350.png",
-    },
-    {
-      name: "Wind Instruments",
-      img: "https://cdn-icons-png.flaticon.com/512/860/860264.png",
-    },
-    {
-      name: "Traditional Instruments",
-      img: "https://cdn-icons-png.flaticon.com/512/886/886915.png",
-    },
-    {
-      name: "Sheet Music",
-      img: "https://cdn-icons-png.flaticon.com/512/3028/3028564.png",
-    },
-    {
-      name: "Cases, Racks and Bags",
-      img: "https://cdn-icons-png.flaticon.com/512/2855/2855904.png",
-    },
-    {
-      name: "Cables and Connectors",
-      img: "https://cdn-icons-png.flaticon.com/512/3659/3659911.png",
-    },
-    {
-      name: "Accessories",
-      img: "https://cdn-icons-png.flaticon.com/512/1066/1066367.png",
-    },
-    {
-      name: "Stompenberg FX",
-      img: "https://cdn-icons-png.flaticon.com/512/3131/3131924.png",
-    },
-  ];
+  // Tạo danh sách category từ products
+  const categoryListFromDB = [...new Set(products.map(p => p.category.name))].map(name => ({
+    name,
+    img: "", // tạm thời No Image
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,6 +49,12 @@ const HomePage = () => {
     } else setIsLoginModalOpen(true);
   };
 
+  const handleMenuChange = (menu) => {
+  setActiveMenu(menu);
+  setSelectedProduct(null); // reset khi đổi menu
+};
+
+
   return (
     <div className="homepage-wrapper">
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
@@ -124,7 +64,7 @@ const HomePage = () => {
         logout={logout} 
         handleUserIconClick={handleUserIconClick} 
         activeMenu={activeMenu} 
-        setActiveMenu={setActiveMenu} 
+        setActiveMenu={handleMenuChange} 
       />
 
       <div className="menu-content-area">
@@ -133,12 +73,21 @@ const HomePage = () => {
             <HeroBanner />
             <TrustBar />
             <CyberWeekCarousel products={products} loading={loading} />
-            <CategoriesList CATEGORY_LIST={CATEGORY_LIST} />
+            <CategoriesList CATEGORY_LIST={categoryListFromDB} />
           </>
         )}
+
         {activeMenu === "Giới Thiệu" && <AboutSection />}
         {activeMenu === "Danh mục sản phẩm" && <CategorySection />}
-        {activeMenu === "Sản phẩm" && <ProductSection />}
+        
+        {activeMenu === "Sản phẩm" && (
+          <>
+            {!selectedProduct && <ProductSection onSelectProduct={setSelectedProduct} />}
+            {selectedProduct && <ProductDetailPage product={selectedProduct} onBack={() => setSelectedProduct(null)} />}
+          </>
+        )}
+
+
         {activeMenu === "Dịch vụ" && <ServiceSection />}
         {activeMenu === "Liên hệ" && <ContactSection />}
       </div>
