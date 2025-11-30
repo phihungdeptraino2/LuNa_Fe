@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getAllProducts } from "../../services/productService";
 import { useAuth } from "../../context/AuthContext";
 import LoginModal from "../../components/LoginModal";
 import Header from "../../components/common/Header";
@@ -21,7 +20,7 @@ const HomePage = () => {
   const { user, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-    const CATEGORY_LIST = [
+      const CATEGORY_LIST = [
     {
       name: "Guitars and Basses",
       img: "https://cdn-icons-png.flaticon.com/512/4430/4430537.png",

@@ -1,29 +1,23 @@
-// src/components/ProductCard.jsx
 import React from "react";
+import { Link } from "react-router-dom";
 
-const ProductCard = ({ product }) => {
-  return (
+const ProductCard = ({ product }) => (
+  <Link to={`/products/${product.id}`} className="product-card-link">
     <div className="product-card">
-      <h3>{product.name}</h3>
-      <p><strong>Price:</strong> ${product.price}</p>
-      <p><strong>Stock:</strong> {product.stockQuantity}</p>
-      <p><strong>Brand:</strong> {product.brand.name}</p>
-      <p><strong>Category:</strong> {product.category.name}</p>
+      <div className="card-img-container">
+        {product.productImages.length > 0 ? (
+          <img src={product.productImages[0]} alt={product.name} className="card-img" />
+        ) : (
+          <div className="card-img-placeholder">No Image</div>
+        )}
+      </div>
 
-      {product.productAttributes.length > 0 && (
-        <div>
-          <strong>Attributes:</strong>
-          <ul>
-            {product.productAttributes.map(attr => (
-              <li key={attr.id}>
-                {attr.attributeName}: {attr.attributeValue}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="card-info">
+        <h5>{product.name}</h5>
+        <p className="price">${product.price.toFixed(2)}</p>
+      </div>
     </div>
-  );
-};
+  </Link>
+);
 
 export default ProductCard;

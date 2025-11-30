@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../../services/productService";
 import "../../pages/home/HomePage.css";
+import ProductCard from "../../components/ProductCard";
 
 const ProductSection = () => {
   const [products, setProducts] = useState([]);
@@ -125,23 +126,7 @@ const ProductSection = () => {
       <div className="products-column">
         <div className="products-container">
           {currentProducts.map(product => (
-            <div key={product.id} className="product-card">
-              <div className="card-img-container">
-                {product.productImages.length > 0 ? (
-                  <img src={product.productImages[0]} alt={product.name} className="card-img" />
-                ) : (
-                  <div className="card-img-placeholder">No Image</div>
-                )}
-              </div>
-              <div className="card-info">
-                <h5>{product.name}</h5>
-                <p className="price">${product.price.toFixed(2)}</p>
-                <p className="brand-category">{product.brand.name} - {product.category.name}</p>
-                <p className="attributes">
-                  {product.productAttributes.map(a => `${a.attributeName}: ${a.attributeValue}`).join(", ")}
-                </p>
-              </div>
-            </div>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
 
