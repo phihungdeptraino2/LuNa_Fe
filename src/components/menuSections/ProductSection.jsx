@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../../services/productService";
 import "../../pages/home/HomePage.css";
 import ProductCard from "../../components/ProductCard";
+import { Link } from "react-router-dom";
 
-const ProductSection = ({ onSelectProduct }) => {
+const ProductSection = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +27,7 @@ const ProductSection = ({ onSelectProduct }) => {
       try {
         const data = await getAllProducts();
         setProducts(data);
-      } catch (error) {
+      } catch {
         setProducts([]);
       } finally {
         setLoading(false);
@@ -126,11 +127,9 @@ const ProductSection = ({ onSelectProduct }) => {
       <div className="products-column">
         <div className="products-container">
           {currentProducts.map(product => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              onSelect={onSelectProduct} 
-            />
+            <Link key={product.id} to={`/products/${product.id}`}>
+              <ProductCard product={product} />
+            </Link>
           ))}
         </div>
 

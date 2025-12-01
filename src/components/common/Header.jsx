@@ -1,7 +1,17 @@
 import React from "react";
 import { FaSearch, FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
 import "../../pages/home/HomePage.css"
+import { Link, useLocation } from "react-router-dom";
 
+
+  const menus = [
+    { name: "Trang Chủ", path: "/" },
+    { name: "Giới Thiệu", path: "/about" },
+    { name: "Danh mục sản phẩm", path: "/category" },
+    { name: "Sản phẩm", path: "/products" },
+    { name: "Dịch vụ", path: "/services" },
+    { name: "Liên hệ", path: "/contact" },
+  ];
 const Header = ({ user, handleUserIconClick, activeMenu, setActiveMenu }) => {
   return (
     <header>
@@ -24,16 +34,16 @@ const Header = ({ user, handleUserIconClick, activeMenu, setActiveMenu }) => {
       </div>
 
       <nav className="category-bar">
-        {["Trang Chủ","Giới Thiệu","Danh mục sản phẩm","Sản phẩm","Dịch vụ","Liên hệ"].map(menu => (
-          <span 
-            key={menu} 
-            className={activeMenu === menu ? "active-link" : ""} 
-            onClick={() => setActiveMenu(menu)}
-          >
-            {menu}
-          </span>
-        ))}
-      </nav>
+      {menus.map(menu => (
+        <Link 
+          key={menu.name} 
+          to={menu.path}
+          className={location.pathname === menu.path ? "active-link" : ""}
+        >
+          {menu.name}
+        </Link>
+      ))}
+    </nav>
     </header>
   );
 };

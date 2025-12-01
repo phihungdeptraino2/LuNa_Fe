@@ -1,51 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { getProductById } from "../../services/productService";
 import "./ProductDetailPage.css";
-import {
-  FaStar,
-  FaShoppingCart,
-  FaHeart,
-  FaCheck,
-  FaTruck,
-  FaUndo,
-  FaShieldAlt,
-} from "react-icons/fa";
+import { FaStar, FaShoppingCart, FaHeart, FaCheck } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
 
-const ProductDetailPage = ({ product: initialProduct, onBack }) => {
-  const [product, setProduct] = useState(initialProduct || null);
-  const [loading, setLoading] = useState(!initialProduct);
+const ProductDetailPage = () => {
+  const { id } = useParams();          // Lấy id từ URL
+  const navigate = useNavigate();      // Dùng để quay lại
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
 
-  // Dummy data phòng khi API lỗi
-  const DUMMY_DETAIL = {
-    name: "Fender Player Stratocaster",
-    price: 849.99,
-    description:
-      "Guitar điện biểu tượng, cần Maple, cấu hình pickup SSS kinh điển.",
-    stockQuantity: 20,
-    category: { name: "Electric Guitar (Guitar Điện)" },
-    brand: { name: "Fender" },
-    productImages: [],
-    productAttributes: [],
-    reviews: [],
-  };
-
   useEffect(() => {
-    if (!initialProduct) {
-      // nếu product chưa có sẵn, fetch từ API hoặc dùng dummy
-      setProduct(DUMMY_DETAIL);
-      setMainImage(DUMMY_DETAIL.productImages[0]?.imageUrl || "");
-      setLoading(false);
-    } else {
-      setMainImage(initialProduct.productImages[0]?.imageUrl || "");
-    }
-  }, [initialProduct]);
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductById(id);
+        setProduct(data);
+        setMainImage(data.productImages?.[0]?.imageUrl || "");
+      } catch {
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
 
-  if (loading)
-    return <div className="loading">Đang tải chi tiết sản phẩm...</div>;
-  if (!product)
-    return <div className="loading">Sản phẩm không tồn tại</div>;
+  if (loading) return <div className="loading">Đang tải chi tiết sản phẩm...</div>;
+  if (!product) return <div className="loading">Sản phẩm không tồn tại</div>;
 
   const handleQuantityChange = (amount) => {
     const newQty = quantity + amount;
@@ -53,19 +36,14 @@ const ProductDetailPage = ({ product: initialProduct, onBack }) => {
   };
 
   const formatPrice = (price) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
+    new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
 
   return (
     <div className="product-detail-container">
       {/* Back Button */}
-      {onBack && (
-        <button className="back-btn" onClick={onBack}>
-          ← Quay lại
-        </button>
-      )}
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ← Quay lại
+      </button>
 
       {/* Breadcrumb */}
       <div className="breadcrumb">
@@ -73,14 +51,9 @@ const ProductDetailPage = ({ product: initialProduct, onBack }) => {
       </div>
 
       <div className="product-main-section">
-        {/* LEFT COLUMN: IMAGE */}
         <div className="left-column">
           <div className="main-image-wrapper">
-            {mainImage ? (
-              <img src={mainImage} alt={product.name} />
-            ) : (
-              <div className="no-image">No Image</div>
-            )}
+            {mainImage ? <img src={mainImage} alt={product.name} /> : <div className="no-image">No Image</div>}
           </div>
           <div className="thumbnail-list">
             {product.productImages?.map((img, index) => (
@@ -95,18 +68,12 @@ const ProductDetailPage = ({ product: initialProduct, onBack }) => {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: INFO */}
         <div className="right-column">
           <h1>{product.name}</h1>
-
-          {/* Rating & Reviews */}
           <div className="rating-row">
             <div className="stars">
               {[...Array(5)].map((_, i) => (
-                <FaStar
-                  key={i}
-                  color={i < (product.reviews?.[0]?.rating || 0) ? "#FFD700" : "#ccc"}
-                />
+                <FaStar key={i} color={i < (product.reviews?.[0]?.rating || 0) ? "#FFD700" : "#ccc"} />
               ))}
             </div>
             <span className="review-count">({product.reviews?.length || 0} đánh giá)</span>
@@ -127,10 +94,7 @@ const ProductDetailPage = ({ product: initialProduct, onBack }) => {
               <button onClick={() => handleQuantityChange(1)}>+</button>
             </div>
 
-            <button
-              className="add-to-cart-btn"
-              onClick={() => alert(`Đã thêm ${quantity} sản phẩm vào giỏ!`)}
-            >
+            <button className="add-to-cart-btn" onClick={() => alert(`Đã thêm ${quantity} sản phẩm vào giỏ!`)}>
               <FaShoppingCart /> Thêm vào giỏ hàng
             </button>
 

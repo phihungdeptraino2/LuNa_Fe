@@ -8,28 +8,31 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// PUBLIC PAGES
 import HomePage from "./pages/home/HomePage";
-
 import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage";
-
 import AboutSection from "./components/menuSections/AboutSection";
 import CategorySection from "./components/menuSections/CategorySection";
 import ProductSection from "./components/menuSections/ProductSection";
 import ServiceSection from "./components/menuSections/ServiceSection";
 import ContactSection from "./components/menuSections/ContactSection";
 
-// Import Admin Components (Giờ đã có file rồi nên không lỗi nữa)
+// LAYOUTS
+import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
+
+// ADMIN PAGES
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductManager from "./pages/admin/AdminProductManager";
 import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
-// --- COMPONENT BẢO VỆ ROUTE ADMIN ---
+
+
+// --- ROUTE BẢO VỆ ADMIN ---
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>; // Đợi load user xong
+  if (loading) return <div>Loading...</div>;
 
-  // Logic kiểm tra: Phải có user VÀ user phải có quyền ADMIN
   if (!user || !user.roles || !user.roles.includes("ADMIN")) {
     return <Navigate to="/login" replace />;
   }
@@ -37,23 +40,30 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* --- PUBLIC ROUTES --- */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
 
-          {/* --- MENU ROUTES TRONG HOMEPAGE --- */}
-          <Route path="/about" element={<AboutSection />} />
-          <Route path="/category" element={<CategorySection />} />
-          <Route path="/products" element={<ProductSection />} />
-          <Route path="/services" element={<ServiceSection />} />
-          <Route path="/contact" element={<ContactSection />} />
+          {/* ----- PUBLIC ROUTES DÙNG MAIN LAYOUT ----- */}
+            <Route path="/" element={<MainLayout />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="about" element={<AboutSection />} />
+            <Route path="category" element={<CategorySection />} />
+            <Route path="products" element={<ProductSection />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="services" element={<ServiceSection />} />
+            <Route path="contact" element={<ContactSection />} />
 
-          {/* --- ADMIN ROUTES (ĐƯỢC BẢO VỆ) --- */}
+            {/* Product Detail cũng nằm trong Layout để giữ Header + Footer */}
+            <Route path="products/:id" element={<ProductDetailPage />} />
+          </Route>
+
+
+          {/* ----- ADMIN ROUTES ----- */}
           <Route
             path="/admin"
             element={
@@ -65,12 +75,13 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProductManager />} />
             <Route path="discounts" element={<AdminDiscountManager />} />
-            {/* Nếu vào /admin khơi khơi thì nhảy về dashboard */}
-            <Route index element={<Navigate to="dashboard" />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
+
 
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
+
         <ToastContainer position="top-right" autoClose={3000} />
       </Router>
     </AuthProvider>

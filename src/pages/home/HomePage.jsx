@@ -8,27 +8,20 @@ import TrustBar from "../../components/common/TrustBar";
 import CyberWeekCarousel from "../../components/common/CyberWeekCarousel";
 import CategoriesList from "../../components/common/CategoriesList";
 import Footer from "../../components/common/Footer";
-import AboutSection from "../../components/menuSections/AboutSection";
-import CategorySection from "../../components/menuSections/CategorySection";
-import ProductSection from "../../components/menuSections/ProductSection";
-import ServiceSection from "../../components/menuSections/ServiceSection";
-import ContactSection from "../../components/menuSections/ContactSection";
-import ProductDetailPage from "../../pages/ProductDetail/ProductDetailPage";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeMenu, setActiveMenu] = useState("Trang Chủ");
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const { user, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  // Tạo danh sách category từ products
+  // Tạo danh sách category từ API
   const categoryListFromDB = [...new Set(products.map(p => p.category.name))].map(name => ({
     name,
-    img: "", // tạm thời No Image
+    img: "",
   }));
 
+  // Load products
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,56 +36,33 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+  // User avatar click
   const handleUserIconClick = () => {
     if (user) {
       if (window.confirm("Bạn muốn đăng xuất?")) logout();
     } else setIsLoginModalOpen(true);
   };
 
-  const handleMenuChange = (menu) => {
-  setActiveMenu(menu);
-  setSelectedProduct(null); // reset khi đổi menu
-};
-
-
   return (
     <div className="homepage-wrapper">
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-      <div className="super-top-bar">CYBERWEEK - Save up to 70% 🔥 Shop Now!</div>
-      <Header 
+      {/* <div className="super-top-bar">CYBERWEEK - Save up to 70% 🔥 Shop Now!</div> */}
+
+      {/* <Header 
         user={user} 
         logout={logout} 
-        handleUserIconClick={handleUserIconClick} 
-        activeMenu={activeMenu} 
-        setActiveMenu={handleMenuChange} 
-      />
+        handleUserIconClick={handleUserIconClick}
+      /> */}
 
+      {/* 🟩 HomePage chỉ hiển thị TRANG CHỦ */}
       <div className="menu-content-area">
-        {activeMenu === "Trang Chủ" && (
-          <>
-            <HeroBanner />
-            <TrustBar />
-            <CyberWeekCarousel products={products} loading={loading} />
-            <CategoriesList CATEGORY_LIST={categoryListFromDB} />
-          </>
-        )}
-
-        {activeMenu === "Giới Thiệu" && <AboutSection />}
-        {activeMenu === "Danh mục sản phẩm" && <CategorySection />}
-        
-        {activeMenu === "Sản phẩm" && (
-          <>
-            {!selectedProduct && <ProductSection onSelectProduct={setSelectedProduct} />}
-            {selectedProduct && <ProductDetailPage product={selectedProduct} onBack={() => setSelectedProduct(null)} />}
-          </>
-        )}
-
-
-        {activeMenu === "Dịch vụ" && <ServiceSection />}
-        {activeMenu === "Liên hệ" && <ContactSection />}
+        <HeroBanner />
+        <TrustBar />
+        <CyberWeekCarousel products={products} loading={loading} />
+        <CategoriesList CATEGORY_LIST={categoryListFromDB} />
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
