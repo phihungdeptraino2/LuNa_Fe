@@ -3,6 +3,14 @@ import { getProductById } from "../../services/productService";
 import "./ProductDetailPage.css";
 import { FaStar, FaShoppingCart, FaHeart, FaCheck } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+
+
+
+<button onClick={() => addToCart(product, quantity)}>
+  Thêm vào giỏ hàng
+</button>
+
 
 const ProductDetailPage = () => {
   const { id } = useParams();          // Lấy id từ URL
@@ -10,6 +18,8 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+
+  const { addToCart } = useCart();
   const [mainImage, setMainImage] = useState("");
 
   useEffect(() => {
@@ -94,7 +104,12 @@ const ProductDetailPage = () => {
               <button onClick={() => handleQuantityChange(1)}>+</button>
             </div>
 
-            <button className="add-to-cart-btn" onClick={() => alert(`Đã thêm ${quantity} sản phẩm vào giỏ!`)}>
+            <button
+              className="add-to-cart-btn"
+              onClick={() => {
+                addToCart(product, quantity);
+                alert(`Đã thêm ${quantity} sản phẩm vào giỏ!`);
+              }}>
               <FaShoppingCart /> Thêm vào giỏ hàng
             </button>
 

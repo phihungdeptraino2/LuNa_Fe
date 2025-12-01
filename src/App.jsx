@@ -25,6 +25,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductManager from "./pages/admin/AdminProductManager";
 import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
+import CartPage from "./pages/cart/CartPage";
 
 
 // --- ROUTE BẢO VỆ ADMIN ---
@@ -57,6 +58,8 @@ function App() {
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="services" element={<ServiceSection />} />
             <Route path="contact" element={<ContactSection />} />
+            
+            <Route path="cart" element={<CartPage/>} />
 
             {/* Product Detail cũng nằm trong Layout để giữ Header + Footer */}
             <Route path="products/:id" element={<ProductDetailPage />} />

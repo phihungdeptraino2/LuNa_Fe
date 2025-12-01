@@ -989,3 +989,16 @@ header {
 .filter-group input {
   margin-bottom: 5px;
 }
+
+/* HomePage.css hoặc Header.css */
+.login-btn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.login-btn:hover {
+  background-color: #f0f0f0; /* highlight khi hover */
+  border-radius: 5px;
+}
