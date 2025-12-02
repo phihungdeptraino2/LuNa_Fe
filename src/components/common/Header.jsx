@@ -2,6 +2,7 @@ import React from "react";
 import { FaSearch, FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
 import "../../pages/home/HomePage.css";
 import { Link, useLocation } from "react-router-dom";
+import { useCart } from "../../context/CartContext"
 
 const menus = [
   { name: "Trang Chủ", path: "/" },
@@ -14,6 +15,7 @@ const menus = [
 
 const Header = ({ user, handleUserIconClick }) => {
   const location = useLocation();
+  const { totalTypes } = useCart();
 
   return (
     <header>
@@ -35,7 +37,7 @@ const Header = ({ user, handleUserIconClick }) => {
           <div className="action-item">
             <Link to="/cart">
               <FaShoppingCart className="header-icon" />
-              <span className="badge">0</span>
+              {totalTypes > 0 && <span className="badge">{totalTypes}</span>}
             </Link>
           </div>
         </div>

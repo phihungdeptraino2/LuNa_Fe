@@ -45,7 +45,6 @@ const AdminRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
         <Routes>
 
           {/* ----- PUBLIC ROUTES DÙNG MAIN LAYOUT ----- */}
@@ -86,7 +85,6 @@ function App() {
         </Routes>
 
         <ToastContainer position="top-right" autoClose={3000} />
-      </Router>
     </AuthProvider>
   );
 }
