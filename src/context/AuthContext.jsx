@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-// 1. Thay đổi import: Không import axios nữa, mà import các hàm từ Service
 import { loginAPI, getMeAPI, logoutAPI } from "../services/authService";
 
 const AuthContext = createContext(null);
@@ -14,11 +13,11 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          // Dùng hàm từ Service
-          const response = await getMeAPI();
-          if (response.data && response.data.data) {
-            setUser(response.data.data);
-          }
+          const meRes = await getMeAPI();
+          const userData = meRes.data.data;
+
+          // Lưu token vào user
+          setUser({ ...userData, token });
         } catch (error) {
           console.log("Token lỗi");
           localStorage.removeItem("token");
@@ -32,18 +31,19 @@ export const AuthProvider = ({ children }) => {
   // --- HÀM LOGIN ---
   const login = async (username, password) => {
     try {
-      // Dùng hàm từ Service
       const res = await loginAPI(username, password);
+      const token = res.data.data.token;
 
-      if (res.data.data.token) {
-        localStorage.setItem("token", res.data.data.token);
+      if (token) {
+        localStorage.setItem("token", token);
 
-        // Dùng hàm từ Service
         const meRes = await getMeAPI();
         const userData = meRes.data.data;
 
-        setUser(userData);
-        return userData;
+        // Lưu token vào user
+        setUser({ ...userData, token });
+
+        return { ...userData, token };
       }
     } catch (error) {
       console.error(error);
@@ -56,10 +56,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
-
-    // Dùng hàm từ Service (gọi chạy ngầm, ko cần await cũng được)
     logoutAPI();
-
     window.location.href = "/";
   };
 

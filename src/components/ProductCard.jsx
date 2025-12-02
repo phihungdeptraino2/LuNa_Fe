@@ -1,14 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import "./ProductCard.css"
 
-const ProductCard = ({ product, onSelect }) => (
+const ProductCard = ({ product, onSelect }) => {
+  const defaultImage = product.productImages.find(img => img.default)?.imageUrl || "";
+
+  const BE_HOST = "http://localhost:8081";
+
+const imageSrc = defaultImage
+  ? `${BE_HOST}${defaultImage.startsWith("/") ? defaultImage : `/${defaultImage}`}`
+  : "";
+
+  return (
     <div 
       className="product-card"
       onClick={() => onSelect && onSelect(product)} 
-      style={{ cursor: "pointer" }}>
+      style={{ cursor: "pointer" }}
+    >
       <div className="card-img-container">
-        {product.productImages.length > 0 ? (
-          <img src={product.productImages[0]} alt={product.name} className="card-img" />
+        {imageSrc ? (
+          <img src={imageSrc} alt={product.name} className="card-img" />
         ) : (
           <div className="card-img-placeholder">No Image</div>
         )}
@@ -19,6 +29,7 @@ const ProductCard = ({ product, onSelect }) => (
         <p className="price">${product.price.toFixed(2)}</p>
       </div>
     </div>
-);
+  );
+};
 
 export default ProductCard;

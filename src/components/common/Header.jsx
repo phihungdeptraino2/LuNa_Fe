@@ -4,24 +4,28 @@ import "../../pages/home/HomePage.css";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext"
 
-const menus = [
-  { name: "Trang Chủ", path: "/" },
-  { name: "Giới Thiệu", path: "/about" },
-  { name: "Danh mục sản phẩm", path: "/category" },
-  { name: "Sản phẩm", path: "/products" },
-  { name: "Dịch vụ", path: "/services" },
-  { name: "Liên hệ", path: "/contact" },
-];
-
 const Header = ({ user, handleUserIconClick }) => {
   const location = useLocation();
   const { totalTypes } = useCart();
+
+  // Kiểm tra role customer
+  const isCustomer = user?.roles?.includes("CUSTOMER");
+
+  const prefix = user && user.roles.includes("CUSTOMER") ? "/customer" : "";
+  const menus = [
+    { name: "Trang Chủ", path: `${prefix}/home` },
+    { name: "Giới Thiệu", path: `${prefix}/about` },
+    { name: "Danh mục sản phẩm", path: `${prefix}/category` },
+    { name: "Sản phẩm", path: `${prefix}/products` },
+    { name: "Dịch vụ", path: `${prefix}/services` },
+    { name: "Liên hệ", path: `${prefix}/contact` },
+  ];
 
   return (
     <header>
       <div className="main-header">
         <div className="logo">
-          <Link to="/">Luna<span>•</span>Music</Link>
+          <Link to={isCustomer ? "/customer/home" : "/"}>Luna<span>•</span>Music</Link>
         </div>
         <div className="search-bar">
           <input type="text" placeholder="Search..." />
@@ -33,9 +37,10 @@ const Header = ({ user, handleUserIconClick }) => {
           </div>
 
           <FaHeart className="header-icon" />
-          {/* Giỏ hàng với Link sang /cart */}
+
+          {/* Giỏ hàng với link dynamic */}
           <div className="action-item">
-            <Link to="/cart">
+            <Link to={isCustomer ? "/customer/cart" : "/cart"}>
               <FaShoppingCart className="header-icon" />
               {totalTypes > 0 && <span className="badge">{totalTypes}</span>}
             </Link>
@@ -57,5 +62,6 @@ const Header = ({ user, handleUserIconClick }) => {
     </header>
   );
 };
+
 
 export default Header;

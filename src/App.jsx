@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,7 +22,6 @@ import AdminProductManager from "./pages/admin/AdminProductManager";
 import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
 import CartPage from "./pages/cart/CartPage";
 
-
 // --- ROUTE BẢO VỆ ADMIN ---
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -41,50 +35,55 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-
 function App() {
   return (
     <AuthProvider>
-        <Routes>
+      <Routes>
+        {/* ----- PUBLIC + CUSTOMER ROUTES ----- */}
+        <Route path="/" element={<MainLayout />}>
+          {/* Public pages */}
+          <Route index element={<Navigate to="home" replace />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path="about" element={<AboutSection />} />
+          <Route path="category" element={<CategorySection />} />
+          <Route path="products" element={<ProductSection />} />
+          <Route path="products/:id" element={<ProductDetailPage />} />
+          <Route path="services" element={<ServiceSection />} />
+          <Route path="contact" element={<ContactSection />} />
+          <Route path="cart" element={<CartPage />} />
 
-          {/* ----- PUBLIC ROUTES DÙNG MAIN LAYOUT ----- */}
-            <Route path="/" element={<MainLayout />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="about" element={<AboutSection />} />
-            <Route path="category" element={<CategorySection />} />
-            <Route path="products" element={<ProductSection />} />
-            <Route path="products/:id" element={<ProductDetailPage />} />
-            <Route path="services" element={<ServiceSection />} />
-            <Route path="contact" element={<ContactSection />} />
-            
-            <Route path="cart" element={<CartPage/>} />
+          {/* Customer pages */}
+          <Route path="customer/home" element={<HomePage />} />
+          <Route path="customer/about" element={<AboutSection />} />
+          <Route path="customer/category" element={<CategorySection />} />
+          <Route path="customer/products" element={<ProductSection />} />
+          <Route path="customer/products/:id" element={<ProductDetailPage />} />
+          <Route path="customer/services" element={<ServiceSection />} />
+          <Route path="customer/contact" element={<ContactSection />} />
+          <Route path="customer/cart" element={<CartPage />} />
+          <Route path="customer" element={<Navigate to="customer/home" replace />} />
+        </Route>
 
-            {/* Product Detail cũng nằm trong Layout để giữ Header + Footer */}
-            <Route path="products/:id" element={<ProductDetailPage />} />
-          </Route>
+        {/* ----- ADMIN ROUTES ----- */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProductManager />} />
+          <Route path="discounts" element={<AdminDiscountManager />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+        </Route>
 
+        {/* 404 */}
+        <Route path="*" element={<div>404 Not Found</div>} />
+      </Routes>
 
-          {/* ----- ADMIN ROUTES ----- */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminLayout />
-              </AdminRoute>
-            }
-          >
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProductManager />} />
-            <Route path="discounts" element={<AdminDiscountManager />} />
-            <Route index element={<Navigate to="dashboard" replace />} />
-          </Route>
-
-
-          <Route path="*" element={<div>404 Not Found</div>} />
-        </Routes>
-
-        <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} />
     </AuthProvider>
   );
 }

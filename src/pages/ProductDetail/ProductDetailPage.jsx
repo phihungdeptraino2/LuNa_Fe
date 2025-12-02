@@ -4,7 +4,8 @@ import "./ProductDetailPage.css";
 import { FaStar, FaShoppingCart, FaHeart, FaCheck } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-
+import LoginModal from "../../components/LoginModal";
+import { useAuth } from "../../context/AuthContext";
 
 
 <button onClick={() => addToCart(product, quantity)}>
@@ -18,16 +19,27 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { user } = useAuth(); // user = null nếu chưa đăng nhập
+
 
   const { addToCart } = useCart();
   const [mainImage, setMainImage] = useState("");
+  const BE_HOST = "http://localhost:8081";
+  const buildImageUrl = (url) => {
+  if (!url) return "";
+  return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
+};
+
+
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const data = await getProductById(id);
         setProduct(data);
-        setMainImage(data.productImages?.[0]?.imageUrl || "");
+        setMainImage(buildImageUrl(data.productImages?.[0]?.imageUrl || ""));
+
       } catch {
         setProduct(null);
       } finally {
@@ -50,6 +62,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="product-detail-container">
+      
       {/* Back Button */}
       <button className="back-btn" onClick={() => navigate(-1)}>
         ← Quay lại
@@ -62,18 +75,34 @@ const ProductDetailPage = () => {
 
       <div className="product-main-section">
         <div className="left-column">
-          <div className="main-image-wrapper">
-            {mainImage ? <img src={mainImage} alt={product.name} /> : <div className="no-image">No Image</div>}
-          </div>
+          <div 
+          className="main-image-wrapper"
+          onMouseMove={e => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            e.currentTarget.firstChild.style.transform = 'scale(2)'; // zoom sát hơn
+            e.currentTarget.firstChild.style.objectPosition = `${x}% ${y}%`;
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.firstChild.style.transform = 'scale(1)';
+            e.currentTarget.firstChild.style.objectPosition = 'center center';
+          }}
+        >
+          <img src={mainImage} alt={product.name} />
+        </div>
+
+
           <div className="thumbnail-list">
             {product.productImages?.map((img, index) => (
               <img
                 key={index}
-                src={img.imageUrl}
+                src={buildImageUrl(img.imageUrl)}
                 alt="thumb"
-                className={mainImage === img.imageUrl ? "active" : ""}
-                onClick={() => setMainImage(img.imageUrl)}
+                className={mainImage === buildImageUrl(img.imageUrl) ? "active" : ""} 
+                onClick={() => setMainImage(buildImageUrl(img.imageUrl))}
               />
+
             ))}
           </div>
         </div>
@@ -108,9 +137,21 @@ const ProductDetailPage = () => {
               className="add-to-cart-btn"
               onClick={() => {
                 addToCart(product, quantity);
-                alert(`Đã thêm ${quantity} sản phẩm vào giỏ!`);
               }}>
               <FaShoppingCart /> Thêm vào giỏ hàng
+            </button>
+            <button
+              className="buy-now-btn"
+              onClick={() => {
+                if (!user) {
+                  setShowLoginModal(true); // chưa đăng nhập -> hiện modal login
+                  return;
+                }
+                addToCart(product, quantity);
+                navigate("/cart"); // hoặc /cart tuỳ bạn
+              }}
+            >
+              Mua hàng
             </button>
 
             <button className="wishlist-btn">
@@ -160,8 +201,24 @@ const ProductDetailPage = () => {
           </div>
         ))}
       </div>
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={(userData) => {
+          setShowLoginModal(false);
+          addToCart(product, quantity);
+
+          if (userData.roles.includes("CUSTOMER")) {
+            navigate("/customer/cart");
+          } else if (userData.roles.includes("ADMIN")) {
+            navigate("/admin/dashboard");
+          }
+        }}
+      />
     </div>
   );
 };
+
+
 
 export default ProductDetailPage;

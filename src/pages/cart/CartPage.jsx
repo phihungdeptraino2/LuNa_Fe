@@ -1,22 +1,53 @@
 import React from "react";
 import { useCart } from "../../context/CartContext";
 import CartItem from "../../components/cart/CartItem";
-import "./CartPage.css"
+import "./CartPage.css";
+
 const CartPage = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
 
-  if (cartItems.length === 0)
-    return <p>Giỏ hàng trống. Hãy thêm sản phẩm vào giỏ!</p>;
+  // Nếu giỏ hàng rỗng
+  if (!cartItems || cartItems.length === 0) {
+    return (
+      <div className="cart-empty">
+        <h2>Giỏ hàng trống</h2>
+        <p>Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
+      </div>
+    );
+  }
 
   return (
     <div className="cart-page">
-      <h1>Giỏ hàng của bạn</h1>
-      {cartItems.map(item => (
-        <CartItem key={item.id} item={item} />
-      ))}
-      <h3>Tổng tiền: {totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</h3>
-      <button onClick={clearCart}>Xóa tất cả</button>
-      <button>Thanh toán</button>
+      <h1 className="cart-title">Giỏ hàng của bạn</h1>
+
+      <div className="cart-items-list">
+        {cartItems.map((item, index) => (
+          <CartItem key={item.product?.id || item.id || index} item={item} />
+        ))}
+      </div>
+
+
+      <div className="cart-summary">
+        <h3>
+          Tổng tiền:{" "}
+          <span className="total-price">
+            {totalPrice.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </span>
+        </h3>
+
+        <div className="cart-actions">
+          <button className="btn-clear" onClick={clearCart}>
+            Xóa tất cả
+          </button>
+
+          <button className="btn-checkout">
+            Thanh toán
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

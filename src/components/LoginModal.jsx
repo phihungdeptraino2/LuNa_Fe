@@ -19,17 +19,17 @@ const LoginModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setError("");
     try {
-      // Nhận dữ liệu user trả về
       const userData = await login(username, password);
 
-      if (userData) {
-        // --- LOGIC PHÂN QUYỀN ---
-        // Backend bạn trả về role đã cắt chữ "ROLE_" nên chỉ cần check "ADMIN"
-        if (userData.roles && userData.roles.includes("ADMIN")) {
-          navigate("/admin/dashboard"); // Admin thì bay vào trang quản trị
-        } else {
-          onClose(); // Khách hàng thì đóng modal để mua hàng tiếp
+      if (userData && userData.roles) {
+        if (userData.roles.includes("ADMIN")) {
+          // Nếu là admin → vào trang quản trị
+          navigate("/admin/dashboard");
+        } else if (userData.roles.includes("CUSTOMER")) {
+          // Nếu là customer → thêm /customer vào URL
+          navigate(`/customer${window.location.pathname}`);
         }
+        onClose(); // đóng modal sau khi redirect
       } else {
         setError("Tên đăng nhập hoặc mật khẩu không đúng.");
       }
@@ -37,6 +37,7 @@ const LoginModal = ({ isOpen, onClose }) => {
       setError("Lỗi kết nối server.");
     }
   };
+
 
   return (
     <div className="modal-overlay" onClick={onClose}>

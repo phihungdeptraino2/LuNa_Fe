@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import "../../pages/home/HomePage.css"
 
 const CyberWeekCarousel = ({ products, loading }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
