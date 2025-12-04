@@ -1,0 +1,239 @@
+.order-review-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.order-review-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.order-review-empty {
+  text-align: center;
+  padding: 40px;
+}
+
+.order-review-empty button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.order-review-empty button:hover {
+  background: #0056b3;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.order-review-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.section {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+
+.section h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item span {
+  color: #666;
+}
+
+.info-item strong {
+  color: #333;
+}
+
+.address-box {
+  background: white;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  line-height: 1.8;
+}
+
+.address-box p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.status-badge {
+  display: inline-block;
+  background: #ffc107;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.order-summary {
+  background: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.order-summary h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.summary-items {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-details {
+  padding-right: 15px;
+}
+
+.item-name {
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.item-quantity {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 5px 0;
+}
+
+.item-price-unit {
+  color: #007bff;
+  font-size: 14px;
+  margin: 0;
+}
+
+.item-total {
+  font-weight: bold;
+  color: #e74c3c;
+  text-align: right;
+  min-width: 120px;
+}
+
+.summary-totals {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  color: #666;
+}
+
+.total-final {
+  border-top: 2px solid #ddd;
+  padding-top: 12px;
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-confirm,
+.btn-cancel {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.btn-confirm {
+  background: #28a745;
+  color: white;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background: #218838;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.btn-confirm:disabled,
+.btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .order-review-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}

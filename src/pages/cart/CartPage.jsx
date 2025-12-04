@@ -1,10 +1,12 @@
-import React from "react";
-import { useCart } from "../../context/CartContext";
-import CartItem from "../../components/cart/CartItem";
-import "./CartPage.css";
+"use client"
+import { useCart } from "../../context/CartContext"
+import { useNavigate } from "react-router-dom"
+import CartItem from "../../components/cart/CartItem"
+import "./CartPage.css"
 
 const CartPage = () => {
-  const { cartItems, totalPrice, clearCart } = useCart();
+  const { cartItems, totalPrice, clearCart } = useCart()
+  const navigate = useNavigate()
 
   // Nếu giỏ hàng rỗng
   if (!cartItems || cartItems.length === 0) {
@@ -13,7 +15,7 @@ const CartPage = () => {
         <h2>Giỏ hàng trống</h2>
         <p>Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -25,7 +27,6 @@ const CartPage = () => {
           <CartItem key={item.product?.id || item.id || index} item={item} />
         ))}
       </div>
-
 
       <div className="cart-summary">
         <h3>
@@ -43,13 +44,13 @@ const CartPage = () => {
             Xóa tất cả
           </button>
 
-          <button className="btn-checkout">
+          <button className="btn-checkout" onClick={() => navigate("/checkout")}>
             Thanh toán
           </button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CartPage;
+export default CartPage
