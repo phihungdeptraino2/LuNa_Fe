@@ -140,7 +140,7 @@ const CheckoutPage = () => {
 
     try {
       const token = localStorage.getItem("token")
-      const userId = user?.id || 2
+      const userId = user?.id
 
       const response = await fetch(`http://localhost:8081/api/orders/checkout`, {
         method: "POST",

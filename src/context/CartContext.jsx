@@ -167,24 +167,42 @@ export const CartProvider = ({ children }) => {
   const clearCart = async () => {
     if (token) {
       try {
-        const res = await fetch(`http://localhost:8081/api/cart/clear`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        for (const item of cartItems) {
+          const productId = item.product?.id;
 
-        if (!res.ok) throw new Error("Xóa giỏ hàng thất bại")
+          if (!productId) continue;
 
-        setCartItems([])
-        sessionStorage.removeItem("cart")
+          const res = await fetch(
+            `http://localhost:8081/api/cart/remove?productId=${productId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error(`Xóa sản phẩm ${productId} thất bại`);
+          }
+        }
+
+        // Sau khi xóa API thành công → làm sạch state phía client
+        setCartItems([]);
+        sessionStorage.removeItem("cart");
+
       } catch (err) {
-        console.error(err)
-        alert("Lỗi khi xóa giỏ hàng")
+        console.error(err);
+        alert("Lỗi khi xóa giỏ hàng");
       }
+
     } else {
-      setCartItems([])
-      sessionStorage.removeItem("cart")
+      // Trường hợp user chưa đăng nhập → chỉ xóa local cart
+      setCartItems([]);
+      sessionStorage.removeItem("cart");
     }
-  }
+  };
+
 
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0)
   const totalTypes = cartItems.length

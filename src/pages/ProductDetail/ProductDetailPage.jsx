@@ -7,7 +7,6 @@ import { useCart } from "../../context/CartContext";
 import LoginModal from "../../components/LoginModal";
 import { useAuth } from "../../context/AuthContext";
 
-
 <button onClick={() => addToCart(product, quantity)}>
   Thêm vào giỏ hàng
 </button>
