@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { loginAPI, getMeAPI, logoutAPI } from "../services/authService";
+import { loginAPI, getMeAPI, logoutAPI, registerAPI } from "../services/authService";
 
 const AuthContext = createContext(null);
 
@@ -60,8 +60,36 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/";
   };
 
+  const register = async (formData) => {
+  try {
+    const res = await registerAPI(formData);
+
+    if (res.data.status === 201) {
+      // Đăng ký thành công
+      return {
+        success: true,
+        message: res.data.message,
+      };
+    }
+  } catch (error) {
+    console.error(error);
+
+    // Nếu backend trả lỗi dạng { message: "..." }
+    const message =
+      error.response?.data?.message || "Register failed";
+
+    return {
+      success: false,
+      message,
+    };
+  }
+
+  return { success: false, message: "Register failed" };
+};
+
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading , register}}>
       {!loading && children}
     </AuthContext.Provider>
   );

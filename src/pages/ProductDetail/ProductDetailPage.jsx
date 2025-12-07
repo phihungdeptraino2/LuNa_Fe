@@ -22,6 +22,7 @@ const ProductDetailPage = () => {
   const { user } = useAuth(); // user = null nếu chưa đăng nhập
 
 
+
   const { addToCart } = useCart();
   const [mainImage, setMainImage] = useState("");
   const BE_HOST = "http://localhost:8081";
@@ -50,6 +51,11 @@ const ProductDetailPage = () => {
 
   if (loading) return <div className="loading">Đang tải chi tiết sản phẩm...</div>;
   if (!product) return <div className="loading">Sản phẩm không tồn tại</div>;
+
+  const reviews = product.reviews || []; // Đảm bảo reviews là mảng
+  const totalReviews = reviews.length;
+  const totalRatingSum = reviews.reduce((sum, rev) => sum + (rev.rating || 0), 0);
+  const averageRating = totalReviews > 0 ? (totalRatingSum / totalReviews).toFixed(1) : 0;
 
   const handleQuantityChange = (amount) => {
     const newQty = quantity + amount;
@@ -114,7 +120,16 @@ const ProductDetailPage = () => {
                 <FaStar key={i} color={i < (product.reviews?.[0]?.rating || 0) ? "#FFD700" : "#ccc"} />
               ))}
             </div>
-            <span className="review-count">({product.reviews?.length || 0} đánh giá)</span>
+            <span className="review-count">({totalReviews} đánh giá)</span>
+            {/* NÚT CHUYỂN ĐẾN TRANG ĐÁNH GIÁ (NEW) */}
+            {totalReviews > 0 && (
+                <button 
+                    className="view-all-reviews-btn" 
+                    onClick={() => navigate(`/products/${product.id}/reviews`)} // Chuyển đến trang đánh giá
+                >
+                    Xem tất cả đánh giá ({totalReviews})
+                </button>
+            )}
           </div>
 
           <div className="price-section">
@@ -186,7 +201,7 @@ const ProductDetailPage = () => {
         <p>{product.description}</p>
 
         <h2>Đánh giá sản phẩm</h2>
-        {product.reviews?.map((rev) => (
+        {/* {product.reviews?.map((rev) => (
           <div key={rev.id} className="review-card">
             <div className="review-header">
               <strong>{rev.userName || "Người dùng ẩn danh"}</strong>
@@ -198,7 +213,26 @@ const ProductDetailPage = () => {
             </div>
             <p>{rev.reviewText}</p>
           </div>
-        ))}
+        ))} */}
+        {/* NÚT XEM TẤT CẢ ĐÁNH GIÁ (LẦN 2: Dưới phần đánh giá) */}
+        {totalReviews > 0 ? (
+             <>
+                 {/* Hiển thị TỐI ĐA 3 đánh giá gần nhất/tốt nhất */}
+                 {reviews.slice(0, 3).map((rev) => (
+                    <div key={rev.id} className="review-card">
+                        {/* ... Nội dung đánh giá ... */}
+                    </div>
+                 ))}
+                 <button 
+                    className="view-more-reviews-btn" 
+                    onClick={() => navigate(`/products/${product.id}/reviews`)}
+                 >
+                    Xem thêm {totalReviews > 3 ? `(${totalReviews - 3})` : ""} đánh giá khác
+                 </button>
+             </>
+        ) : (
+            <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+        )}
       </div>
       <LoginModal
         isOpen={showLoginModal}
