@@ -7,31 +7,23 @@ import { useCart } from "../../context/CartContext";
 import LoginModal from "../../components/LoginModal";
 import { useAuth } from "../../context/AuthContext";
 
-<button onClick={() => addToCart(product, quantity)}>
-  Thêm vào giỏ hàng
-</button>
-
-
 const ProductDetailPage = () => {
-  const { id } = useParams();          // Lấy id từ URL
-  const navigate = useNavigate();      // Dùng để quay lại
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { user } = useAuth(); // user = null nếu chưa đăng nhập
-
-
-
+  const { user } = useAuth();
   const { addToCart } = useCart();
+
   const [mainImage, setMainImage] = useState("");
   const BE_HOST = "http://localhost:8081";
+
   const buildImageUrl = (url) => {
-  if (!url) return "";
-  return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
-};
-
-
+    if (!url) return "";
+    return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -39,7 +31,6 @@ const ProductDetailPage = () => {
         const data = await getProductById(id);
         setProduct(data);
         setMainImage(buildImageUrl(data.productImages?.[0]?.imageUrl || ""));
-
       } catch {
         setProduct(null);
       } finally {
@@ -52,8 +43,9 @@ const ProductDetailPage = () => {
   if (loading) return <div className="loading">Đang tải chi tiết sản phẩm...</div>;
   if (!product) return <div className="loading">Sản phẩm không tồn tại</div>;
 
-  const reviews = product.reviews || []; // Đảm bảo reviews là mảng
+  const reviews = product.reviews || [];
   const totalReviews = reviews.length;
+
   const totalRatingSum = reviews.reduce((sum, rev) => sum + (rev.rating || 0), 0);
   const averageRating = totalReviews > 0 ? (totalRatingSum / totalReviews).toFixed(1) : 0;
 
@@ -67,7 +59,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="product-detail-container">
-      
+
       {/* Back Button */}
       <button className="back-btn" onClick={() => navigate(-1)}>
         ← Quay lại
@@ -80,23 +72,22 @@ const ProductDetailPage = () => {
 
       <div className="product-main-section">
         <div className="left-column">
-          <div 
-          className="main-image-wrapper"
-          onMouseMove={e => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            e.currentTarget.firstChild.style.transform = 'scale(2)'; // zoom sát hơn
-            e.currentTarget.firstChild.style.objectPosition = `${x}% ${y}%`;
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.firstChild.style.transform = 'scale(1)';
-            e.currentTarget.firstChild.style.objectPosition = 'center center';
-          }}
-        >
-          <img src={mainImage} alt={product.name} />
-        </div>
-
+          <div
+            className="main-image-wrapper"
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = ((e.clientX - rect.left) / rect.width) * 100;
+              const y = ((e.clientY - rect.top) / rect.height) * 100;
+              e.currentTarget.firstChild.style.transform = "scale(2)";
+              e.currentTarget.firstChild.style.objectPosition = `${x}% ${y}%`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.firstChild.style.transform = "scale(1)";
+              e.currentTarget.firstChild.style.objectPosition = "center center";
+            }}
+          >
+            <img src={mainImage} alt={product.name} />
+          </div>
 
           <div className="thumbnail-list">
             {product.productImages?.map((img, index) => (
@@ -104,10 +95,9 @@ const ProductDetailPage = () => {
                 key={index}
                 src={buildImageUrl(img.imageUrl)}
                 alt="thumb"
-                className={mainImage === buildImageUrl(img.imageUrl) ? "active" : ""} 
+                className={mainImage === buildImageUrl(img.imageUrl) ? "active" : ""}
                 onClick={() => setMainImage(buildImageUrl(img.imageUrl))}
               />
-
             ))}
           </div>
         </div>
@@ -117,19 +107,20 @@ const ProductDetailPage = () => {
           <div className="rating-row">
             <div className="stars">
               {[...Array(5)].map((_, i) => (
-                <FaStar key={i} color={i < (product.reviews?.[0]?.rating || 0) ? "#FFD700" : "#ccc"} />
+                <FaStar key={i} color={i < averageRating ? "#FFD700" : "#ccc"} />
               ))}
             </div>
             <span className="review-count">({totalReviews} đánh giá)</span>
-            {/* NÚT CHUYỂN ĐẾN TRANG ĐÁNH GIÁ (NEW) */}
-            {totalReviews > 0 && (
-                <button 
-                    className="view-all-reviews-btn" 
-                    onClick={() => navigate(`/products/${product.id}/reviews`)} // Chuyển đến trang đánh giá
-                >
-                    Xem tất cả đánh giá ({totalReviews})
-                </button>
-            )}
+
+            {/* NÚT LUÔN HIỂN THỊ */}
+            <button
+              className="view-all-reviews-btn"
+              onClick={() => navigate(`/products/${product.id}/reviews`)}
+            >
+              {totalReviews > 0
+                ? `Xem tất cả đánh giá (${totalReviews})`
+                : "Viết đánh giá đầu tiên"}
+            </button>
           </div>
 
           <div className="price-section">
@@ -149,20 +140,17 @@ const ProductDetailPage = () => {
 
             <button
               className="add-to-cart-btn"
-              onClick={() => {
-                addToCart(product, quantity);
-              }}>
+              onClick={() => addToCart(product, quantity)}
+            >
               <FaShoppingCart /> Thêm vào giỏ hàng
             </button>
+
             <button
               className="buy-now-btn"
               onClick={() => {
-                if (!user) {
-                  setShowLoginModal(true); // chưa đăng nhập -> hiện modal login
-                  return;
-                }
+                if (!user) return setShowLoginModal(true);
                 addToCart(product, quantity);
-                navigate("/cart"); // hoặc /cart tuỳ bạn
+                navigate("/cart");
               }}
             >
               Mua hàng
@@ -197,61 +185,48 @@ const ProductDetailPage = () => {
           </tbody>
         </table>
 
-        <h2>Mô tả sản phẩm</h2>
-        <p>{product.description}</p>
-
         <h2>Đánh giá sản phẩm</h2>
-        {/* {product.reviews?.map((rev) => (
-          <div key={rev.id} className="review-card">
-            <div className="review-header">
-              <strong>{rev.userName || "Người dùng ẩn danh"}</strong>
-              <div className="stars">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} color={i < rev.rating ? "#FFD700" : "#ccc"} />
-                ))}
-              </div>
-            </div>
-            <p>{rev.reviewText}</p>
-          </div>
-        ))} */}
-        {/* NÚT XEM TẤT CẢ ĐÁNH GIÁ (LẦN 2: Dưới phần đánh giá) */}
-        {totalReviews > 0 ? (
-             <>
-                 {/* Hiển thị TỐI ĐA 3 đánh giá gần nhất/tốt nhất */}
-                 {reviews.slice(0, 3).map((rev) => (
-                    <div key={rev.id} className="review-card">
-                        {/* ... Nội dung đánh giá ... */}
-                    </div>
-                 ))}
-                 <button 
-                    className="view-more-reviews-btn" 
-                    onClick={() => navigate(`/products/${product.id}/reviews`)}
-                 >
-                    Xem thêm {totalReviews > 3 ? `(${totalReviews - 3})` : ""} đánh giá khác
-                 </button>
-             </>
-        ) : (
+
+        {totalReviews === 0 ? (
+          <>
             <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+            <button
+              className="view-more-reviews-btn"
+              onClick={() => navigate(`/products/${product.id}/reviews`)}
+            >
+              Viết đánh giá đầu tiên
+            </button>
+          </>
+        ) : (
+          <>
+            {reviews.slice(0, 3).map((rev) => (
+              <div key={rev.id} className="review-card">
+                <strong>{rev.userName}</strong>
+                <div className="stars">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar key={i} color={i < rev.rating ? "#FFD700" : "#ccc"} />
+                  ))}
+                </div>
+                <p>{rev.reviewText}</p>
+              </div>
+            ))}
+
+            <button
+              className="view-more-reviews-btn"
+              onClick={() => navigate(`/products/${product.id}/reviews`)}
+            >
+              Xem tất cả đánh giá ({totalReviews})
+            </button>
+          </>
         )}
       </div>
+
       <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
-        onLoginSuccess={(userData) => {
-          setShowLoginModal(false);
-          addToCart(product, quantity);
-
-          if (userData.roles.includes("CUSTOMER")) {
-            navigate("/customer/cart");
-          } else if (userData.roles.includes("ADMIN")) {
-            navigate("/admin/dashboard");
-          }
-        }}
       />
     </div>
   );
 };
-
-
 
 export default ProductDetailPage;

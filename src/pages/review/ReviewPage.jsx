@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductReviews, submitProductReview } from "../../services/reviewService";
 import { getProductById } from "../../services/productService";
+import { getOrdersByUser } from "../../services/orderService"; // ⭐ THÊM API LẤY ĐƠN HÀNG
 import { FaStar } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import "./ReviewPage.css";
 
-// Component hiển thị Rating Stars
+// Rating Stars
 const RatingStars = ({ rating, setRating, editable = false }) => {
   return (
     <div className="stars">
@@ -33,19 +34,47 @@ const ReviewPage = () => {
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [newRating, setNewRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  const [canReview, setCanReview] = useState(false); // ⭐ USER CÓ QUYỀN REVIEW KHÔNG?
+
   useEffect(() => {
     const loadData = async () => {
       try {
+        // 1. Lấy sản phẩm
         const productData = await getProductById(id);
         setProduct(productData);
 
+        // 2. Lấy review
         const reviewsData = await getProductReviews(id);
         setReviews(reviewsData);
+
+        // 3. ⭐ CHECK USER ĐÃ MUA SẢN PHẨM NÀY CHƯA?
+        // 3. ⭐ CHECK USER ĐÃ MUA SẢN PHẨM NÀY CHƯA?
+        if (user?.id) {
+            const res = await getOrdersByUser(user.id, "DELIVERED");
+
+            console.log("📦 RAW RESPONSE:", res);
+            console.log("📦 BACKEND DATA:", res.data);
+
+            const orders = res.data.data || []; // ⭐ Mảng đơn hàng thật
+
+            console.log("📦 ORDERS ARRAY:", orders);
+
+            const hasPurchased = orders.some(order =>
+                order.items.some(item => item.productId === parseInt(id))
+            );
+
+            setCanReview(hasPurchased);
+        }
+
+
+
+
       } catch (err) {
         console.error("Error loading product or reviews:", err);
       } finally {
@@ -53,7 +82,7 @@ const ReviewPage = () => {
       }
     };
     loadData();
-  }, [id]);
+  }, [id, user]);
 
   // Handle submit review
   const handleSubmitReview = async (e) => {
@@ -61,6 +90,11 @@ const ReviewPage = () => {
 
     if (!user) {
       alert("Vui lòng đăng nhập để đánh giá sản phẩm.");
+      return;
+    }
+
+    if (!canReview) {
+      alert("Bạn chỉ có thể đánh giá khi đã mua sản phẩm này.");
       return;
     }
 
@@ -119,34 +153,40 @@ const ReviewPage = () => {
         <h3>Viết đánh giá của bạn</h3>
 
         {user ? (
-          <form onSubmit={handleSubmitReview}>
-            <div className="form-group">
-              <label>Đánh giá sao:</label>
-              <RatingStars rating={newRating} setRating={setNewRating} editable={true} />
-            </div>
+          canReview ? (
+            <form onSubmit={handleSubmitReview}>
+              <div className="form-group">
+                <label>Đánh giá sao:</label>
+                <RatingStars rating={newRating} setRating={setNewRating} editable={true} />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="reviewText">Nội dung:</label>
-              <textarea
-                id="reviewText"
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-                rows="4"
-                required
-                placeholder="Chia sẻ cảm nhận của bạn..."
-              />
-            </div>
+              <div className="form-group">
+                <label htmlFor="reviewText">Nội dung:</label>
+                <textarea
+                  id="reviewText"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  rows="4"
+                  required
+                  placeholder="Chia sẻ cảm nhận của bạn..."
+                />
+              </div>
 
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Đang gửi..." : "Gửi đánh giá"}
-            </button>
+              <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Đang gửi..." : "Gửi đánh giá"}
+              </button>
 
-            {submitSuccess && (
-              <span className="submit-success">
-                <FaStar /> Gửi đánh giá thành công!
-              </span>
-            )}
-          </form>
+              {submitSuccess && (
+                <span className="submit-success">
+                  <FaStar /> Gửi đánh giá thành công!
+                </span>
+              )}
+            </form>
+          ) : (
+            <p style={{ color: "red", fontWeight: "bold" }}>
+              Bạn phải mua sản phẩm này (và đơn đã giao) mới được đánh giá.
+            </p>
+          )
         ) : (
           <p>
             Vui lòng{" "}
