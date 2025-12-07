@@ -1,46 +1,47 @@
-"use client"
+"use client";
 
-import { Routes, Route, Navigate } from "react-router-dom"
-import { AuthProvider, useAuth } from "./context/AuthContext"
-import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // PUBLIC PAGES
-import HomePage from "./pages/home/HomePage"
-import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage"
-import AboutSection from "./components/menuSections/AboutSection"
-import CategorySection from "./components/menuSections/CategorySection"
-import ProductSection from "./components/menuSections/ProductSection"
-import ServiceSection from "./components/menuSections/ServiceSection"
-import ContactSection from "./components/menuSections/ContactSection"
-
+import HomePage from "./pages/home/HomePage";
+import ProductDetailPage from "./pages/ProductDetail/ProductDetailPage";
+import AboutSection from "./components/menuSections/AboutSection";
+import CategorySection from "./components/menuSections/CategorySection";
+import ProductSection from "./components/menuSections/ProductSection";
+import ServiceSection from "./components/menuSections/ServiceSection";
+import ContactSection from "./components/menuSections/ContactSection";
 
 // LAYOUTS
-import MainLayout from "./layouts/MainLayout"
-import AdminLayout from "./layouts/AdminLayout"
+import MainLayout from "./layouts/MainLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 // ADMIN PAGES
-import AdminDashboard from "./pages/admin/AdminDashboard"
-import AdminProductManager from "./pages/admin/AdminProductManager"
-import AdminDiscountManager from "./pages/admin/AdminDiscountManager"
-import CartPage from "./pages/cart/CartPage"
-import CheckoutPage from "./pages/checkout/CheckoutPage"
-import OrderReviewPage from "./pages/order/OrderReviewPage"
-import OrderSuccessPage from "./pages/order/OrderSuccessPage"
-import ReviewPage from "./pages/review/ReviewPage"
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProductManager from "./pages/admin/AdminProductManager";
+import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
+import AdminOrderManager from "./pages/admin/AdminOrderManager";
+
+import CartPage from "./pages/cart/CartPage";
+import CheckoutPage from "./pages/checkout/CheckoutPage";
+import OrderReviewPage from "./pages/order/OrderReviewPage";
+import OrderSuccessPage from "./pages/order/OrderSuccessPage";
+import ReviewPage from "./pages/review/ReviewPage";
 
 // --- ROUTE BẢO VỆ ADMIN ---
 const AdminRoute = ({ children }) => {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div>Loading...</div>;
 
   if (!user || !user.roles || !user.roles.includes("ADMIN")) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
-  return children
-}
+  return children;
+};
 
 function App() {
   return (
@@ -73,8 +74,14 @@ function App() {
           <Route path="customer/contact" element={<ContactSection />} />
           <Route path="customer/cart" element={<CartPage />} />
           <Route path="customer/checkout" element={<CheckoutPage />} />
-          <Route path="customer" element={<Navigate to="customer/home" replace />} />
-          <Route path="customer/products/:id/reviews" element={<ReviewPage />} />
+          <Route
+            path="customer"
+            element={<Navigate to="customer/home" replace />}
+          />
+          <Route
+            path="customer/products/:id/reviews"
+            element={<ReviewPage />}
+          />
         </Route>
 
         {/* ----- ADMIN ROUTES ----- */}
@@ -89,6 +96,8 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<AdminProductManager />} />
           <Route path="discounts" element={<AdminDiscountManager />} />
+          <Route path="orders" element={<AdminOrderManager />} />
+
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 
@@ -98,7 +107,7 @@ function App() {
 
       <ToastContainer position="top-right" autoClose={3000} />
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
