@@ -1,6 +1,5 @@
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
-// Import thêm FaTags (Icon khuyến mãi)
 import {
   FaBox,
   FaUser,
@@ -9,14 +8,15 @@ import {
   FaSignOutAlt,
   FaHome,
   FaTags,
+  FaList,
+  FaStore, // <--- 1. Import thêm icon cho Brand
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 const AdminLayout = () => {
   const { logout } = useAuth();
-  const location = useLocation(); // Để biết đang ở trang nào mà active menu
+  const location = useLocation();
 
-  // Hàm kiểm tra active menu
   const isActive = (path) =>
     location.pathname === path ? "bg-[#5a02c2]" : "hover:bg-[#333]";
 
@@ -28,7 +28,7 @@ const AdminLayout = () => {
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
-      {/* SIDEBAR TÍM THAN */}
+      {/* SIDEBAR */}
       <aside
         style={{
           width: "260px",
@@ -39,7 +39,7 @@ const AdminLayout = () => {
           flexDirection: "column",
         }}
       >
-        {/* Logo Admin */}
+        {/* Logo */}
         <div style={{ marginBottom: 40, textAlign: "center" }}>
           <h2
             style={{
@@ -56,6 +56,7 @@ const AdminLayout = () => {
           </p>
         </div>
 
+        {/* Menu List */}
         <ul style={{ listStyle: "none", padding: 0, flex: 1 }}>
           <MenuItem
             to="/admin/dashboard"
@@ -63,25 +64,43 @@ const AdminLayout = () => {
             label="Dashboard"
             isActive={isActive("/admin/dashboard")}
           />
+
           <MenuItem
             to="/admin/products"
             icon={<FaBox />}
             label="Products"
             isActive={isActive("/admin/products")}
           />
+
+          <MenuItem
+            to="/admin/categories"
+            icon={<FaList />}
+            label="Categories"
+            isActive={isActive("/admin/categories")}
+          />
+
+          {/* --- 2. THÊM MỤC BRANDS VÀO ĐÂY --- */}
+          <MenuItem
+            to="/admin/brands"
+            icon={<FaStore />}
+            label="Brands"
+            isActive={isActive("/admin/brands")}
+          />
+
           <MenuItem
             to="/admin/orders"
             icon={<FaShoppingCart />}
             label="Orders"
             isActive={isActive("/admin/orders")}
           />
+
           <MenuItem
             to="/admin/users"
             icon={<FaUser />}
             label="Users"
             isActive={isActive("/admin/users")}
           />
-          {/* --- MỚI: QUẢN LÝ KHUYẾN MÃI --- */}
+
           <MenuItem
             to="/admin/discounts"
             icon={<FaTags />}
@@ -113,7 +132,7 @@ const AdminLayout = () => {
           <button
             onClick={logout}
             style={{
-              background: "#3699ff", // Màu xanh dương hiện đại
+              background: "#3699ff",
               border: "none",
               color: "white",
               padding: "12px",
@@ -127,8 +146,6 @@ const AdminLayout = () => {
               fontWeight: "600",
               transition: "background 0.2s",
             }}
-            onMouseOver={(e) => (e.target.style.background = "#0073e6")}
-            onMouseOut={(e) => (e.target.style.background = "#3699ff")}
           >
             <FaSignOutAlt /> Logout
           </button>
@@ -137,7 +154,6 @@ const AdminLayout = () => {
 
       {/* MAIN CONTENT */}
       <main style={{ flex: 1, background: "#f5f8fa" }}>
-        {/* Header nhỏ của Admin (Optional) */}
         <header
           style={{
             height: 60,
@@ -170,7 +186,6 @@ const AdminLayout = () => {
   );
 };
 
-// Component nhỏ để render từng dòng menu cho gọn
 const MenuItem = ({ to, icon, label, isActive }) => (
   <li style={{ marginBottom: 5 }}>
     <Link

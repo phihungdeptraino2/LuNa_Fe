@@ -23,6 +23,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductManager from "./pages/admin/AdminProductManager";
 import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
 import AdminOrderManager from "./pages/admin/AdminOrderManager";
+import AdminBrandManager from "./pages/admin/AdminBrandManager"
+import AdminCategoryManager from "./pages/admin/AdminCategoryManager";
+//
 
 import CartPage from "./pages/cart/CartPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
@@ -97,7 +100,8 @@ function App() {
           <Route path="products" element={<AdminProductManager />} />
           <Route path="discounts" element={<AdminDiscountManager />} />
           <Route path="orders" element={<AdminOrderManager />} />
-
+           <Route path="brands" element={<AdminBrandManager />} />
+           <Route path="categories" element={<AdminCategoryManager />} />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 
