@@ -1,43 +1,36 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom"; // Nhớ import useNavigate
 import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
 import "./LoginModal.css";
 
-const LoginModal = ({ isOpen, onClose , onOpenRegister}) => {
+const RegisterModal = ({ isOpen, onClose, onBackToLogin }) => {
+  const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
-  const navigate = useNavigate(); // Hook chuyển trang
+  const { register } = useAuth();
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    try {
-      const userData = await login(username, password);
 
-      if (userData && userData.roles) {
-        if (userData.roles.includes("ADMIN")) {
-          // Nếu là admin → vào trang quản trị
-          navigate("/admin/dashboard");
-        } else if (userData.roles.includes("CUSTOMER")) {
-          // Nếu là customer → thêm /customer vào URL
-          navigate(`/customer${window.location.pathname}`);
-        }
-        onClose(); // đóng modal sau khi redirect
-      } else {
-        setError("Tên đăng nhập hoặc mật khẩu không đúng.");
-      }
-    } catch (err) {
-      setError("Lỗi kết nối server.");
+    const formData = { fullName, username, email, phone, password };
+    const result = await register(formData);
+
+    if (result.success) {
+      alert("Đăng ký thành công!");
+      onClose();
+      onBackToLogin(); // mở login modal
+    } else {
+      setError(result.message);
     }
   };
-
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -46,9 +39,21 @@ const LoginModal = ({ isOpen, onClose , onOpenRegister}) => {
           <FaTimes />
         </button>
 
-        <h2 className="modal-title">Customer Centre login</h2>
+        <h2 className="modal-title">Register Account</h2>
 
         <form onSubmit={handleSubmit}>
+          
+          <div className="input-group">
+            <label>Full Name *</label>
+            <input
+              type="text"
+              className="modal-input"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          </div>
+
           <div className="input-group">
             <label>Username *</label>
             <input
@@ -56,6 +61,28 @@ const LoginModal = ({ isOpen, onClose , onOpenRegister}) => {
               className="modal-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Email *</label>
+            <input
+              type="email"
+              className="modal-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Phone *</label>
+            <input
+              type="text"
+              className="modal-input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               required
             />
           </div>
@@ -81,17 +108,8 @@ const LoginModal = ({ isOpen, onClose , onOpenRegister}) => {
 
           {error && <p className="error-msg">{error}</p>}
 
-          <div className="modal-actions">
-            <label className="remember-me">
-              <input type="checkbox" /> Remember Me
-            </label>
-            <a href="#" className="forgot-pass">
-              Forgot your password?
-            </a>
-          </div>
-
           <button type="submit" className="modal-login-btn">
-            Log In
+            Register
           </button>
         </form>
 
@@ -99,16 +117,17 @@ const LoginModal = ({ isOpen, onClose , onOpenRegister}) => {
           <button
             type="button"
             className="register-link"
-            onClick={onOpenRegister}
+            onClick={() => {
+              onClose();
+              onBackToLogin();
+            }}
           >
-            Register now →
+            ← Back to Login
           </button>
-
-
         </div>
       </div>
     </div>
   );
 };
 
-export default LoginModal;
+export default RegisterModal;

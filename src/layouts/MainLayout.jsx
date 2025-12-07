@@ -4,10 +4,12 @@ import Footer from "../components/common/Footer";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "../components/LoginModal";
+import RegisterModal from "../components/RegisterModal"; // ✅ IMPORT
 
 const MainLayout = () => {
   const { user, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterOpen, setRegisterOpen] = useState(false);
 
   const handleUserIconClick = () => {
     if (user) {
@@ -19,18 +21,27 @@ const MainLayout = () => {
 
   return (
     <>
-      {/* Header bây giờ nhận props user + handler */}
       <Header user={user} handleUserIconClick={handleUserIconClick} />
 
-      {/* Login modal cũng đặt ở đây */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
+        onOpenRegister={() => {
+          setIsLoginModalOpen(false);
+          setRegisterOpen(true);
+        }}
+      />
+
+      <RegisterModal
+        isOpen={isRegisterOpen}
+        onClose={() => setRegisterOpen(false)}
+        onBackToLogin={() => setIsLoginModalOpen(true)}
       />
 
       <main style={{ minHeight: "80vh" }}>
-        <Outlet /> {/* Render trang con */}
+        <Outlet />
       </main>
+
       <Footer />
     </>
   );

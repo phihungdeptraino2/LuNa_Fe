@@ -14,6 +14,7 @@ import ProductSection from "./components/menuSections/ProductSection"
 import ServiceSection from "./components/menuSections/ServiceSection"
 import ContactSection from "./components/menuSections/ContactSection"
 
+
 // LAYOUTS
 import MainLayout from "./layouts/MainLayout"
 import AdminLayout from "./layouts/AdminLayout"
@@ -26,6 +27,7 @@ import CartPage from "./pages/cart/CartPage"
 import CheckoutPage from "./pages/checkout/CheckoutPage"
 import OrderReviewPage from "./pages/order/OrderReviewPage"
 import OrderSuccessPage from "./pages/order/OrderSuccessPage"
+import ReviewPage from "./pages/review/ReviewPage"
 
 // --- ROUTE BẢO VỆ ADMIN ---
 const AdminRoute = ({ children }) => {
@@ -59,6 +61,7 @@ function App() {
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="order-review" element={<OrderReviewPage />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
+          <Route path="products/:id/reviews" element={<ReviewPage />} />
 
           {/* Customer pages */}
           <Route path="customer/home" element={<HomePage />} />
@@ -71,6 +74,7 @@ function App() {
           <Route path="customer/cart" element={<CartPage />} />
           <Route path="customer/checkout" element={<CheckoutPage />} />
           <Route path="customer" element={<Navigate to="customer/home" replace />} />
+          <Route path="customer/products/:id/reviews" element={<ReviewPage />} />
         </Route>
 
         {/* ----- ADMIN ROUTES ----- */}
