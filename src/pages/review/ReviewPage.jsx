@@ -35,8 +35,9 @@ const ReviewPage = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [newRating, setNewRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
+  const [newRating, setNewRating] = useState(5);   // ⭐ Mặc định 5 sao
+  const [reviewText, setReviewText] = useState("Tuyệt vời"); // ⭐ Mặc định comment
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
@@ -114,8 +115,8 @@ const ReviewPage = () => {
       const createdReview = await submitProductReview(reviewData);
 
       setReviews((prev) => [createdReview, ...prev]);
-      setNewRating(0);
-      setReviewText("");
+      setNewRating(5);
+      setReviewText("Tuyệt vời");  
       setSubmitSuccess(true);
 
       setTimeout(() => setSubmitSuccess(false), 3000);

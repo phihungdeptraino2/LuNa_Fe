@@ -43,6 +43,8 @@ export const AuthProvider = ({ children }) => {
         // Lưu token vào user
         setUser({ ...userData, token });
 
+        window.location.reload();
+
         return { ...userData, token };
       }
     } catch (error) {

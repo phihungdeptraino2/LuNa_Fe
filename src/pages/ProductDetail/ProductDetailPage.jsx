@@ -6,6 +6,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import LoginModal from "../../components/LoginModal";
 import { useAuth } from "../../context/AuthContext";
+import { productVideos } from "../../data/productVideos";
+
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -16,6 +18,18 @@ const ProductDetailPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user } = useAuth();
   const { addToCart } = useCart();
+  const [showVideo, setShowVideo] = useState(false);
+
+  const videoUrl = productVideos[id];
+
+
+  const getVideoId = (url) => {
+  if (!url) return "";
+  if (url.includes("v=")) return url.split("v=")[1].split("&")[0];
+  if (url.includes("youtu.be/")) return url.split("youtu.be/")[1];
+  return "";
+};
+
 
   const [mainImage, setMainImage] = useState("");
   const BE_HOST = "http://localhost:8081";
@@ -100,6 +114,20 @@ const ProductDetailPage = () => {
               />
             ))}
           </div>
+          {videoUrl && (
+            <div
+              className="product-video-preview"
+              onClick={() => setShowVideo(true)}
+            >
+              <img
+                src={`https://img.youtube.com/vi/${getVideoId(videoUrl)}/0.jpg`}
+                alt="Video Preview"
+                className="video-thumbnail"
+              />
+              <div className="play-button">▶</div>
+            </div>
+          )}
+
         </div>
 
         <div className="right-column">
@@ -223,8 +251,25 @@ const ProductDetailPage = () => {
 
       <LoginModal
         isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
+        onC
+        lose={() => setShowLoginModal(false)}
       />
+
+      {showVideo && (
+        <div className="video-overlay" onClick={() => setShowVideo(false)}>
+          <div className="video-popup" onClick={(e) => e.stopPropagation()}>
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${getVideoId(videoUrl)}?autoplay=1`}
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

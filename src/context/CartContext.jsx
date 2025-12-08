@@ -135,33 +135,45 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = async (productId) => {
     if (token) {
       try {
-        const res = await fetch(`http://localhost:8081/api/cart/remove/${productId}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await fetch(
+          `http://localhost:8081/api/cart/remove?productId=${productId}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-        if (!res.ok) throw new Error("Xóa sản phẩm thất bại")
+        if (!res.ok) throw new Error("Xóa sản phẩm thất bại");
 
-        const data = await res.json()
-        if (data.items) {
-          setCartItems(
-            data.items.map((i) => ({
-              product: i.product,
-              quantity: i.quantity,
-            })),
-          )
-          sessionStorage.setItem("cart", JSON.stringify(data.items))
-        }
+        const data = await res.json();
+
+        // backend trả về data.data.items
+        const items = data.data?.items || [];
+
+        const updated = items.map((i) => ({
+          product: {
+            id: i.productId,
+            name: i.name,
+            price: i.price,
+            imageUrl: i.imageUrl,
+          },
+          quantity: i.quantity,
+        }));
+
+        setCartItems(updated);
+        sessionStorage.setItem("cart", JSON.stringify(updated));
+
       } catch (err) {
-        console.error(err)
-        alert("Lỗi khi xóa sản phẩm")
+        console.error(err);
+        alert("Lỗi khi xóa sản phẩm");
       }
     } else {
-      const newCart = cartItems.filter((item) => item.product?.id !== productId)
-      setCartItems(newCart)
-      sessionStorage.setItem("cart", JSON.stringify(newCart))
+      const newCart = cartItems.filter((item) => item.product?.id !== productId);
+      setCartItems(newCart);
+      sessionStorage.setItem("cart", JSON.stringify(newCart));
     }
-  }
+  };
+
 
   // Xóa toàn bộ giỏ
   const clearCart = async () => {
