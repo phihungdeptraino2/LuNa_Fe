@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
-// Đảm bảo đường dẫn import đúng. Nếu file productService nằm ở src/services/productService.js
-// thì từ src/pages/admin/AdminProductManager.jsx ta phải lùi ra 2 cấp: ../../services/productService
-import { getAdminProducts, deleteProduct } from "../../services/productService";
-
-// Thay FaBoxOpen bằng FaBox để tránh lỗi import nếu bản icon cũ không có
-import { FaEdit, FaTrash, FaPlus, FaSearch, FaBox } from "react-icons/fa";
+import {
+  getAdminProducts,
+  deleteProduct,
+  createProduct,
+  updateProduct,
+  uploadProductImages,
+  getAllCategories,
+  getAllBrands,
+} from "../../services/productService";
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaSearch,
+  FaBox,
+  FaTimes,
+  FaCloudUploadAlt,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const AdminProductManager = () => {
@@ -12,13 +24,33 @@ const AdminProductManager = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Hàm load dữ liệu từ Backend
+  // --- STATE MỚI CHO FORM & MODAL ---
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+
+  // State chứa dữ liệu form
+  const [formData, setFormData] = useState({
+    id: null,
+    name: "",
+    description: "",
+    price: 0,
+    stockQuantity: 0,
+    isActive: true,
+    categoryId: "",
+    brandId: "",
+  });
+
+  // State chứa file ảnh upload
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  // --- INIT DATA ---
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const data = await getAdminProducts();
       setProducts(data);
-      console.log("Admin Data:", data);
     } catch (error) {
       toast.error("Lỗi khi tải danh sách sản phẩm!");
     } finally {
@@ -26,30 +58,120 @@ const AdminProductManager = () => {
     }
   };
 
+  // Load Categories & Brands khi component mount để dùng cho Select option
   useEffect(() => {
     fetchProducts();
+    const fetchMeta = async () => {
+      const cats = await getAllCategories();
+      const brs = await getAllBrands();
+      setCategories(cats);
+      setBrands(brs);
+    };
+    fetchMeta();
   }, []);
 
-  // Hàm xử lý xóa
+  // --- HANDLERS ---
+
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
       try {
         await deleteProduct(id);
         toast.success("Xóa sản phẩm thành công!");
-        fetchProducts(); // Load lại danh sách sau khi xóa
+        fetchProducts();
       } catch (error) {
-        toast.error("Không thể xóa sản phẩm (có thể do ràng buộc đơn hàng).");
+        toast.error(error.response?.data?.message || "Không thể xóa sản phẩm.");
       }
     }
   };
 
-  // Lọc sản phẩm theo tìm kiếm
+  // Mở Modal Thêm mới
+  const handleAddNew = () => {
+    setIsEditing(false);
+    setFormData({
+      id: null,
+      name: "",
+      description: "",
+      price: 0,
+      stockQuantity: 0,
+      isActive: true,
+      categoryId: "",
+      brandId: "",
+    });
+    setSelectedFiles([]);
+    setShowModal(true);
+  };
+
+  // Mở Modal Edit
+  const handleEdit = (product) => {
+    setIsEditing(true);
+    setFormData({
+      id: product.id,
+      name: product.name,
+      description: product.description || "",
+      price: product.price,
+      stockQuantity: product.stockQuantity,
+      isActive:
+        product.isActive !== undefined ? product.isActive : product.active,
+      // Lấy ID từ object category/brand nếu có
+      categoryId: product.category ? product.category.id : "",
+      brandId: product.brand ? product.brand.id : "",
+    });
+    setSelectedFiles([]); // Reset file upload (Edit ảnh là luồng riêng hoặc làm sau)
+    setShowModal(true);
+  };
+
+  // Xử lý submit form
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    // Validate cơ bản
+    if (!formData.name || !formData.categoryId || !formData.brandId) {
+      toast.warning("Vui lòng điền tên, danh mục và thương hiệu!");
+      return;
+    }
+
+    try {
+      let savedProduct;
+
+      // 1. Lưu thông tin Text (Create hoặc Update)
+      if (isEditing) {
+        savedProduct = await updateProduct(formData.id, formData);
+        toast.success("Cập nhật thông tin thành công!");
+      } else {
+        savedProduct = await createProduct(formData);
+        toast.success("Tạo sản phẩm thành công!");
+      }
+
+      // 2. Upload ảnh (Nếu có file được chọn)
+      // Lưu ý: Backend trả về object product đã lưu, ta lấy ID từ đó
+      if (selectedFiles.length > 0 && savedProduct) {
+        try {
+          await uploadProductImages(savedProduct.id, selectedFiles);
+          toast.success(`Đã upload ${selectedFiles.length} ảnh.`);
+        } catch (imgError) {
+          toast.error("Lỗi khi upload ảnh: " + imgError.message);
+        }
+      }
+
+      setShowModal(false);
+      fetchProducts(); // Reload lại bảng
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Lỗi khi lưu sản phẩm");
+    }
+  };
+
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", color: "#333" }}>
+    <div
+      style={{
+        fontFamily: "'Segoe UI', sans-serif",
+        color: "#333",
+        position: "relative",
+      }}
+    >
       {/* HEADER & ACTIONS */}
       <div
         style={{
@@ -65,8 +187,8 @@ const AdminProductManager = () => {
           </h2>
           <p style={{ color: "#888", fontSize: 14 }}>Manage your catalog</p>
         </div>
-
         <button
+          onClick={handleAddNew}
           style={{
             padding: "12px 24px",
             background: "#5a02c2",
@@ -126,57 +248,35 @@ const AdminProductManager = () => {
                 color: "#666",
               }}
             >
-              <th style={{ padding: 15, borderBottom: "1px solid #eee" }}>
-                ID
-              </th>
-              <th style={{ padding: 15, borderBottom: "1px solid #eee" }}>
-                Product Name
-              </th>
-              <th style={{ padding: 15, borderBottom: "1px solid #eee" }}>
-                Category
-              </th>
-              <th style={{ padding: 15, borderBottom: "1px solid #eee" }}>
-                Price
-              </th>
-              <th style={{ padding: 15, borderBottom: "1px solid #eee" }}>
-                Stock
-              </th>
-              <th style={{ padding: 15, borderBottom: "1px solid #eee" }}>
-                Status
-              </th>
-              <th
-                style={{
-                  padding: 15,
-                  borderBottom: "1px solid #eee",
-                  textAlign: "right",
-                }}
-              >
-                Actions
-              </th>
+              <th style={{ padding: 15 }}>ID</th>
+              <th style={{ padding: 15 }}>Product Name</th>
+              <th style={{ padding: 15 }}>Category</th>
+              <th style={{ padding: 15 }}>Brand</th>
+              <th style={{ padding: 15 }}>Price</th>
+              <th style={{ padding: 15 }}>Stock</th>
+              <th style={{ padding: 15 }}>Status</th>
+              <th style={{ padding: 15, textAlign: "right" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" style={{ padding: 30, textAlign: "center" }}>
-                  Loading products...
+                <td colSpan="8" style={{ padding: 30, textAlign: "center" }}>
+                  Loading...
                 </td>
               </tr>
             ) : filteredProducts.length === 0 ? (
               <tr>
-                <td colSpan="7" style={{ padding: 30, textAlign: "center" }}>
+                <td colSpan="8" style={{ padding: 30, textAlign: "center" }}>
                   No products found.
                 </td>
               </tr>
             ) : (
               filteredProducts.map((product) => {
-                // --- LOGIC SỬA LỖI TRẠNG THÁI ---
-                // Kiểm tra xem biến là isActive hay active (do Jackson serialize)
                 const isProductActive =
                   product.isActive !== undefined
                     ? product.isActive
                     : product.active;
-
                 return (
                   <tr
                     key={product.id}
@@ -188,7 +288,6 @@ const AdminProductManager = () => {
                     >
                       #{product.id}
                     </td>
-
                     <td style={{ padding: 15 }}>
                       <div
                         style={{
@@ -216,33 +315,27 @@ const AdminProductManager = () => {
                         </span>
                       </div>
                     </td>
-
-                    <td style={{ padding: 15, color: "#555" }}>
-                      {product.category
-                        ? product.category.name
-                        : "Uncategorized"}
+                    <td style={{ padding: 15 }}>
+                      {product.category?.name || "N/A"}
                     </td>
-
+                    <td style={{ padding: 15 }}>
+                      {product.brand?.name || "N/A"}
+                    </td>
                     <td style={{ padding: 15, fontWeight: "bold" }}>
                       {new Intl.NumberFormat("en-US", {
                         style: "currency",
                         currency: "USD",
                       }).format(product.price)}
                     </td>
-
                     <td style={{ padding: 15 }}>
-                      {product.stockQuantity < 10 ? (
-                        <span style={{ color: "red", fontWeight: "bold" }}>
-                          {product.stockQuantity} (Low)
-                        </span>
-                      ) : (
-                        <span style={{ color: "green" }}>
-                          {product.stockQuantity}
-                        </span>
-                      )}
+                      <span
+                        style={{
+                          color: product.stockQuantity < 10 ? "red" : "green",
+                        }}
+                      >
+                        {product.stockQuantity}
+                      </span>
                     </td>
-
-                    {/* Cột Status đã sửa */}
                     <td style={{ padding: 15 }}>
                       <span
                         style={{
@@ -257,9 +350,9 @@ const AdminProductManager = () => {
                         {isProductActive ? "Active" : "Hidden"}
                       </span>
                     </td>
-
                     <td style={{ padding: 15, textAlign: "right" }}>
                       <button
+                        onClick={() => handleEdit(product)}
                         style={{
                           marginRight: 10,
                           border: "none",
@@ -293,6 +386,321 @@ const AdminProductManager = () => {
           </tbody>
         </table>
       </div>
+
+      {/* --- MODAL ADD/EDIT --- */}
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              padding: 30,
+              borderRadius: 12,
+              width: 600,
+              maxWidth: "90%",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              position: "relative",
+            }}
+          >
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                position: "absolute",
+                top: 20,
+                right: 20,
+                background: "none",
+                border: "none",
+                fontSize: 18,
+                cursor: "pointer",
+              }}
+            >
+              <FaTimes />
+            </button>
+
+            <h2 style={{ marginTop: 0, marginBottom: 20 }}>
+              {isEditing ? "Edit Product" : "Add New Product"}
+            </h2>
+
+            <form
+              onSubmit={handleSave}
+              style={{ display: "flex", flexDirection: "column", gap: 15 }}
+            >
+              {/* NAME */}
+              <div>
+                <label
+                  style={{ display: "block", marginBottom: 5, fontWeight: 600 }}
+                >
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    borderRadius: 6,
+                    border: "1px solid #ddd",
+                  }}
+                  required
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: 20 }}>
+                {/* CATEGORY */}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Category
+                  </label>
+                  <select
+                    value={formData.categoryId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, categoryId: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 6,
+                      border: "1px solid #ddd",
+                    }}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* BRAND */}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Brand
+                  </label>
+                  <select
+                    value={formData.brandId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, brandId: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 6,
+                      border: "1px solid #ddd",
+                    }}
+                    required
+                  >
+                    <option value="">Select Brand</option>
+                    {brands.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 20 }}>
+                {/* PRICE */}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Price
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        price: parseFloat(e.target.value),
+                      })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 6,
+                      border: "1px solid #ddd",
+                    }}
+                  />
+                </div>
+                {/* STOCK */}
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Stock
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.stockQuantity}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        stockQuantity: parseInt(e.target.value),
+                      })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 6,
+                      border: "1px solid #ddd",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* DESCRIPTION */}
+              <div>
+                <label
+                  style={{ display: "block", marginBottom: 5, fontWeight: 600 }}
+                >
+                  Description
+                </label>
+                <textarea
+                  rows="3"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    borderRadius: 6,
+                    border: "1px solid #ddd",
+                  }}
+                />
+              </div>
+
+              {/* ACTIVE STATUS */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input
+                  type="checkbox"
+                  checked={formData.isActive}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isActive: e.target.checked })
+                  }
+                  id="isActive"
+                  style={{ width: 18, height: 18 }}
+                />
+                <label htmlFor="isActive" style={{ cursor: "pointer" }}>
+                  Active Product
+                </label>
+              </div>
+
+              {/* UPLOAD IMAGES */}
+              <div
+                style={{
+                  border: "1px dashed #5a02c2",
+                  padding: 20,
+                  borderRadius: 8,
+                  background: "#f5f0ff",
+                }}
+              >
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: 10,
+                    fontWeight: 600,
+                    color: "#5a02c2",
+                  }}
+                >
+                  <FaCloudUploadAlt /> Upload Images
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => setSelectedFiles(e.target.files)}
+                />
+                {selectedFiles.length > 0 && (
+                  <p style={{ fontSize: 12, marginTop: 5 }}>
+                    Selected: {selectedFiles.length} files
+                  </p>
+                )}
+              </div>
+
+              {/* BUTTONS */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 10,
+                  marginTop: 10,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  style={{
+                    padding: "10px 20px",
+                    borderRadius: 6,
+                    border: "none",
+                    background: "#eee",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: "10px 20px",
+                    borderRadius: 6,
+                    border: "none",
+                    background: "#5a02c2",
+                    color: "white",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  {isEditing ? "Update Product" : "Create Product"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
