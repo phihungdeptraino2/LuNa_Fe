@@ -9,7 +9,7 @@ import {
   FaHome,
   FaTags,
   FaList,
-  FaStore, // <--- 1. Import thêm icon cho Brand
+  FaStore,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
@@ -24,7 +24,8 @@ const AdminLayout = () => {
     <div
       style={{
         display: "flex",
-        minHeight: "100vh",
+        height: "100vh", // <--- ĐỔI minHeight THÀNH height: Cố định chiều cao bằng màn hình
+        overflow: "hidden", // <--- QUAN TRỌNG: Ngăn trang web cuộn, giữ Sidebar đứng yên
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
@@ -37,6 +38,8 @@ const AdminLayout = () => {
           padding: "20px",
           display: "flex",
           flexDirection: "column",
+          flexShrink: 0, // <--- Đảm bảo Sidebar không bị co lại
+          overflowY: "auto", // <--- Nếu menu quá dài, chỉ Sidebar mới cuộn
         }}
       >
         {/* Logo */}
@@ -64,43 +67,36 @@ const AdminLayout = () => {
             label="Dashboard"
             isActive={isActive("/admin/dashboard")}
           />
-
           <MenuItem
             to="/admin/products"
             icon={<FaBox />}
             label="Products"
             isActive={isActive("/admin/products")}
           />
-
           <MenuItem
             to="/admin/categories"
             icon={<FaList />}
             label="Categories"
             isActive={isActive("/admin/categories")}
           />
-
-          {/* --- 2. THÊM MỤC BRANDS VÀO ĐÂY --- */}
           <MenuItem
             to="/admin/brands"
             icon={<FaStore />}
             label="Brands"
             isActive={isActive("/admin/brands")}
           />
-
           <MenuItem
             to="/admin/orders"
             icon={<FaShoppingCart />}
             label="Orders"
             isActive={isActive("/admin/orders")}
           />
-
           <MenuItem
             to="/admin/users"
             icon={<FaUser />}
             label="Users"
             isActive={isActive("/admin/users")}
           />
-
           <MenuItem
             to="/admin/discounts"
             icon={<FaTags />}
@@ -153,7 +149,16 @@ const AdminLayout = () => {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main style={{ flex: 1, background: "#f5f8fa" }}>
+      <main
+        style={{
+          flex: 1,
+          background: "#f5f8fa",
+          height: "100%", // <--- Chiều cao bằng cha (100vh)
+          overflowY: "auto", // <--- QUAN TRỌNG: Chỉ cho phép phần này cuộn dọc
+          display: "flex", // Giữ flex để bố trí Header và Content dọc
+          flexDirection: "column",
+        }}
+      >
         <header
           style={{
             height: 60,
@@ -163,6 +168,10 @@ const AdminLayout = () => {
             alignItems: "center",
             padding: "0 30px",
             boxShadow: "0 2px 5px rgba(0,0,0,0.02)",
+            flexShrink: 0, // <--- Giữ Header không bị co khi cuộn
+            position: "sticky", // (Tùy chọn) Giữ Header dính trên cùng khi cuộn nội dung
+            top: 0,
+            zIndex: 10,
           }}
         >
           <span style={{ fontWeight: "bold", color: "#333" }}>Admin Panel</span>
