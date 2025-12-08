@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Eye, ArrowLeft, X, Save, Search } from "lucide-react";
+import { Eye, ArrowLeft, X, RefreshCw } from "lucide-react"; // Thêm icon Refresh
 
 const AdminOrderManager = () => {
-  const [orders, setOrders] = useState([]); // Dữ liệu gốc
-  const [filteredOrders, setFilteredOrders] = useState([]); // Dữ liệu hiển thị
-  const [selectedOrder, setSelectedOrder] = useState(null); // Đơn hàng đang xem chi tiết
+  const [orders, setOrders] = useState([]); 
+  const [filteredOrders, setFilteredOrders] = useState([]); 
+  const [selectedOrder, setSelectedOrder] = useState(null); 
   const [loading, setLoading] = useState(true);
   
-  // Hook xử lý URL query (?status=PENDING)
+  // State lưu trạng thái đang chọn trong Modal để chuẩn bị cập nhật
+  const [updatingStatus, setUpdatingStatus] = useState(""); 
+
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const currentStatus = searchParams.get("status") || "ALL";
 
-  // Cấu hình API
+  // API Đơn hàng cơ bản
   const API_BASE = "http://localhost:8081/api/admin/orders";
+  // API Cập nhật trạng thái (Dựa trên OrderController bạn đã gửi trước đó)
+  const API_UPDATE_STATUS = "http://localhost:8081/api/orders/admin/update-status";
 
-  // --- 1. LẤY DỮ LIỆU TỪ SERVER ---
+  // --- 1. LẤY DỮ LIỆU ---
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -28,8 +32,6 @@ const AdminOrderManager = () => {
       const res = await axios.get(API_BASE, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
-      // Map dữ liệu từ API response
       if (res.data && res.data.data) {
         setOrders(res.data.data);
       }
@@ -40,7 +42,7 @@ const AdminOrderManager = () => {
     }
   };
 
-  // --- 2. LỌC DỮ LIỆU KHI TAB THAY ĐỔI ---
+  // --- 2. LỌC DỮ LIỆU ---
   useEffect(() => {
     if (currentStatus === "ALL") {
       setFilteredOrders(orders);
@@ -49,11 +51,11 @@ const AdminOrderManager = () => {
     }
   }, [currentStatus, orders]);
 
-  // --- 3. CÁC HÀM XỬ LÝ ---
   const handleTabChange = (status) => {
     setSearchParams(status === "ALL" ? {} : { status });
   };
 
+  // --- 3. XEM CHI TIẾT ---
   const handleViewDetail = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -62,6 +64,8 @@ const AdminOrderManager = () => {
       });
       if(res.data && res.data.data) {
           setSelectedOrder(res.data.data);
+          // Set trạng thái hiện tại vào state cập nhật để hiển thị đúng trong select
+          setUpdatingStatus(res.data.data.status); 
       }
     } catch (error) {
       console.error("Lỗi tải chi tiết:", error);
@@ -69,33 +73,68 @@ const AdminOrderManager = () => {
     }
   };
 
-  const handleUpdateQuantity = async (orderId, productId, newQuantity) => {
-    if(newQuantity <= 0) return alert("Số lượng phải > 0");
-    try {
-        const token = localStorage.getItem("token");
-        await axios.put(`${API_BASE}/${orderId}/items`, null, {
-            params: { productId, newQuantity },
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        alert("Cập nhật thành công!");
-        // Load lại chi tiết đơn hàng để thấy số mới
-        handleViewDetail(orderId);
-        // Load lại danh sách tổng để cập nhật tổng tiền (nếu backend có tính lại)
-        fetchOrders();
-    } catch (error) {
-        console.error(error);
-        alert("Lỗi cập nhật số lượng");
-    }
+  // --- 4. CHỨC NĂNG CẬP NHẬT TRẠNG THÁI (MỚI) ---
+  const handleUpdateStatus = async () => {
+      if (!selectedOrder) return;
+      if (updatingStatus === selectedOrder.status) return alert("Vui lòng chọn trạng thái khác!");
+
+      const confirmUpdate = window.confirm(`Bạn có chắc chắn muốn chuyển đơn hàng sang trạng thái: ${updatingStatus}?`);
+      if (!confirmUpdate) return;
+
+      try {
+          const token = localStorage.getItem("token");
+          
+          // Gọi API cập nhật trạng thái
+          // Lưu ý: Backend dùng @RequestParam nên phải truyền params
+          await axios.put(API_UPDATE_STATUS, null, {
+              params: { 
+                  orderId: selectedOrder.id, 
+                  status: updatingStatus 
+              },
+              headers: { Authorization: `Bearer ${token}` }
+          });
+
+          alert("Cập nhật trạng thái thành công!");
+          
+          // Tắt Modal
+          setSelectedOrder(null);
+          // Load lại danh sách để thấy sự thay đổi
+          fetchOrders();
+
+      } catch (error) {
+          console.error("Lỗi cập nhật trạng thái:", error);
+          alert(error.response?.data?.message || "Lỗi khi cập nhật trạng thái");
+      }
   };
 
-  // --- HELPER FORMAT ---
-  const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
-  const formatDate = (date) => new Date(date).toLocaleDateString('vi-VN') + " " + new Date(date).toLocaleTimeString('vi-VN');
+  // --- HELPER FUNCTIONS ---
+  const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
+  const formatDate = (date) => date ? (new Date(date).toLocaleDateString('vi-VN') + " " + new Date(date).toLocaleTimeString('vi-VN')) : "";
+
+  const getUserInfo = (order) => {
+    if (!order) return { name: "...", email: "", phone: "" };
+    const name = order.userName || order.user?.fullname || order.userResponseDTO?.fullname || "Khách lẻ";
+    const email = order.email || order.user?.email || ""; 
+    const phone = order.phone || order.user?.phone || "";
+    return { name, email, phone };
+  };
+
+  const getAddressString = (order) => {
+      if (!order) return "Tại cửa hàng";
+      if (order.addressStreet || order.addressCity) {
+          return [order.addressStreet, order.addressDistrict, order.addressCity, order.addressProvince].filter(Boolean).join(", ");
+      }
+      const addr = order.address;
+      if (addr && typeof addr === 'object') {
+          return `${addr.street || ''}, ${addr.district || ''}, ${addr.city || ''}`;
+      }
+      return "Tại cửa hàng";
+  };
 
   // --- RENDER ---
   return (
     <div style={styles.container}>
-      {/* HEADER & BACK BUTTON */}
+      {/* Header */}
       <div style={styles.header}>
         <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
             <button onClick={() => navigate("/admin/dashboard")} style={styles.iconBtn}><ArrowLeft size={20}/></button>
@@ -104,9 +143,9 @@ const AdminOrderManager = () => {
         <div style={styles.stats}>Tổng: {filteredOrders.length} đơn</div>
       </div>
 
-      {/* TABS TRẠNG THÁI */}
+      {/* Tabs */}
       <div style={styles.tabsContainer}>
-        {["ALL", "PENDING", "SHIPPED", "DELIVERED", "CANCELLED"].map(status => (
+        {["ALL", "PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"].map(status => (
             <button 
                 key={status}
                 onClick={() => handleTabChange(status)}
@@ -120,7 +159,7 @@ const AdminOrderManager = () => {
         ))}
       </div>
 
-      {/* BẢNG DANH SÁCH */}
+      {/* Table */}
       <div style={styles.tableCard}>
         {loading ? <p style={{padding: 20}}>Đang tải...</p> : (
             <table style={styles.table}>
@@ -135,46 +174,73 @@ const AdminOrderManager = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredOrders.map(order => (
-                        <tr key={order.id} style={styles.tr}>
-                            <td style={styles.td}>#{order.id}</td>
-                            <td style={styles.td}>
-                                <b>{order.userResponseDTO?.fullname}</b><br/>
-                                <span style={{fontSize: 12, color: '#666'}}>{order.userResponseDTO?.email}</span>
-                            </td>
-                            <td style={styles.td}>{formatDate(order.orderDate)}</td>
-                            <td style={{...styles.td, color: '#10b981', fontWeight: 'bold'}}>{formatCurrency(order.totalAmount)}</td>
-                            <td style={styles.td}><StatusBadge status={order.status} /></td>
-                            <td style={styles.td}>
-                                <button style={styles.actionBtn} onClick={() => handleViewDetail(order.id)}>
-                                    <Eye size={16} style={{marginRight: 5}}/> Chi tiết
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    {filteredOrders.length === 0 && (
-                        <tr><td colSpan={6} style={{textAlign: 'center', padding: 20}}>Không có đơn hàng nào</td></tr>
-                    )}
+                    {filteredOrders.map(order => {
+                        const userInfo = getUserInfo(order);
+                        return (
+                            <tr key={order.id} style={styles.tr}>
+                                <td style={styles.td}>#{order.id}</td>
+                                <td style={styles.td}>
+                                    <b>{userInfo.name}</b><br/>
+                                    <span style={{fontSize: 12, color: '#666'}}>{userInfo.email}</span>
+                                </td>
+                                <td style={styles.td}>{formatDate(order.orderDate)}</td>
+                                <td style={{...styles.td, color: '#10b981', fontWeight: 'bold'}}>
+                                    {formatCurrency(order.total || order.totalAmount)}
+                                </td>
+                                <td style={styles.td}><StatusBadge status={order.status} /></td>
+                                <td style={styles.td}>
+                                    <button style={styles.actionBtn} onClick={() => handleViewDetail(order.id)}>
+                                        <Eye size={16} style={{marginRight: 5}}/> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         )}
       </div>
 
-      {/* MODAL CHI TIẾT ĐƠN HÀNG */}
+      {/* MODAL CHI TIẾT & CẬP NHẬT TRẠNG THÁI */}
       {selectedOrder && (
         <div style={styles.modalOverlay}>
             <div style={styles.modalContent}>
                 <div style={styles.modalHeader}>
-                    <h3>Chi tiết đơn hàng #{selectedOrder.id}</h3>
+                    <h3>Đơn hàng #{selectedOrder.id}</h3>
                     <button onClick={() => setSelectedOrder(null)} style={styles.closeBtn}><X size={24}/></button>
                 </div>
                 
                 <div style={styles.modalBody}>
+                    {/* Phần 1: Điều khiển Trạng Thái (MỚI THÊM) */}
+                    <div style={styles.statusControlPanel}>
+                        <label style={{fontWeight: 'bold', marginBottom: 5, display: 'block'}}>Cập nhật trạng thái:</label>
+                        <div style={{display: 'flex', gap: 10}}>
+                            <select 
+                                value={updatingStatus} 
+                                onChange={(e) => setUpdatingStatus(e.target.value)}
+                                style={styles.statusSelect}
+                            >
+                                <option value="PENDING">PENDING (Chờ xử lý)</option>
+                                <option value="CONFIRMED">CONFIRMED (Đã xác nhận)</option>
+                                <option value="SHIPPED">SHIPPED (Đang giao)</option>
+                                <option value="DELIVERED">DELIVERED (Đã giao)</option>
+                                <option value="CANCELLED">CANCELLED (Đã hủy)</option>
+                            </select>
+                            
+                            <button onClick={handleUpdateStatus} style={styles.updateStatusBtn}>
+                                <RefreshCw size={16} style={{marginRight: 5}}/> Cập nhật
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr style={{border: 'none', borderTop: '1px solid #eee', margin: '20px 0'}}/>
+
+                    {/* Phần 2: Thông tin chi tiết */}
                     <div style={styles.infoGrid}>
-                        <p><b>Khách hàng:</b> {selectedOrder.userResponseDTO?.fullname}</p>
-                        <p><b>SĐT:</b> {selectedOrder.userResponseDTO?.phone}</p>
-                        <p><b>Địa chỉ:</b> {selectedOrder.address || "Tại cửa hàng"}</p>
+                        <p><b>Tài khoản:</b> {getUserInfo(selectedOrder).name}</p>
+                        <p><b>Địa chỉ:</b> {getAddressString(selectedOrder)}</p>
                         <p><b>Ngày đặt:</b> {formatDate(selectedOrder.orderDate)}</p>
+                        <p><b>Trạng thái hiện tại:</b> <StatusBadge status={selectedOrder.status}/></p>
                     </div>
 
                     <h4 style={{marginTop: 20}}>Danh sách sản phẩm</h4>
@@ -183,45 +249,33 @@ const AdminOrderManager = () => {
                             <tr style={{borderBottom: '1px solid #ddd', textAlign: 'left'}}>
                                 <th style={{padding: 8}}>Sản phẩm</th>
                                 <th style={{padding: 8}}>Giá</th>
-                                <th style={{padding: 8}}>Số lượng</th>
-                                <th style={{padding: 8}}>Thành tiền</th>
-                                <th style={{padding: 8}}>Cập nhật</th>
+                                <th style={{padding: 8, textAlign: 'center'}}>Số lượng</th>
+                                <th style={{padding: 8, textAlign: 'right'}}>Thành tiền</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {selectedOrder.orderDetails?.map((item, index) => (
-                                <tr key={index} style={{borderBottom: '1px solid #eee'}}>
-                                    <td style={{padding: 8}}>{item.productName || `Sản phẩm ID: ${item.product_id}`}</td>
-                                    <td style={{padding: 8}}>{formatCurrency(item.price)}</td>
-                                    <td style={{padding: 8}}>
-                                        {/* Input sửa số lượng */}
-                                        <input 
-                                            type="number" 
-                                            defaultValue={item.quantity} 
-                                            min="1"
-                                            id={`qty-${selectedOrder.id}-${item.product_id}`}
-                                            style={styles.qtyInput}
-                                        />
-                                    </td>
-                                    <td style={{padding: 8}}>{formatCurrency(item.price * item.quantity)}</td>
-                                    <td style={{padding: 8}}>
-                                        <button 
-                                            style={styles.saveBtn}
-                                            onClick={() => {
-                                                const newQty = document.getElementById(`qty-${selectedOrder.id}-${item.product_id}`).value;
-                                                handleUpdateQuantity(selectedOrder.id, item.product_id, newQty);
-                                            }}
-                                        >
-                                            <Save size={14}/>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {(selectedOrder.items || selectedOrder.orderDetails || []).map((item, index) => {
+                                const pId = item.productId || item.product_id;
+                                return (
+                                    <tr key={index} style={{borderBottom: '1px solid #eee'}}>
+                                        <td style={{padding: 8}}>
+                                            {item.productName || `Sản phẩm ID: ${pId}`}
+                                        </td>
+                                        <td style={{padding: 8}}>{formatCurrency(item.price)}</td>
+                                        <td style={{padding: 8, textAlign: 'center', fontWeight: 'bold'}}>{item.quantity}</td>
+                                        <td style={{padding: 8, textAlign: 'right'}}>
+                                            {formatCurrency(item.price * item.quantity)}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
 
                     <div style={styles.totalSection}>
-                        Tổng cộng: <span style={{fontSize: 20, color: '#d32f2f'}}>{formatCurrency(selectedOrder.totalAmount)}</span>
+                        Tổng cộng: <span style={{fontSize: 20, color: '#d32f2f'}}>
+                            {formatCurrency(selectedOrder.total || selectedOrder.totalAmount)}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -231,13 +285,14 @@ const AdminOrderManager = () => {
   );
 };
 
-// Component con hiển thị Badge trạng thái
+// Component Badge
 const StatusBadge = ({ status }) => {
     const map = {
         PENDING: { color: '#f59e0b', bg: '#fffbeb', label: 'Chờ xử lý' },
         SHIPPED: { color: '#3b82f6', bg: '#eff6ff', label: 'Đang giao' },
         DELIVERED: { color: '#10b981', bg: '#ecfdf5', label: 'Hoàn thành' },
-        CANCELLED: { color: '#ef4444', bg: '#fef2f2', label: 'Đã hủy' }
+        CANCELLED: { color: '#ef4444', bg: '#fef2f2', label: 'Đã hủy' },
+        CONFIRMED: { color: '#0ea5e9', bg: '#e0f2fe', label: 'Đã xác nhận' }
     };
     const s = map[status] || { color: '#333', bg: '#eee', label: status };
     return (
@@ -247,33 +302,35 @@ const StatusBadge = ({ status }) => {
     )
 };
 
-// CSS Styles
+// Styles
 const styles = {
-  container: { padding: "20px", background: "#f3f4f6", minHeight: "100vh", fontFamily: "Segoe UI" },
+  container: { padding: "20px", background: "#f3f4f6", minHeight: "100vh", fontFamily: "Segoe UI, sans-serif" },
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   title: { margin: 0, color: "#1f2937" },
   iconBtn: { background: "none", border: "none", cursor: "pointer", marginRight: 10 },
-  tabsContainer: { display: "flex", gap: 10, marginBottom: 20 },
+  tabsContainer: { display: "flex", gap: 10, marginBottom: 20, flexWrap: 'wrap' },
   tab: { padding: "10px 20px", borderRadius: 8, border: "none", background: "white", cursor: "pointer", fontWeight: 500, color: "#6b7280" },
   activeTab: { background: "#2563eb", color: "white", boxShadow: "0 4px 6px -1px rgba(37, 99, 235, 0.2)" },
-  tableCard: { background: "white", borderRadius: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.1)", overflow: "hidden" },
-  table: { width: "100%", borderCollapse: "collapse" },
+  tableCard: { background: "white", borderRadius: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.1)", overflowX: "auto" },
+  table: { width: "100%", borderCollapse: "collapse", minWidth: 600 },
   thRow: { background: "#f9fafb", borderBottom: "1px solid #e5e7eb" },
   th: { padding: "15px", textAlign: "left", fontSize: 13, color: "#6b7280", fontWeight: 600 },
   tr: { borderBottom: "1px solid #f3f4f6" },
   td: { padding: "15px", fontSize: 14, color: "#374151" },
   actionBtn: { display: "flex", alignItems: "center", padding: "6px 12px", background: "#e0e7ff", color: "#3730a3", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13 },
   
-  // Modal Styles
   modalOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 },
   modalContent: { background: "white", width: "90%", maxWidth: "800px", borderRadius: 12, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" },
   modalHeader: { padding: "20px", borderBottom: "1px solid #eee", display: "flex", justifyContent: "space-between", alignItems: "center" },
   closeBtn: { background: "none", border: "none", cursor: "pointer", color: "#666" },
   modalBody: { padding: "20px" },
   infoGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, background: "#f9fafb", padding: 15, borderRadius: 8 },
-  qtyInput: { width: 60, padding: 5, borderRadius: 4, border: "1px solid #ccc", textAlign: "center" },
-  saveBtn: { background: "#2563eb", color: "white", border: "none", padding: 6, borderRadius: 4, cursor: "pointer", display: "flex", alignItems: "center" },
-  totalSection: { marginTop: 20, textAlign: "right", fontSize: 18, fontWeight: "bold" }
+  totalSection: { marginTop: 20, textAlign: "right", fontSize: 18, fontWeight: "bold" },
+  
+  // Style mới cho phần cập nhật trạng thái
+  statusControlPanel: { background: "#e0f2fe", padding: 15, borderRadius: 8, marginBottom: 15 },
+  statusSelect: { padding: "8px", borderRadius: 4, border: "1px solid #ccc", flex: 1 },
+  updateStatusBtn: { background: "#0ea5e9", color: "white", border: "none", padding: "8px 16px", borderRadius: 4, cursor: "pointer", display: "flex", alignItems: "center", fontWeight: "bold" }
 };
 
 export default AdminOrderManager;
