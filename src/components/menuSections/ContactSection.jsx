@@ -5,6 +5,7 @@ import {
   FaEnvelope,
   FaClock,
   FaPaperPlane,
+  FaMusic, // Icon trang trí header
 } from "react-icons/fa";
 
 const ContactSection = () => {
@@ -21,57 +22,60 @@ const ContactSection = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Tại đây bạn sẽ gọi API gửi mail sau này
-    alert(`Cảm ơn ${formData.name}! Chúng tôi đã nhận được tin nhắn của bạn.`);
+    alert(`Cảm ơn ${formData.name}! Chúng tôi đã nhận được thư của bạn.`);
     setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
     <div style={styles.container}>
-      {/* HEADER SECTION */}
+      {/* --- HEADER (Đồng bộ với ServiceSection) --- */}
       <div style={styles.header}>
-        <h2 style={styles.title}>Liên Hệ Với Chúng Tôi</h2>
+        <div style={styles.headerDecoration}>
+          <div style={styles.decoLine}></div>
+          <FaMusic style={styles.decoIcon} />
+          <div style={styles.decoLine}></div>
+        </div>
+        <h2 style={styles.title}>LIÊN HỆ VỚI LUNA</h2>
         <p style={styles.subtitle}>
-          Chúng tôi luôn sẵn sàng lắng nghe bạn. Hãy gửi thắc mắc hoặc ghé thăm
-          cửa hàng của Luna Music!
+          <i>"Gửi gắm tâm tư, kết nối đam mê"</i>
         </p>
       </div>
 
       <div style={styles.contentWrapper}>
-        {/* CỘT TRÁI: THÔNG TIN & BẢN ĐỒ */}
+        {/* --- CỘT TRÁI: THÔNG TIN & BẢN ĐỒ --- */}
         <div style={styles.infoColumn}>
-          {/* Info Cards */}
-          <div style={styles.infoGrid}>
-            <InfoCard
+          {/* Info List */}
+          <div style={styles.infoList}>
+            <InfoItem
               icon={<FaMapMarkerAlt />}
-              title="Địa chỉ cửa hàng"
+              title="Địa chỉ"
               content="12 Nguyễn Văn Bảo, P.4, Q.Gò Vấp, TP.HCM"
             />
-            <InfoCard
+            <InfoItem
               icon={<FaPhoneAlt />}
-              title="Hotline hỗ trợ"
+              title="Hotline"
               content="0123 456 789"
             />
-            <InfoCard
+            <InfoItem
               icon={<FaEnvelope />}
-              title="Email"
+              title="Hộp thư"
               content="support@lunamusic.com"
             />
-            <InfoCard
+            <InfoItem
               icon={<FaClock />}
-              title="Giờ mở cửa"
+              title="Mở cửa"
               content="Thứ 2 - Chủ Nhật: 08:00 - 22:00"
             />
           </div>
 
-          {/* Google Map Embed */}
-          <div style={styles.mapContainer}>
+          {/* Google Map (Đóng khung tranh) */}
+          <div style={styles.mapFrame}>
             <iframe
               title="Google Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.858169091027!2d106.68427047480556!3d10.822164158352613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528e54969507f%3A0xfa60665c56437e52!2zMTIgTmd1eeG7hW4gVMSDbiBC4bqjbywgUGjGsOG7nW5nIDQsIEfDsiBW4bqlcCwgSOG7kyBDaMOtIE1pbmgsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1709485721405!5m2!1sen!2s"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.8582378486044!2d106.68427047451785!3d10.82215895835165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528e549695d13%3A0x333d81b991825902!2zMTIgTmd1eXDhu4VuIFbEg24gQuG6o28sIFBoxrDhu51uZyA0LCBHw7IgVuG6pXAsIEjhu5MgQ2jDrSBNaW5oLCBWaWV0bmFt!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
               width="100%"
               height="300"
-              style={{ border: 0 }}
+              style={{ border: 0, display: "block" }} // display block để fix khoảng trắng dưới iframe
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -79,10 +83,12 @@ const ContactSection = () => {
           </div>
         </div>
 
-        {/* CỘT PHẢI: FORM LIÊN HỆ */}
+        {/* --- CỘT PHẢI: FORM LIÊN HỆ (Style bức thư) --- */}
         <div style={styles.formColumn}>
           <div style={styles.formCard}>
-            <h3 style={styles.formTitle}>Gửi Tin Nhắn</h3>
+            <h3 style={styles.formTitle}>GỬI TIN NHẮN</h3>
+            <div style={styles.dividerSmall}></div>
+
             <form onSubmit={handleSubmit}>
               <div style={styles.formGroup}>
                 <label style={styles.label}>Họ và tên</label>
@@ -91,20 +97,20 @@ const ContactSection = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Nhập tên của bạn"
+                  placeholder="Nhập tên của bạn..."
                   style={styles.input}
                   required
                 />
               </div>
 
               <div style={styles.formGroup}>
-                <label style={styles.label}>Email</label>
+                <label style={styles.label}>Email liên hệ</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Nhập email của bạn"
+                  placeholder="Nhập email..."
                   style={styles.input}
                   required
                 />
@@ -117,19 +123,19 @@ const ContactSection = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  placeholder="Ví dụ: Hỗ trợ bảo hành, Tư vấn mua hàng..."
+                  placeholder="Vấn đề bạn quan tâm..."
                   style={styles.input}
                   required
                 />
               </div>
 
               <div style={styles.formGroup}>
-                <label style={styles.label}>Nội dung tin nhắn</label>
+                <label style={styles.label}>Lời nhắn</label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Bạn cần hỗ trợ gì?"
+                  placeholder="Viết lời nhắn tại đây..."
                   style={{
                     ...styles.input,
                     height: "120px",
@@ -140,7 +146,8 @@ const ContactSection = () => {
               </div>
 
               <button type="submit" style={styles.submitBtn}>
-                <FaPaperPlane style={{ marginRight: 8 }} /> Gửi Ngay
+                GỬI THƯ{" "}
+                <FaPaperPlane style={{ marginLeft: 10, fontSize: 14 }} />
               </button>
             </form>
           </div>
@@ -150,148 +157,197 @@ const ContactSection = () => {
   );
 };
 
-// Component con hiển thị từng dòng thông tin
-const InfoCard = ({ icon, title, content }) => (
-  <div style={styles.infoCard}>
+// Component con hiển thị từng dòng thông tin (Style liệt kê cổ điển)
+const InfoItem = ({ icon, title, content }) => (
+  <div style={styles.infoItem}>
     <div style={styles.iconBox}>{icon}</div>
-    <div>
-      <h4 style={styles.infoTitle}>{title}</h4>
-      <p style={styles.infoContent}>{content}</p>
+    <div style={styles.infoTextWrapper}>
+      <span style={styles.infoTitle}>{title}: </span>
+      <span style={styles.infoContent}>{content}</span>
     </div>
   </div>
 );
 
-// --- CSS STYLES ---
+// --- VINTAGE CSS STYLES ---
 const styles = {
   container: {
-    maxWidth: "1200px",
+    maxWidth: "1100px",
     margin: "0 auto",
-    padding: "40px 20px",
-    fontFamily: "'Segoe UI', sans-serif",
-    color: "#333",
+    padding: "60px 20px",
+    backgroundColor: "#fdfbf7", // Màu kem giấy cũ
+    fontFamily: "'Lora', serif",
+    color: "#1a1a1a",
   },
+
+  // 1. HEADER (Copy style từ ServiceSection)
   header: {
     textAlign: "center",
-    marginBottom: "50px",
+    marginBottom: "60px",
   },
-  title: {
-    fontSize: "36px",
-    fontWeight: "800",
-    color: "#1e1e2d", // Màu tối giống Admin layout
-    marginBottom: "10px",
-  },
-  subtitle: {
-    fontSize: "16px",
-    color: "#666",
-    maxWidth: "600px",
-    margin: "0 auto",
-  },
-  contentWrapper: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "40px",
-  },
-  // CỘT TRÁI
-  infoColumn: {
-    flex: "1 1 400px", // Co giãn, tối thiểu 400px
-  },
-  infoGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", // Tự động chia cột
-    gap: "20px",
-    marginBottom: "30px",
-  },
-  infoCard: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "15px",
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
-    border: "1px solid #f0f0f0",
-  },
-  iconBox: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    background: "#f3e8ff", // Tím nhạt
-    color: "#5a02c2", // Tím đậm thương hiệu
+  headerDecoration: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "18px",
-    flexShrink: 0,
+    gap: "15px",
+    marginBottom: "15px",
   },
-  infoTitle: {
-    margin: "0 0 5px 0",
+  decoLine: {
+    width: "80px",
+    height: "1px",
+    backgroundColor: "#1a1a1a",
+  },
+  decoIcon: {
     fontSize: "16px",
-    fontWeight: "600",
+    color: "#1a1a1a",
+    transform: "rotate(-10deg)",
   },
-  infoContent: {
-    margin: 0,
-    fontSize: "14px",
-    color: "#666",
-    lineHeight: "1.5",
+  title: {
+    fontSize: "42px",
+    fontWeight: "400",
+    color: "#1a1a1a",
+    fontFamily: "'Playfair Display', serif",
+    letterSpacing: "4px",
+    textTransform: "uppercase",
+    margin: "0 0 10px 0",
   },
-  mapContainer: {
-    borderRadius: "12px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
-    border: "1px solid #ddd",
+  subtitle: {
+    fontSize: "18px",
+    color: "#555",
+    fontFamily: "'Playfair Display', serif",
+    fontStyle: "italic",
+    maxWidth: "600px",
+    margin: "0 auto",
   },
 
-  // CỘT PHẢI
+  // LAYOUT
+  contentWrapper: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "50px", // Tăng khoảng cách giữa 2 cột cho thoáng
+    alignItems: "flex-start",
+  },
+
+  // 2. CỘT TRÁI (INFO & MAP)
+  infoColumn: {
+    flex: "1 1 400px",
+  },
+  infoList: {
+    marginBottom: "40px",
+    borderTop: "1px solid #1a1a1a", // Kẻ ngang trên cùng
+    borderBottom: "1px solid #1a1a1a", // Kẻ ngang dưới cùng
+    padding: "20px 0",
+  },
+  infoItem: {
+    display: "flex",
+    alignItems: "flex-start", // Căn đầu dòng
+    gap: "15px",
+    padding: "15px 0",
+    borderBottom: "1px dashed #ccc", // Gạch đứt nét giữa các dòng
+  },
+  iconBox: {
+    width: "24px",
+    textAlign: "center",
+    color: "#1a1a1a",
+    fontSize: "18px",
+    marginTop: "2px", // Căn chỉnh nhẹ với dòng text đầu tiên
+  },
+  infoTextWrapper: {
+    flex: 1,
+    fontFamily: "'Lora', serif",
+  },
+  infoTitle: {
+    fontWeight: "700",
+    textTransform: "uppercase",
+    fontSize: "14px",
+    letterSpacing: "1px",
+    marginRight: "5px",
+  },
+  infoContent: {
+    fontSize: "16px",
+    color: "#333",
+  },
+
+  // MAP FRAME (Khung tranh)
+  mapFrame: {
+    border: "4px double #1a1a1a", // Viền đôi dày
+    padding: "5px", // Khoảng trắng giữa viền và bản đồ
+    backgroundColor: "#fff",
+    boxShadow: "5px 5px 0px rgba(0,0,0,0.1)", // Bóng cứng nhẹ
+  },
+
+  // 3. CỘT PHẢI (FORM)
   formColumn: {
     flex: "1 1 400px",
   },
   formCard: {
     background: "#fff",
-    padding: "30px",
-    borderRadius: "16px",
-    boxShadow: "0 10px 30px rgba(90, 2, 194, 0.1)", // Bóng đổ màu tím nhẹ
-    borderTop: "5px solid #5a02c2", // Điểm nhấn màu tím trên đầu form
+    padding: "40px",
+    border: "1px solid #1a1a1a", // Viền đơn
+    position: "relative",
+    // Hiệu ứng chồng giấy (giả lập tờ giấy đặt lên bàn)
+    boxShadow: "10px 10px 0px #e0ded8",
   },
   formTitle: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginBottom: "20px",
-    color: "#333",
+    fontSize: "26px",
+    fontFamily: "'Playfair Display', serif",
+    fontWeight: "700",
+    margin: "0 0 10px 0",
+    color: "#1a1a1a",
+    textAlign: "center",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+  },
+  dividerSmall: {
+    width: "40px",
+    height: "2px",
+    backgroundColor: "#1a1a1a",
+    margin: "0 auto 30px auto",
   },
   formGroup: {
-    marginBottom: "20px",
+    marginBottom: "25px",
   },
   label: {
     display: "block",
     marginBottom: "8px",
-    fontWeight: "500",
-    fontSize: "14px",
-    color: "#555",
+    fontWeight: "600",
+    fontSize: "13px",
+    color: "#1a1a1a",
+    textTransform: "uppercase",
+    letterSpacing: "1px",
+    fontFamily: "'Lora', serif",
   },
   input: {
     width: "100%",
     padding: "12px 15px",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "14px",
+    background: "#fdfbf7", // Nền hơi kem nhẹ cho input
+    border: "1px solid #888", // Viền xám đậm
+    borderRadius: "0", // Vuông vức tuyệt đối
+    fontSize: "16px",
+    fontFamily: "'Lora', serif",
+    color: "#333",
     outline: "none",
-    transition: "border 0.3s",
-    boxSizing: "border-box", // Quan trọng để không bị vỡ layout
+    boxSizing: "border-box",
+    transition: "border-color 0.3s",
   },
+  // Nút Submit phong cách cổ điển
   submitBtn: {
     width: "100%",
-    padding: "14px",
-    backgroundColor: "#5a02c2", // Tím thương hiệu
-    color: "white",
+    padding: "16px",
+    backgroundColor: "#1a1a1a", // Đen tuyền
+    color: "#fdfbf7", // Chữ trắng kem
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "0",
     fontSize: "16px",
-    fontWeight: "bold",
+    fontFamily: "'Playfair Display', serif",
+    fontWeight: "700",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    transition: "background 0.3s",
+    marginTop: "10px",
+    transition: "opacity 0.3s",
   },
 };
 
