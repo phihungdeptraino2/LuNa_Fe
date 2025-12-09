@@ -74,7 +74,10 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     <header>
       <div className="main-header">
         <div className="logo">
-          <Link to={isCustomer ? "/customer/home" : "/"}>Luna<span>•</span>Music</Link>
+          <Link to={isCustomer ? "/customer/home" : "/"}>
+            <span className="logo-luna">Luna</span>
+            <span className="logo-music">Music</span>
+          </Link>
         </div>
 
         {/* Search Bar */}
