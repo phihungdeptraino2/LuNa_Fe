@@ -1,0 +1,236 @@
+/* RegisterModal.css - Phiên bản Fix Lỗi Layout & Chuẩn Vintage */
+
+/* 1. KHAI BÁO BIẾN MÀU SẮC (THEME) */
+:root {
+  --primary-gold: #c5a059; /* Vàng Champagne sang trọng */
+  --bg-paper: #fffefb; /* Nền trắng ngà (giống giấy viết thư) */
+  --text-main: #2c2c2c; /* Chữ đen than chì */
+  --text-sub: #666666; /* Chữ xám phụ */
+  --input-bg: #ffffff; /* Nền ô nhập liệu trắng tinh */
+  --input-border: #e0e0e0; /* Viền xám nhạt */
+}
+
+/* Đảm bảo tính toán kích thước đúng cho mọi phần tử trong modal */
+.modal-container * {
+  box-sizing: border-box;
+}
+
+/* 2. OVERLAY (LỚP PHỦ MỜ) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  padding: 20px; /* Khoảng cách an toàn cho mobile */
+}
+
+/* 3. KHUNG MODAL CHÍNH */
+.modal-container {
+  background-color: var(--bg-paper);
+  width: 500px; /* Chiều rộng chuẩn */
+  max-width: 100%;
+  max-height: 90vh; /* Không cao quá màn hình */
+  overflow-y: auto; /* Cuộn nếu nội dung dài */
+
+  padding: 50px 40px; /* Khoảng cách bên trong thoáng đãng */
+  border-radius: 4px;
+  position: relative;
+
+  /* Viền & Bóng đổ tạo chiều sâu */
+  border: 1px solid var(--primary-gold);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tùy chỉnh thanh cuộn cho đẹp */
+.modal-container::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-container::-webkit-scrollbar-thumb {
+  background-color: var(--primary-gold);
+  border-radius: 10px;
+}
+.modal-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 4. NÚT ĐÓNG (CLOSE BTN) */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.close-btn:hover {
+  color: var(--primary-gold);
+}
+
+/* 5. TIÊU ĐỀ (HEADER) */
+.modal-title {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 0;
+  margin-bottom: 30px;
+
+  /* Đường gạch chân vàng */
+  border-bottom: 2px solid var(--primary-gold);
+  padding-bottom: 15px;
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 6. FORM LAYOUT (PHẦN QUAN TRỌNG ĐỂ SỬA LỖI MÉO SẸO) */
+
+/* Bao quanh mỗi cặp Label + Input */
+.input-group {
+  margin-bottom: 20px;
+  width: 100%; /* Chiếm hết chiều ngang */
+  display: block; /* Dạng khối, không phải flex */
+}
+
+/* Nhãn (Tên trường) */
+.input-group label {
+  display: block; /* Xuống dòng riêng biệt */
+  width: 100%;
+  text-align: left; /* Căn trái */
+  margin-bottom: 8px; /* Cách ô input một chút */
+
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: sans-serif;
+}
+
+/* Ô nhập liệu */
+.modal-input {
+  width: 100%; /* Chiếm hết chiều ngang container */
+  padding: 12px 15px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 2px; /* Bo góc nhẹ hoặc để 0 nếu thích vuông */
+
+  font-size: 15px;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: "Times New Roman", serif; /* Font chữ cổ điển khi gõ */
+}
+
+/* Hiệu ứng khi bấm vào ô input */
+.modal-input:focus {
+  border-color: var(--primary-gold);
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.15);
+}
+
+/* 7. MẬT KHẨU & ICON MẮT */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+  color: #aaa;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 2;
+}
+.eye-icon:hover {
+  color: var(--primary-gold);
+}
+
+/* 8. THÔNG BÁO LỖI */
+.error-msg {
+  color: #d32f2f;
+  background-color: #fdecea;
+  padding: 10px;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid #f8d7da;
+  border-radius: 2px;
+}
+
+/* 9. NÚT ĐĂNG KÝ (BUTTON) */
+.modal-login-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--primary-gold); /* Nền vàng */
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px solid var(--primary-gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  font-family: "Playfair Display", serif;
+}
+
+.modal-login-btn:hover {
+  background-color: #fff; /* Hover thành nền trắng */
+  color: var(--primary-gold); /* Chữ vàng */
+  box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3);
+}
+
+/* 10. FOOTER (BACK TO LOGIN) */
+.modal-footer {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.register-link {
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.register-link:hover {
+  color: var(--primary-gold);
+  text-decoration: underline;
+}

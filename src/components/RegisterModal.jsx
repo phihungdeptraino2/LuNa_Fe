@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
-import "./LoginModal.css";
+import "./RegisterModal.css";
 
 const RegisterModal = ({ isOpen, onClose, onBackToLogin }) => {
   const [fullName, setFullName] = useState("");
@@ -42,7 +42,6 @@ const RegisterModal = ({ isOpen, onClose, onBackToLogin }) => {
         <h2 className="modal-title">Register Account</h2>
 
         <form onSubmit={handleSubmit}>
-          
           <div className="input-group">
             <label>Full Name *</label>
             <input
