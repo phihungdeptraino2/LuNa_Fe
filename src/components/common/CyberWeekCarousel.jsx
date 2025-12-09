@@ -6,7 +6,6 @@ import "../../pages/home/HomePage.css"
 const CyberWeekCarousel = ({ products, loading }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const scrollContainerRef = useRef(null);
-
   const handleScroll = () => {
     const container = scrollContainerRef.current;
     if (container) {
@@ -28,14 +27,17 @@ const CyberWeekCarousel = ({ products, loading }) => {
           {loading ? (
             <div style={{ color: "white" }}>Loading...</div>
           ) : (
-            products.map((product) => {
+            products.slice(0, 10).map((product) => { // ✅ Đã giới hạn tối đa 10 sản phẩm
               const imgUrl = product.productImages?.[0]?.imageUrl || product.imageUrl || "https://via.placeholder.com/200";
               const fakeOldPrice = product.price * 1.2;
               return (
                 <div key={product.id} className="product-card carousel-card">
                   <div className="deal-badge">Deal</div>
-                  <div className="card-img-container"><img src={imgUrl} alt={product.name} className="card-img" /></div>
+                  <div className="card-img-container">
+                    <img src={imgUrl} alt={product.name} className="card-img" />
+                  </div>
                   <div className="card-info">
+                    {/* ✅ Link này đảm bảo chuyển trang chi tiết sản phẩm */}
                     <Link to={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}><h4>{product.name}</h4></Link>
                     <div className="rating">⭐⭐⭐⭐⭐ <span style={{ color: "#888" }}>(7)</span></div>
                     <div className="price-box">

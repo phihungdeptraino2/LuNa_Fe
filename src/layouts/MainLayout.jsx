@@ -18,6 +18,8 @@ const MainLayout = () => {
       setIsLoginModalOpen(true);
     }
   };
+  console.log("User object:", user);
+
 
   return (
     <>
@@ -30,6 +32,7 @@ const MainLayout = () => {
           setIsLoginModalOpen(false);
           setRegisterOpen(true);
         }}
+        
       />
 
       <RegisterModal
