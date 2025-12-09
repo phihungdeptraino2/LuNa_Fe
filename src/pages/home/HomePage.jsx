@@ -14,6 +14,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const { user, logout } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   // Tạo danh sách category từ API
   const categoryListFromDB = [...new Set(products.map(p => p.category.name))].map(name => ({
@@ -27,14 +28,24 @@ const HomePage = () => {
       try {
         const data = await getAllProducts();
         setProducts(data.length > 0 ? data : []);
+
+        // ⚡ Tạo categories từ data và set state
+        const cats = [...new Set(data.map((p) => p.category.name))].map((name, index) => ({
+          id: index + 1,   // cần id cho key
+          name,
+        }));
+        setCategories(cats);
+
       } catch {
         setProducts([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
   }, []);
+
 
   // User avatar click
   const handleUserIconClick = () => {
@@ -59,7 +70,8 @@ const HomePage = () => {
         <HeroBanner />
         <TrustBar />
         <CyberWeekCarousel products={products} loading={loading} />
-        <CategoriesList CATEGORY_LIST={categoryListFromDB} />
+        <CategoriesList CATEGORY_LIST={categories} user={user} />
+
       </div>
 
       {/* <Footer /> */}

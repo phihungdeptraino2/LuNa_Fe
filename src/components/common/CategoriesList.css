@@ -1,0 +1,12 @@
+.icon-wrapper {
+    font-size: 48px;
+    color: #ff5722;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-list-item-link {
+    text-decoration: none;
+    color: inherit;
+}
