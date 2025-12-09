@@ -28,6 +28,13 @@ const AdminDashboard = () => {
 
   // Cấu hình URL backend của bạn
   const API_URL = "http://localhost:8081/api/admin/dashboard";
+  const BE_HOST = "http://localhost:8081";
+
+  // 🔧 Hàm build URL hình ảnh giống AdminProductManager
+  const buildImageUrl = (url) => {
+    if (!url) return "";
+    return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +50,13 @@ const AdminDashboard = () => {
 
         // Dựa vào cấu trúc ApiResponse builder trong Java: response.data.data
         if (response.data && response.data.data) {
-          setDashboardData(response.data.data);
+          const data = response.data.data;
+          
+          // 🔍 LOG để debug
+          console.log("=== DASHBOARD DATA ===");
+          console.log("Top Products:", data.topSellingProducts);
+          
+          setDashboardData(data);
         }
         setLoading(false);
       } catch (err) {
@@ -171,24 +184,46 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {topSellingProducts.map((product) => (
-                <tr key={product.id} style={styles.tr}>
-                  <td style={styles.td}>
-                    <img
-                      src={product.image || "https://via.placeholder.com/50"}
-                      alt={product.name}
-                      style={styles.productImg}
-                    />
-                  </td>
-                  <td style={styles.td}>{product.name}</td>
-                  <td style={styles.td} align="center">
-                    {product.totalSold}
-                  </td>
-                  <td style={styles.td}>
-                    {formatCurrency(product.totalRevenue)}
-                  </td>
-                </tr>
-              ))}
+              {topSellingProducts.map((product) => {
+                // 🔍 LOG để debug từng sản phẩm
+                console.log(`Product #${product.id}:`, product.image);
+                
+                return (
+                  <tr key={product.id} style={styles.tr}>
+                    <td style={styles.td}>
+                      <div style={styles.imageContainer}>
+                        {product.image ? (
+                          <img
+                            src={buildImageUrl(product.image)}
+                            alt={product.name}
+                            style={styles.productImg}
+                            onLoad={() => console.log("✅ Image loaded:", product.name)}
+                            onError={(e) => {
+                              console.error("❌ Image failed:", product.name);
+                              console.error("Failed URL:", e.target.src);
+                              // Fallback to placeholder
+                              e.target.src = "https://via.placeholder.com/50";
+                            }}
+                          />
+                        ) : (
+                          <img
+                            src="https://via.placeholder.com/50"
+                            alt={product.name}
+                            style={styles.productImg}
+                          />
+                        )}
+                      </div>
+                    </td>
+                    <td style={styles.td}>{product.name}</td>
+                    <td style={styles.td} align="center">
+                      {product.totalSold}
+                    </td>
+                    <td style={styles.td}>
+                      {formatCurrency(product.totalRevenue)}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -346,11 +381,22 @@ const styles = {
     fontSize: "14px",
     color: "#374151",
   },
+  // 🎨 Style container cho image
+  imageContainer: {
+    width: "50px",
+    height: "50px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    borderRadius: "8px",
+    backgroundColor: "#f3f4f6",
+  },
   productImg: {
-    width: "40px",
-    height: "40px",
+    width: "100%",
+    height: "100%",
     objectFit: "cover",
-    borderRadius: "6px",
+    borderRadius: "8px",
   },
   stockList: {
     listStyle: "none",

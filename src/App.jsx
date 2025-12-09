@@ -32,6 +32,7 @@ import CheckoutPage from "./pages/checkout/CheckoutPage";
 import OrderReviewPage from "./pages/order/OrderReviewPage";
 import OrderSuccessPage from "./pages/order/OrderSuccessPage";
 import ReviewPage from "./pages/review/ReviewPage";
+import AdminUserManager from "./pages/admin/AdminUserManager";
 
 // --- ROUTE BẢO VỆ ADMIN ---
 const AdminRoute = ({ children }) => {
@@ -102,6 +103,7 @@ function App() {
           <Route path="orders" element={<AdminOrderManager />} />
            <Route path="brands" element={<AdminBrandManager />} />
            <Route path="categories" element={<AdminCategoryManager />} />
+           <Route path="/admin/users" element={<AdminUserManager />} />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

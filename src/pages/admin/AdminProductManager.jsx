@@ -7,6 +7,7 @@ import {
   uploadProductImages,
   getAllCategories,
   getAllBrands,
+  getAllProducts,
 } from "../../services/productService";
 import {
   FaEdit,
@@ -49,8 +50,9 @@ const AdminProductManager = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const data = await getAdminProducts();
+      const data = await getAllProducts();
       setProducts(data);
+      
     } catch (error) {
       toast.error("Lỗi khi tải danh sách sản phẩm!");
     } finally {
@@ -100,7 +102,18 @@ const AdminProductManager = () => {
     setSelectedFiles([]);
     setShowModal(true);
   };
-
+  const BE_HOST = "http://localhost:8081";
+  const buildImageUrl = (url) => {
+  if (!url) {
+    console.warn("⚠️ Empty URL received");
+    return "";
+  }
+  
+  const fullUrl = `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
+  console.log("🖼️ Image URL:", fullUrl);
+  
+  return fullUrl;
+};
   // Mở Modal Edit
   const handleEdit = (product) => {
     setIsEditing(true);
@@ -302,13 +315,39 @@ const AdminProductManager = () => {
                             height: 40,
                             background: "#f0f0f0",
                             borderRadius: 6,
+                            overflow: "hidden",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            color: "#999",
                           }}
                         >
-                          <FaBox />
+                          {/* LOG TRỰC TIẾP */}
+                          {console.log(`Product #${product.id}:`, product.productImages)}
+                          
+                          {product.productImages?.[0] ? (
+                            <>
+                              {console.log("Image URL:", buildImageUrl(product.productImages[0].imageUrl))}
+                              <img
+                                src={buildImageUrl(product.productImages[0].imageUrl)}
+                                alt={product.name}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                                onLoad={() => console.log("✅ Image loaded:", product.name)}
+                                onError={(e) => {
+                                  console.error("❌ Image failed:", product.name);
+                                  console.error("Failed URL:", e.target.src);
+                                }}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              {console.log("⚠️ No image for:", product.name)}
+                              <FaBox style={{ color: "#999" }} />
+                            </>
+                          )}
                         </div>
                         <span style={{ fontWeight: "600" }}>
                           {product.name}
