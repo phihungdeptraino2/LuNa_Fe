@@ -1,11 +1,109 @@
-.card-img-container {
-  width: 200px;
-  height: 200px;
+/* ProductCard.css */
+
+/* =======================================
+   PRODUCT CARD BASE STYLE 
+   ======================================= */
+.product-card {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* Chiều cao cố định để card trong grid đồng đều */
+
+  /* Vintage Look */
+  border: 2px solid #1a1a1a;
+  background: #ffffff;
+
+  /* Hiệu ứng bo tròn và đổ bóng */
+  border-radius: 8px;
+  /* Bo tròn góc card */
   overflow: hidden;
+  /* QUAN TRỌNG: Đảm bảo ảnh/nội dung không tràn ra ngoài góc bo tròn */
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
+  /* Đổ bóng nhẹ kiểu vintage */
+
+  /* Transition */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
+.product-card:hover {
+  transform: translateY(-5px);
+  /* Nâng thẻ lên nhẹ */
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+  /* Đổ bóng mạnh hơn khi hover */
+}
+
+/* =======================================
+   IMAGE SECTION 
+   ======================================= */
+
+/* Container bao bọc ảnh */
+.card-img-container {
+  width: 100%;
+  /* Sử dụng tỷ lệ khung hình 1:1 hoặc 4:3 để ảnh vuông/gần vuông */
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  position: relative;
+  /* Dùng cho placeholder */
+}
+
+/* Thẻ <img> chính */
 .card-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* đảm bảo ảnh không bị co dãn */
+  /* QUAN TRỌNG: Kéo dãn/Cắt ảnh để khít container mà không bị méo */
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img {
+  transform: scale(1.05);
+  /* Phóng to ảnh nhẹ khi hover */
+}
+
+/* Placeholder khi không có ảnh */
+.card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  color: #666;
+  font-style: italic;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* =======================================
+   INFO SECTION 
+   ======================================= */
+.card-info {
+  padding: 15px;
+  text-align: center;
+  flex-grow: 1;
+  /* Đảm bảo phần nội dung chiếm hết không gian còn lại */
+}
+
+.card-info h5 {
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+  /* Xử lý tên sản phẩm dài */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-info .price {
+  font-family: 'Courier New', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: #8b0000;
+  /* Màu giá tiền nổi bật (Đỏ đậm) */
+  margin: 0;
 }

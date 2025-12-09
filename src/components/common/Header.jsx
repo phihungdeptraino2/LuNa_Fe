@@ -140,7 +140,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
               <FaPowerOff className="header-icon clickable" />
               {isPowerDropdownOpen && (
                 <div className="dropdown-menu power-menu">
-                  <Link to={`${prefix}/profile`} className="dropdown-item" onClick={(e) => e.preventDefault()}>Profile</Link>
+                  <Link to={`${prefix}/profile`} className="dropdown-item" >Profile</Link>
                   <Link to={`${prefix}/settings`} className="dropdown-item" onClick={(e) => e.preventDefault()}>Settings</Link>
                   {isAdmin && <Link to="/admin/dashboard" className="dropdown-item">Dashboard</Link>}
                   <div className="dropdown-item" onClick={handleUserIconClick}>Logout</div>

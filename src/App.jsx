@@ -33,6 +33,7 @@ import OrderReviewPage from "./pages/order/OrderReviewPage";
 import OrderSuccessPage from "./pages/order/OrderSuccessPage";
 import ReviewPage from "./pages/review/ReviewPage";
 import AdminUserManager from "./pages/admin/AdminUserManager";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 // --- ROUTE BẢO VỆ ADMIN ---
 const AdminRoute = ({ children }) => {
@@ -78,6 +79,7 @@ function App() {
           <Route path="customer/contact" element={<ContactSection />} />
           <Route path="customer/cart" element={<CartPage />} />
           <Route path="customer/checkout" element={<CheckoutPage />} />
+          <Route path="/customer/profile" element={<ProfilePage />} />
           <Route
             path="customer"
             element={<Navigate to="customer/home" replace />}
@@ -101,9 +103,9 @@ function App() {
           <Route path="products" element={<AdminProductManager />} />
           <Route path="discounts" element={<AdminDiscountManager />} />
           <Route path="orders" element={<AdminOrderManager />} />
-           <Route path="brands" element={<AdminBrandManager />} />
-           <Route path="categories" element={<AdminCategoryManager />} />
-           <Route path="/admin/users" element={<AdminUserManager />} />
+          <Route path="brands" element={<AdminBrandManager />} />
+          <Route path="categories" element={<AdminCategoryManager />} />
+          <Route path="/admin/users" element={<AdminUserManager />} />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 
