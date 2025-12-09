@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
         // Lưu token vào user
         setUser({ ...userData, token });
 
-        //window.location.reload();
+        window.location.reload();
 
         return { ...userData, token };
       }
@@ -63,35 +63,35 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (formData) => {
-  try {
-    const res = await registerAPI(formData);
+    try {
+      const res = await registerAPI(formData);
 
-    if (res.data.status === 201) {
-      // Đăng ký thành công
+      if (res.data.status === 201) {
+        // Đăng ký thành công
+        return {
+          success: true,
+          message: res.data.message,
+        };
+      }
+    } catch (error) {
+      console.error(error);
+
+      // Nếu backend trả lỗi dạng { message: "..." }
+      const message =
+        error.response?.data?.message || "Register failed";
+
       return {
-        success: true,
-        message: res.data.message,
+        success: false,
+        message,
       };
     }
-  } catch (error) {
-    console.error(error);
 
-    // Nếu backend trả lỗi dạng { message: "..." }
-    const message =
-      error.response?.data?.message || "Register failed";
-
-    return {
-      success: false,
-      message,
-    };
-  }
-
-  return { success: false, message: "Register failed" };
-};
+    return { success: false, message: "Register failed" };
+  };
 
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading , register}}>
+    <AuthContext.Provider value={{ user, login, logout, loading, register }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -20,6 +20,8 @@ const ProductDetailPage = () => {
   const { addToCart } = useCart();
   const [showVideo, setShowVideo] = useState(false);
 
+  const [stockAlert, setStockAlert] = useState({ show: false, message: '' });
+
   const videoUrl = productVideos[id];
 
 
@@ -67,6 +69,8 @@ const ProductDetailPage = () => {
     const newQty = quantity + amount;
     if (newQty >= 1 && newQty <= (product.stockQuantity || 100)) setQuantity(newQty);
   };
+
+  
 
   const formatPrice = (price) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
@@ -141,14 +145,14 @@ const ProductDetailPage = () => {
             <span className="review-count">({totalReviews} đánh giá)</span>
 
             {/* NÚT LUÔN HIỂN THỊ */}
-            <button
+            {/* <button
               className="view-all-reviews-btn"
               onClick={() => navigate(`/products/${product.id}/reviews`)}
             >
               {totalReviews > 0
                 ? `Xem tất cả đánh giá (${totalReviews})`
                 : "Viết đánh giá đầu tiên"}
-            </button>
+            </button> */}
           </div>
 
           <div className="price-section">
@@ -173,7 +177,7 @@ const ProductDetailPage = () => {
               <FaShoppingCart /> Thêm vào giỏ hàng
             </button>
 
-            <button
+            {/* <button
               className="buy-now-btn"
               onClick={() => {
                 if (!user) return setShowLoginModal(true);
@@ -182,10 +186,10 @@ const ProductDetailPage = () => {
               }}
             >
               Mua hàng
-            </button>
+            </button> */}
 
             <button className="wishlist-btn">
-              <FaHeart /> Yêu thích
+              <FaHeart />
             </button>
           </div>
         </div>

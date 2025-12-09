@@ -1,312 +1,555 @@
+/* ============================================
+   LUNA MUSIC STORE - CHECKOUT PAGE
+   Black & White Vintage Classic Music Style
+   ============================================ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;600;700&display=swap');
+
 .checkout-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: #f5f5f5;
+  padding: 80px 40px;
+  background: #fafafa;
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
   min-height: 100vh;
+  position: relative;
 }
 
-.checkout-container h1 {
+/* Vintage paper texture background */
+.checkout-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.01) 2px,
+      rgba(0, 0, 0, 0.01) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.checkout-container>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   PAGE TITLE - Vintage Newspaper Style
+   ============================================ */
+.checkout-container>h1 {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #000000;
   text-align: center;
-  margin-bottom: 30px;
-  font-size: 2rem;
-  color: #333;
+  margin-bottom: 60px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  position: relative;
+  padding: 30px 0;
+  border-top: 4px double #000000;
+  border-bottom: 4px double #000000;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px #000000,
+    inset 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
+/* Decorative musical notes */
+.checkout-container>h1::before,
+.checkout-container>h1::after {
+  font-family: serif;
+  position: absolute;
+  font-size: 2.5rem;
+  color: #000000;
+  opacity: 0.15;
+  font-weight: 400;
+}
+
+.checkout-container>h1::before {
+  content: '♪';
+  left: 50px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-15deg);
+}
+
+.checkout-container>h1::after {
+  content: '♫';
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%) rotate(15deg);
+}
+
+/* ============================================
+   ERROR MESSAGE
+   ============================================ */
 .error-message {
-  background-color: #fee;
-  color: #c33;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border-left: 4px solid #c33;
+  background: #ffffff;
+  border: 3px solid #000000;
+  padding: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: #d32f2f;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-/* ===== LAYOUT 2 CỘT ===== */
+.error-message::before {
+  content: '⚠';
+  margin-right: 10px;
+  font-size: 1.4rem;
+}
+
+/* ============================================
+   CHECKOUT CONTENT - TWO COLUMN LAYOUT
+   ============================================ */
 .checkout-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: 1fr 450px;
+  gap: 40px;
+  align-items: start;
 }
 
-/* ===== BÊN TRÁI: FORM ===== */
+/* ============================================
+   LEFT SIDE - ADDRESS & CUSTOMER INFO
+   ============================================ */
 .checkout-left {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 30px;
 }
 
-.address-section,
-.customer-info,
-.payment-method {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Address Section */
+.address-section {
+  background: #ffffff;
+  border: 4px double #000000;
+  padding: 35px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.address-section::before {
+  content: '♪ ◆ ♫';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  padding: 0 15px;
+  font-size: 0.9rem;
+  color: #000000;
+  letter-spacing: 8px;
 }
 
 .address-section h2,
 .customer-info h3,
 .payment-method h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
-  color: #333;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 25px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #000000;
 }
 
-/* ===== DANH SÁCH ĐỊA CHỈ ===== */
+/* Addresses List */
 .addresses-list {
-  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .address-item {
   display: flex;
-  gap: 12px;
-  padding: 15px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  gap: 15px;
+  padding: 20px;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
   cursor: pointer;
   transition: all 0.3s ease;
-  align-items: flex-start;
+  position: relative;
 }
 
 .address-item:hover {
-  border-color: #0077ff;
-  background-color: #f9f9f9;
+  border-color: #000000;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: translateX(2px);
 }
 
 .address-item.selected {
-  border-color: #0077ff;
-  background-color: #f0f7ff;
+  border: 3px solid #000000;
+  background: #f8f8f8;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
 }
 
 .address-item input[type="radio"] {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
   margin-top: 5px;
   cursor: pointer;
-  width: 18px;
-  height: 18px;
+  accent-color: #000000;
 }
 
 .address-details {
   flex: 1;
 }
 
-.address-name {
-  margin: 0 0 5px 0;
-  font-weight: 600;
-  color: #333;
-}
-
-.address-phone {
-  margin: 3px 0;
-  color: #666;
-  font-size: 0.9rem;
-}
-
 .address-text {
-  margin: 8px 0 0 0;
-  color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.address-city {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: #666666;
+  margin: 0;
+  font-style: italic;
 }
 
 .badge-default {
   display: inline-block;
-  background-color: #0077ff;
-  color: white;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 12px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   margin-top: 8px;
+  border: 2px solid #000000;
 }
 
-/* ===== NÚTTHÊM ĐỊA CHỈ ===== */
+/* Add Address Button */
 .btn-add-address {
   width: 100%;
-  padding: 12px;
-  margin: 15px 0;
-  background-color: #f0f0f0;
-  border: 2px dashed #0077ff;
-  color: #0077ff;
-  border-radius: 8px;
-  cursor: pointer;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
   font-weight: 600;
+  padding: 14px 25px;
+  background: #ffffff;
+  color: #000000;
+  border: 3px dashed #000000;
+  cursor: pointer;
   transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-add-address::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  transition: left 0.4s ease;
+  z-index: 0;
+}
+
+.btn-add-address:hover::before {
+  left: 0;
 }
 
 .btn-add-address:hover {
-  background-color: #f0f7ff;
+  color: #ffffff;
+  border-style: solid;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* ===== FORM NHẬP ĐỊA CHỈ ===== */
+.btn-add-address span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Address Form */
 .address-form {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  margin-top: 15px;
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 2px solid #e0e0e0;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
-  font-size: 0.95rem;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
 .form-group input[type="text"],
+.form-group input[type="email"],
 .form-group input[type="tel"] {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  transition: border-color 0.3s ease;
+  padding: 12px 15px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 2px solid #000000;
+  transition: all 0.3s ease;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="tel"]:focus {
+.form-group input:focus {
   outline: none;
-  border-color: #0077ff;
-  box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.1);
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  border-color: #000000;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .form-group.checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .form-group.checkbox input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
+  accent-color: #000000;
 }
 
 .form-group.checkbox label {
   margin: 0;
-  font-weight: 400;
+  cursor: pointer;
 }
 
 .btn-save-address {
   width: 100%;
-  padding: 12px;
-  background-color: #0077ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 14px 30px;
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-save-address::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #333333;
+  transition: left 0.4s ease;
+  z-index: 0;
+}
+
+.btn-save-address:hover::before {
+  left: 0;
 }
 
 .btn-save-address:hover {
-  background-color: #005fcc;
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* ===== THÔNG TIN KHÁCH HÀNG ===== */
+/* Customer Info Section */
+.customer-info {
+  background: #ffffff;
+  border: 3px solid #000000;
+  padding: 30px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+}
+
 .customer-info p {
-  margin: 10px 0;
-  color: #666;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  margin: 12px 0;
+  line-height: 1.6;
 }
 
 .customer-info strong {
-  color: #333;
-  display: inline-block;
-  width: 110px;
+  font-weight: 700;
+  color: #000000;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.5px;
 }
 
-/* ===== PHƯƠNG THỨC THANH TOÁN ===== */
+/* Payment Method Section */
+.payment-method {
+  background: #ffffff;
+  border: 3px solid #000000;
+  padding: 30px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+}
+
 .payment-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 
 .payment-options label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding: 15px;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .payment-options label:hover {
-  background-color: #f5f5f5;
+  border-color: #000000;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 .payment-options input[type="radio"] {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
+  accent-color: #000000;
 }
 
-/* ===== BÊN PHẢI: TÓM TẮT ===== */
+.payment-options label:has(input:checked) {
+  border: 3px solid #000000;
+  background: #f8f8f8;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   RIGHT SIDE - ORDER SUMMARY
+   ============================================ */
 .checkout-right {
   position: sticky;
   top: 20px;
 }
 
 .order-summary {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border: 4px double #000000;
+  padding: 35px;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.order-summary::before {
+  content: '♪ ◆ ♫ ◆ ♪';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  padding: 0 15px;
+  font-size: 0.9rem;
+  color: #000000;
+  letter-spacing: 8px;
 }
 
 .order-summary h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-  color: #333;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 25px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #000000;
+  text-align: center;
 }
 
+/* Summary Items */
 .summary-items {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
   max-height: 400px;
   overflow-y: auto;
+  margin-bottom: 25px;
+  padding-right: 10px;
+}
+
+/* Custom Scrollbar - Vintage Style */
+.summary-items::-webkit-scrollbar {
+  width: 8px;
+}
+
+.summary-items::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border: 1px solid #000000;
+}
+
+.summary-items::-webkit-scrollbar-thumb {
+  background: #000000;
+  border: 1px solid #000000;
+}
+
+.summary-items::-webkit-scrollbar-thumb:hover {
+  background: #333333;
 }
 
 .summary-item {
   display: flex;
-  gap: 12px;
-  margin-bottom: 15px;
+  justify-content: space-between;
   align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
 }
 
 .item-info {
   display: flex;
+  align-items: center;
   gap: 12px;
   flex: 1;
-  align-items: flex-start;
 }
 
 .item-info img {
   width: 60px;
   height: 60px;
   object-fit: cover;
-  border-radius: 6px;
-  background-color: #f5f5f5;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 3px #ffffff;
 }
 
 .item-details {
@@ -314,171 +557,521 @@
 }
 
 .item-name {
-  margin: 0 0 5px 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
-  font-size: 0.95rem;
+  color: #1a1a1a;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
 }
 
 .item-quantity {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  color: #666666;
   margin: 0;
-  color: #999;
-  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .item-price {
-  margin: 0;
-  font-weight: 600;
-  color: #0077ff;
-  text-align: right;
-  min-width: 80px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+  white-space: nowrap;
 }
 
-/* ===== TỔNG CỘNG ===== */
+/* Summary Totals */
 .summary-totals {
+  border-top: 2px solid #000000;
+  padding-top: 20px;
   margin-bottom: 25px;
 }
 
 .total-row {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
-  color: #666;
-  border-bottom: 1px solid #eee;
+  align-items: center;
+  margin-bottom: 12px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+}
+
+.total-row span:first-child {
+  font-weight: 600;
 }
 
 .total-row span:last-child {
-  font-weight: 600;
-  color: #333;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
 }
 
-.total-row.total-final {
-  border-bottom: none;
-  border-top: 2px solid #333;
-  padding: 15px 0;
-  font-size: 1.1rem;
-  color: #333;
+.total-final {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 3px double #000000;
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
-.total-row.total-final span:last-child {
-  color: #0077ff;
-  font-size: 1.3rem;
+.total-final span {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  color: #000000;
+  letter-spacing: 1px;
 }
 
-/* ===== NÚT HÀNH ĐỘNG ===== */
-.btn-checkout {
+/* Checkout Buttons */
+.btn-checkout,
+.btn-back {
   width: 100%;
-  padding: 14px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 16px 30px;
+  border: 3px solid #000000;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.btn-checkout {
+  background: #000000;
+  color: #ffffff;
+}
+
+.btn-checkout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #333333;
+  transition: left 0.4s ease;
+  z-index: 0;
+}
+
+.btn-checkout:hover::before {
+  left: 0;
 }
 
 .btn-checkout:hover {
-  background-color: #1e7e34;
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
 }
 
 .btn-back {
+  background: #ffffff;
+  color: #000000;
+  margin-bottom: 0;
+}
+
+.btn-back::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
-  padding: 14px;
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  height: 100%;
+  background: #f0f0f0;
+  transition: left 0.4s ease;
+  z-index: 0;
+}
+
+.btn-back:hover::before {
+  left: 0;
 }
 
 .btn-back:hover {
-  background-color: #e0e0e0;
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
 }
 
+.btn-checkout span,
+.btn-back span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   EMPTY CHECKOUT STATE
+   ============================================ */
 .checkout-empty {
-  background: white;
-  padding: 60px 20px;
-  border-radius: 12px;
+  max-width: 600px;
+  margin: 120px auto;
+  padding: 80px 50px;
   text-align: center;
+  background: #ffffff;
+  border: 5px double #000000;
+  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.checkout-empty::before,
+.checkout-empty::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #000000;
+}
+
+.checkout-empty::before {
+  top: 20px;
+  left: 20px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.checkout-empty::after {
+  bottom: 20px;
+  right: 20px;
+  border-left: none;
+  border-top: none;
 }
 
 .checkout-empty h2 {
-  color: #333;
-  margin-bottom: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #000000;
+  margin: 20px 0;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
 .checkout-empty p {
-  color: #666;
-  margin-bottom: 20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  color: #444444;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  font-style: italic;
 }
 
 .checkout-empty button {
-  padding: 12px 30px;
-  background-color: #0077ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 14px 35px;
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .checkout-empty button:hover {
-  background-color: #005fcc;
+  background: #333333;
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* ===== RESPONSIVE ===== */
-@media screen and (max-width: 1024px) {
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1200px) {
+  .checkout-content {
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+  }
+
+  .checkout-container>h1::before,
+  .checkout-container>h1::after {
+    display: none;
+  }
+}
+
+@media (max-width: 968px) {
   .checkout-content {
     grid-template-columns: 1fr;
+    gap: 30px;
   }
 
   .checkout-right {
     position: static;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
+  .order-summary {
+    max-width: 600px;
+    margin: 0 auto;
   }
 }
 
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
   .checkout-container {
-    padding: 10px;
+    padding: 60px 25px;
   }
 
-  .checkout-container h1 {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+  .checkout-container>h1 {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    margin-bottom: 50px;
+    padding: 25px 15px;
   }
 
   .address-section,
   .customer-info,
   .payment-method,
   .order-summary {
-    padding: 15px;
+    padding: 25px 20px;
+  }
+
+  .address-section h2,
+  .customer-info h3,
+  .payment-method h3,
+  .order-summary h2 {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
   }
 
   .address-item {
-    flex-direction: column;
+    padding: 15px;
   }
 
-  .address-item input[type="radio"] {
-    margin-top: 0;
+  .address-text {
+    font-size: 1.1rem;
   }
 
-  .item-info {
-    flex-direction: column;
-    align-items: flex-start;
+  .address-city {
+    font-size: 1rem;
+  }
+
+  .form-group label {
+    font-size: 1rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="tel"] {
+    font-size: 1rem;
+    padding: 10px 12px;
+  }
+
+  .customer-info p {
+    font-size: 1.1rem;
+  }
+
+  .payment-options label {
+    font-size: 1.1rem;
+    padding: 12px;
+  }
+
+  .summary-items {
+    max-height: 300px;
+  }
+
+  .item-info img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .item-name {
+    font-size: 1rem;
+  }
+
+  .item-quantity {
+    font-size: 0.9rem;
   }
 
   .item-price {
-    text-align: left;
+    font-size: 1rem;
+  }
+
+  .total-row {
+    font-size: 1rem;
+  }
+
+  .total-final {
+    font-size: 1.2rem;
+  }
+
+  .btn-checkout,
+  .btn-back,
+  .btn-add-address,
+  .btn-save-address {
+    font-size: 1rem;
+    padding: 14px 25px;
+    letter-spacing: 1px;
+  }
+
+  .checkout-empty {
+    margin: 80px auto;
+    padding: 60px 35px;
+  }
+
+  .checkout-empty h2 {
+    font-size: 2rem;
+  }
+
+  .checkout-empty p {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-container {
+    padding: 40px 15px;
+  }
+
+  .checkout-container>h1 {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    padding: 20px 10px;
+    border-width: 3px;
+  }
+
+  .address-section,
+  .customer-info,
+  .payment-method,
+  .order-summary {
+    padding: 20px 15px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .address-section::before,
+  .order-summary::before {
+    font-size: 0.75rem;
+    letter-spacing: 5px;
+    padding: 0 10px;
+  }
+
+  .address-section h2,
+  .customer-info h3,
+  .payment-method h3,
+  .order-summary h2 {
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  .address-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .address-text {
+    font-size: 1rem;
+  }
+
+  .address-city {
+    font-size: 0.95rem;
+  }
+
+  .badge-default {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="tel"] {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+  }
+
+  .customer-info p {
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+
+  .payment-options label {
+    font-size: 1rem;
+    padding: 12px;
+  }
+
+  .payment-options input[type="radio"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  .summary-items {
+    max-height: 250px;
+  }
+
+  .summary-item {
+    padding: 12px 0;
+  }
+
+  .item-info img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .item-name {
+    font-size: 0.95rem;
+  }
+
+  .item-quantity {
+    font-size: 0.85rem;
+  }
+
+  .item-price {
+    font-size: 0.95rem;
+  }
+
+  .total-row {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  .total-final {
+    font-size: 1.1rem;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .btn-checkout,
+  .btn-back,
+  .btn-add-address,
+  .btn-save-address {
+    font-size: 0.95rem;
+    padding: 13px 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .checkout-empty {
+    margin: 60px auto;
+    padding: 50px 25px;
+  }
+
+  .checkout-empty::before,
+  .checkout-empty::after {
+    width: 30px;
+    height: 30px;
+  }
+
+  .checkout-empty h2 {
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+  }
+
+  .checkout-empty p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+  }
+
+  .checkout-empty button {
+    font-size: 1rem;
+    padding: 12px 30px;
   }
 }

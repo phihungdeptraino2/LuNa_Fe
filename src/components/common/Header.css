@@ -350,7 +350,7 @@ header {
 
 .category-bar .dropdown-menu {
     position: absolute;
-    top: calc(100% + 10px);
+    top: 100%;
     left: 0;
     background: #1a1a1a;
     border: 2px solid #d4af37;
@@ -431,4 +431,58 @@ header {
     /* Vô hiệu hóa khả năng click (rất quan trọng) */
     cursor: default;
     /* Đổi con trỏ chuột thành mặc định */
+}
+
+.search-bar {
+    position: relative;
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-item:last-child {
+    border-bottom: none;
+}
+
+.search-item:hover {
+    background-color: #f9f9f9;
+}
+
+.search-item-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.search-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-item-name {
+    font-weight: 500;
+}
+
+.search-item-price {
+    font-size: 0.85rem;
+    color: #666;
 }

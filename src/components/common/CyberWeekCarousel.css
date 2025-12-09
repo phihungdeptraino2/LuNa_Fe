@@ -1,0 +1,436 @@
+/* ============================================
+   LUNA MUSIC STORE - CYBERWEEK CAROUSEL
+   Black & White Vintage Classic Music Style
+   ============================================ */
+
+.cyberweek-section {
+    padding: 80px 40px;
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Vintage paper texture */
+.cyberweek-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.01) 2px,
+            rgba(0, 0, 0, 0.01) 4px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Title Styling */
+.cw-title-3d {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    text-align: center;
+    color: #1a1a1a;
+    margin-bottom: 60px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    position: relative;
+    text-shadow:
+        3px 3px 0 rgba(0, 0, 0, 0.1),
+        6px 6px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Decorative musical note ornament */
+.cw-title-3d::before {
+    content: '♪';
+    position: absolute;
+    left: 50%;
+    top: -40px;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: #1a1a1a;
+    opacity: 0.3;
+}
+
+.cw-title-3d::after {
+    content: '';
+    display: block;
+    width: 150px;
+    height: 3px;
+    background: #1a1a1a;
+    margin: 20px auto 0;
+}
+
+/* Carousel Wrapper */
+.carousel-wrapper {
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+    z-index: 2;
+}
+
+/* Navigation Buttons */
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: #1a1a1a;
+    border: 3px solid #1a1a1a;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:hover {
+    background: #ffffff;
+    color: #1a1a1a;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+    left: -60px;
+}
+
+.next-btn {
+    right: -60px;
+}
+
+/* Product Carousel Container */
+.product-carousel {
+    display: flex;
+    gap: 25px;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    padding: 20px 10px 30px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.product-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+/* Product Card */
+.carousel-card {
+    min-width: 280px;
+    max-width: 280px;
+    background: #f8f8f8;
+    border: 3px solid #1a1a1a;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.carousel-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+}
+
+/* Vintage corner decorations */
+.carousel-card::before,
+.carousel-card::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #1a1a1a;
+    transition: border-color 0.3s ease;
+}
+
+.carousel-card::before {
+    top: 8px;
+    left: 8px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.carousel-card::after {
+    bottom: 8px;
+    right: 8px;
+    border-left: none;
+    border-top: none;
+}
+
+/* Deal Badge */
+.deal-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 5px 15px;
+    font-family: 'Lora', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    z-index: 5;
+    border: 2px solid #1a1a1a;
+}
+
+.carousel-card:hover .deal-badge {
+    background: #ffffff;
+    color: #1a1a1a;
+}
+
+/* Card Image Container */
+.card-img-container {
+    width: 100%;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.carousel-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+/* Card Info */
+.card-info {
+    position: relative;
+}
+
+.card-info h4 {
+    font-family: 'Lora', 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    min-height: 50px;
+    text-transform: capitalize;
+}
+
+/* Rating */
+.rating {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    color: #1a1a1a;
+}
+
+/* Price Box */
+.price-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.old-price {
+    font-size: 1.1rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Stock Status */
+.stock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #2e7d32;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Card Actions */
+.card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.heart-icon,
+.cart-btn-mini {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1a1a1a;
+    background: #ffffff;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.heart-icon:hover {
+    background: #1a1a1a;
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.cart-btn-mini {
+    flex: 1;
+}
+
+.cart-btn-mini:hover {
+    background: #1a1a1a;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Custom Scroll Track */
+.custom-scroll-track {
+    width: 80%;
+    height: 4px;
+    background: #e0e0e0;
+    margin: 30px auto;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+.custom-scroll-thumb {
+    position: absolute;
+    height: 100%;
+    width: 20%;
+    background: #1a1a1a;
+    transition: left 0.1s ease;
+}
+
+/* Show All Button */
+.show-all-btn {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 15px 50px;
+    background: #ffffff;
+    color: #1a1a1a;
+    border: 3px solid #1a1a1a;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.show-all-btn:hover {
+    background: #1a1a1a;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .prev-btn {
+        left: -50px;
+    }
+
+    .next-btn {
+        right: -50px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .cw-title-3d {
+        font-size: 3rem;
+    }
+
+    .prev-btn {
+        left: 10px;
+    }
+
+    .next-btn {
+        right: 10px;
+    }
+
+    .nav-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cyberweek-section {
+        padding: 60px 20px;
+    }
+
+    .cw-title-3d {
+        font-size: 2.5rem;
+        letter-spacing: 4px;
+    }
+
+    .carousel-card {
+        min-width: 240px;
+        max-width: 240px;
+    }
+
+    .card-img-container {
+        height: 180px;
+    }
+
+    .show-all-btn {
+        padding: 12px 40px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cw-title-3d {
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
+
+    .carousel-card {
+        min-width: 200px;
+        max-width: 200px;
+        padding: 15px;
+    }
+
+    .card-img-container {
+        height: 150px;
+    }
+
+    .card-info h4 {
+        font-size: 1rem;
+        min-height: 40px;
+    }
+
+    .price {
+        font-size: 1.3rem;
+    }
+
+    .nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+}

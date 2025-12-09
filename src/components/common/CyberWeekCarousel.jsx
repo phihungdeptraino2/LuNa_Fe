@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "../../pages/home/HomePage.css";
+import "./CyberWeekCarousel.css"
 
 const CyberWeekCarousel = ({ products, loading }) => {
   const [scrollProgress, setScrollProgress] = useState(0);

@@ -45,7 +45,7 @@
 
 .categories-grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
     max-width: 1400px;
     margin: 60px auto 0;
@@ -162,7 +162,7 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
     .categories-grid-container {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 25px;
     }
 
@@ -177,7 +177,7 @@
     }
 
     .categories-grid-container {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
 

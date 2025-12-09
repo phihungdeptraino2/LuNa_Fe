@@ -11,8 +11,10 @@ const Header = ({ user, logout, handleUserIconClick }) => {
   const { totalTypes } = useCart();
 
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [isCategoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isPowerDropdownOpen, setPowerDropdownOpen] = useState(false);
 
   const isCustomer = user?.roles?.includes("CUSTOMER");
@@ -28,6 +30,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     { name: "Liên hệ", path: `${prefix}/contact` },
   ];
 
+  // Lấy categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -37,8 +40,35 @@ const Header = ({ user, logout, handleUserIconClick }) => {
         console.error("Error fetching categories:", err);
       }
     };
+
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get("http://localhost:8081/api/products");
+        setProducts(res.data.data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
+
     fetchCategories();
+    fetchProducts();
   }, []);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim() === "") {
+        setSearchResults([]);
+        return;
+      }
+      const results = products.filter((p) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(results.slice(0, 5));
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, products]);
 
   return (
     <header>
@@ -47,23 +77,50 @@ const Header = ({ user, logout, handleUserIconClick }) => {
           <Link to={isCustomer ? "/customer/home" : "/"}>Luna<span>•</span>Music</Link>
         </div>
 
+        {/* Search Bar */}
         <div className="search-bar">
-          <input type="text" placeholder="Search..." />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <FaSearch className="search-icon" />
+
+          {searchResults.length > 0 && (
+            <div className="search-dropdown">
+              {searchResults.map((p) => (
+                <Link
+                  key={p.id}
+                  to={`${prefix}/products/${p.id}`}
+                  className="search-item"
+                  onClick={() => setSearchTerm("")}
+                >
+                  <img
+                    src={`http://localhost:8081${p.productImages.find((img) => img.default)?.imageUrl || ""}`}
+                    alt={p.name}
+                    className="search-item-img"
+                  />
+                  <div className="search-item-info">
+                    <span className="search-item-name">{p.name}</span>
+                    <span className="search-item-price">${p.price}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
+        {/* User Actions */}
         <div className="user-actions">
-          {/* Login Button hoặc User Name */}
           <div className="action-item login-btn" onClick={handleUserIconClick}>
             {user ? `Hi, ${user.username}` : <FaUser />}
           </div>
 
-          {/* Heart Icon - Bỏ wrapper action-item */}
           <div className="action-item">
             <FaHeart className="header-icon" />
           </div>
 
-          {/* Cart Icon - Sửa lại cấu trúc */}
           <div className="action-item cart-wrapper">
             <Link to={isCustomer ? "/customer/cart" : "/cart"}>
               <FaShoppingCart className="header-icon" />
@@ -71,7 +128,6 @@ const Header = ({ user, logout, handleUserIconClick }) => {
             </Link>
           </div>
 
-          {/* Power Dropdown */}
           {user && (
             <div
               className="dropdown power-dropdown"
@@ -92,6 +148,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
         </div>
       </div>
 
+      {/* Category Nav */}
       <nav className="category-bar">
         {menus.map((menu) => {
           if (menu.name === "Danh mục sản phẩm") {
@@ -125,6 +182,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
               </div>
             );
           }
+
           return (
             <Link
               key={menu.name}
