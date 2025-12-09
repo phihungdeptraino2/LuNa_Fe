@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
+import { FaSearch, FaUser, FaHeart, FaShoppingCart, FaPowerOff } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import axios from "axios";
 import "../../pages/home/HomePage.css";
+import "./Header.css";
 
 const Header = ({ user, logout, handleUserIconClick }) => {
   const location = useLocation();
   const { totalTypes } = useCart();
 
-  // State
   const [categories, setCategories] = useState([]);
   const [isCategoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [isPowerDropdownOpen, setPowerDropdownOpen] = useState(false);
 
   const isCustomer = user?.roles?.includes("CUSTOMER");
   const isAdmin = user?.roles?.includes("ADMIN");
@@ -27,7 +28,6 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     { name: "Liên hệ", path: `${prefix}/contact` },
   ];
 
-  // Lấy categories từ API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -42,7 +42,6 @@ const Header = ({ user, logout, handleUserIconClick }) => {
 
   return (
     <header>
-      {/* HEADER TOP */}
       <div className="main-header">
         <div className="logo">
           <Link to={isCustomer ? "/customer/home" : "/"}>Luna<span>•</span>Music</Link>
@@ -54,23 +53,45 @@ const Header = ({ user, logout, handleUserIconClick }) => {
         </div>
 
         <div className="user-actions">
+          {/* Login Button hoặc User Name */}
           <div className="action-item login-btn" onClick={handleUserIconClick}>
             {user ? `Hi, ${user.username}` : <FaUser />}
           </div>
 
-          <FaHeart className="header-icon" />
-
-          {/* Giỏ hàng với link dynamic */}
+          {/* Heart Icon - Bỏ wrapper action-item */}
           <div className="action-item">
+            <FaHeart className="header-icon" />
+          </div>
+
+          {/* Cart Icon - Sửa lại cấu trúc */}
+          <div className="action-item cart-wrapper">
             <Link to={isCustomer ? "/customer/cart" : "/cart"}>
               <FaShoppingCart className="header-icon" />
               {totalTypes > 0 && <span className="badge">{totalTypes}</span>}
             </Link>
           </div>
+
+          {/* Power Dropdown */}
+          {user && (
+            <div
+              className="dropdown power-dropdown"
+              onMouseEnter={() => setPowerDropdownOpen(true)}
+              onMouseLeave={() => setPowerDropdownOpen(false)}
+            >
+              <FaPowerOff className="header-icon clickable" />
+              {isPowerDropdownOpen && (
+                <div className="dropdown-menu power-menu">
+                  <Link to={`${prefix}/profile`} className="dropdown-item" onClick={(e) => e.preventDefault()}>Profile</Link>
+                  <Link to={`${prefix}/settings`} className="dropdown-item" onClick={(e) => e.preventDefault()}>Settings</Link>
+                  {isAdmin && <Link to="/admin/dashboard" className="dropdown-item">Dashboard</Link>}
+                  <div className="dropdown-item" onClick={handleUserIconClick}>Logout</div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* CATEGORY MENU */}
       <nav className="category-bar">
         {menus.map((menu) => {
           if (menu.name === "Danh mục sản phẩm") {

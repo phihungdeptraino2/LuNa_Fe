@@ -6,19 +6,21 @@ const CartItem = ({ item }) => {
 
   const BE_HOST = "http://localhost:8081";
 
-  // Lấy sản phẩm từ item (đảm bảo với cả user chưa login)
+  // Lấy sản phẩm từ item (hỗ trợ cả user chưa login)
   const product = item.product || item;
 
-  // tìm ảnh default giống ProductCard
-  const defaultImage =
-    product.productImages?.find(img => img.default)?.imageUrl || "";
+  // Lấy ảnh: ưu tiên productImages.default, nếu không có dùng imageUrl trực tiếp
+  let imageSrc = "";
+  if (product.productImages?.length > 0) {
+    const defaultImg = product.productImages.find(img => img.default);
+    if (defaultImg) {
+      imageSrc = `${BE_HOST}${defaultImg.imageUrl.startsWith("/") ? defaultImg.imageUrl : `/${defaultImg.imageUrl}`}`;
+    }
+  } else if (product.imageUrl) {
+    imageSrc = `${BE_HOST}${product.imageUrl.startsWith("/") ? product.imageUrl : `/${product.imageUrl}`}`;
+  }
 
-  // Ghép URL giống ProductCard
-  const imageSrc = defaultImage
-    ? `${BE_HOST}${defaultImage.startsWith("/") ? defaultImage : `/${defaultImage}`}`
-    : "";
-
-  const price = product.price ?? 0; // fallback 0 nếu undefined
+  const price = product.price ?? 0;
 
   return (
     <div className="cart-item">

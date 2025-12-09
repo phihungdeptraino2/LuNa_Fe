@@ -8,6 +8,9 @@ const CartPage = () => {
   const { cartItems, totalPrice, clearCart } = useCart()
   const navigate = useNavigate()
 
+  // === Debug dữ liệu giỏ hàng ===
+  console.log("cartItems:", cartItems)
+
   // Nếu giỏ hàng rỗng
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -24,7 +27,10 @@ const CartPage = () => {
 
       <div className="cart-items-list">
         {cartItems.map((item, index) => (
-          <CartItem key={item.product?.id || item.id || index} item={item} />
+          <CartItem
+            key={item.product?.id || item.id || index}
+            item={item}
+          />
         ))}
       </div>
 
