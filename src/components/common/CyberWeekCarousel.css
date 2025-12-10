@@ -1,7 +1,7 @@
 /* ============================================
-   LUNA MUSIC STORE - CYBERWEEK CAROUSEL
-   Black & White Vintage Classic Music Style
-   ============================================ */
+    LUNA MUSIC STORE - CYBERWEEK CAROUSEL
+    Black & White Vintage Classic Music Style (Updated)
+    ============================================ */
 
 .cyberweek-section {
     padding: 80px 40px;
@@ -121,13 +121,14 @@
     display: none;
 }
 
-/* Product Card */
+/* Product Card - Đã loại bỏ pseudo-element trang trí góc */
 .carousel-card {
     min-width: 280px;
     max-width: 280px;
     background: #f8f8f8;
     border: 3px solid #1a1a1a;
     border-radius: 12px;
+    /* Giữ bo tròn góc */
     padding: 20px;
     position: relative;
     transition: all 0.3s ease;
@@ -140,30 +141,7 @@
     background: #ffffff;
 }
 
-/* Vintage corner decorations */
-.carousel-card::before,
-.carousel-card::after {
-    content: '';
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    border: 2px solid #1a1a1a;
-    transition: border-color 0.3s ease;
-}
-
-.carousel-card::before {
-    top: 8px;
-    left: 8px;
-    border-right: none;
-    border-bottom: none;
-}
-
-.carousel-card::after {
-    bottom: 8px;
-    right: 8px;
-    border-left: none;
-    border-top: none;
-}
+/* Các pseudo-element ::before và ::after đã bị loại bỏ ở đây */
 
 /* Deal Badge */
 .deal-badge {
@@ -199,6 +177,8 @@
     border: 2px solid #e0e0e0;
     overflow: hidden;
     position: relative;
+    border-radius: 8px;
+    /* Thêm bo tròn cho ảnh */
 }
 
 .card-img {
@@ -283,27 +263,38 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #1a1a1a;
-    background: #ffffff;
+    /* CẬP NHẬT: Xóa viền */
+    border: none;
+    /* CẬP NHẬT: Đặt nền trong suốt */
+    background: transparent;
     color: #1a1a1a;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 1.1rem;
+    border-radius: 4px;
 }
 
 .heart-icon:hover {
-    background: #1a1a1a;
-    color: #ffffff;
+    /* Đã cập nhật hover để vẫn có hiệu ứng */
+    background: #e0e0e0;
+    /* Thay đổi nền khi hover để làm nổi bật */
+    color: #1a1a1a;
     transform: scale(1.1);
 }
 
 .cart-btn-mini {
     flex: 1;
+    /* Cập nhật flex: 0 để icon giỏ hàng không chiếm hết không gian còn lại */
+    flex: 0 0 auto;
+    width: 40px;
+    /* Đặt lại width để phù hợp với icon */
 }
 
 .cart-btn-mini:hover {
-    background: #1a1a1a;
-    color: #ffffff;
+    /* Đã cập nhật hover để vẫn có hiệu ứng */
+    background: #e0e0e0;
+    /* Thay đổi nền khi hover để làm nổi bật */
+    color: #1a1a1a;
     transform: translateY(-2px);
 }
 
@@ -315,6 +306,7 @@
     margin: 30px auto;
     position: relative;
     border: 1px solid #ccc;
+    border-radius: 2px;
 }
 
 .custom-scroll-thumb {
@@ -339,6 +331,8 @@
     letter-spacing: 2px;
     text-transform: uppercase;
     box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    /* Thêm bo tròn cho nút */
 }
 
 .show-all-btn:hover {

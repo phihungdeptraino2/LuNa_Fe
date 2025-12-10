@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
-import toast, { Toaster } from "react-hot-toast" // 👈 Đã thêm import
+import toast, { Toaster } from "react-hot-toast"
 
 const CartContext = createContext()
 
@@ -11,22 +11,22 @@ export const useCart = () => useContext(CartContext)
 // Định nghĩa style vintage cho các loại toast
 const VINTAGE_STYLE = {
   success: {
-    background: '#1a1a1a', // Đen tối
-    color: '#fffaf0', // Trắng ngà
-    border: '2px solid #c9b19e', // Viền sepia
+    background: '#1a1a1a',
+    color: '#fffaf0',
+    border: '2px solid #c9b19e',
     fontFamily: 'serif',
   },
   error: {
-    background: '#8b0000', // Đỏ đậm
+    background: '#8b0000',
     color: '#fff',
     border: '2px solid #fff',
     fontFamily: 'serif',
   },
   warning: {
-    background: '#fffaf0', // Trắng ngà
+    background: '#fffaf0',
     color: '#333',
     border: '2px solid #333',
-    fontFamily: 'sans-serif', // Cho dễ đọc hơn
+    fontFamily: 'sans-serif',
   },
 }
 
@@ -123,14 +123,12 @@ export const CartProvider = ({ children }) => {
           sessionStorage.setItem("cart", JSON.stringify(data.data.items))
         }
 
-        // ✅ THAY THẾ alert() THÀNH CÔNG
         toast.success("🎶 Đã Thêm Bản Nhạc! Tiếp tục thưởng thức.", {
           duration: 3000,
           style: VINTAGE_STYLE.success
         })
       } catch (err) {
         console.error(err)
-        // ❌ THAY THẾ alert() THẤT BẠI
         toast.error("🚨 Đứt Dây Đàn! Lỗi khi thêm vào giỏ hàng. Xin thử lại.", {
           duration: 5000,
           style: VINTAGE_STYLE.error
@@ -150,16 +148,12 @@ export const CartProvider = ({ children }) => {
       setCartItems(newCart)
       sessionStorage.setItem("cart", JSON.stringify(newCart))
 
-      // ⚠️ THAY THẾ alert() CHƯA LOGIN
       toast("🎫 Vé Tạm Thời. Vui lòng **Đăng Nhập** để đảm bảo đơn hàng không bị thất lạc.", {
         icon: '📝',
         duration: 4000,
         style: VINTAGE_STYLE.warning,
       })
     }
-
-    console.log("User in addToCart:", user)
-    console.log("Token:", user?.token)
   }
 
   // Xóa sản phẩm khỏi giỏ
@@ -193,7 +187,6 @@ export const CartProvider = ({ children }) => {
         setCartItems(updated);
         sessionStorage.setItem("cart", JSON.stringify(updated));
 
-        // ✅ THAY THẾ alert() XÓA THÀNH CÔNG (Có thể bỏ qua hoặc dùng toast nhỏ)
         toast('Đã loại bỏ bản nhạc.', {
           duration: 1500,
           icon: '🗑️',
@@ -202,17 +195,15 @@ export const CartProvider = ({ children }) => {
 
       } catch (err) {
         console.error(err);
-        // ❌ THAY THẾ alert() LỖI XÓA
         toast.error("Lỗi Xóa Bỏ. Không thể loại bỏ bản nhạc khỏi hệ thống.", {
           duration: 4000,
           style: VINTAGE_STYLE.error
         });
       }
     } else {
-      const newCart = cartItems.filter((item) => item.product?.id !== productId);
+      const newCart = cartItems.filter((item) => (item.product?.id || item.id) !== productId);
       setCartItems(newCart);
       sessionStorage.setItem("cart", JSON.stringify(newCart));
-      // ✅ THAY THẾ alert() XÓA LOCAL
       toast('Đã loại bỏ bản nhạc tạm thời.', {
         duration: 1500,
         icon: '🗑️',
@@ -226,8 +217,7 @@ export const CartProvider = ({ children }) => {
   const clearCart = async () => {
     if (token) {
       try {
-        // Cần cập nhật backend API để có thể xóa toàn bộ chỉ bằng 1 request
-        // Hiện tại, ta sẽ giữ vòng lặp for cho đến khi bạn sửa API
+        // Giữ vòng lặp for để xóa từng item nếu không có API xóa toàn bộ
         for (const item of cartItems) {
           const productId = item.product?.id;
 
@@ -244,7 +234,6 @@ export const CartProvider = ({ children }) => {
           );
 
           if (!res.ok) {
-            // Nếu có lỗi, ta sẽ ném lỗi và thoát vòng lặp
             throw new Error(`Xóa sản phẩm ${productId} thất bại`);
           }
         }
@@ -253,7 +242,6 @@ export const CartProvider = ({ children }) => {
         setCartItems([]);
         sessionStorage.removeItem("cart");
 
-        // ✅ THAY THẾ alert() CLEAR THÀNH CÔNG
         toast.success("Giỏ hàng đã được dọn sạch. Buổi hòa nhạc sắp bắt đầu!", {
           duration: 3000,
           style: VINTAGE_STYLE.success
@@ -261,7 +249,6 @@ export const CartProvider = ({ children }) => {
 
       } catch (err) {
         console.error(err);
-        // ❌ THAY THẾ alert() LỖI CLEAR
         toast.error("Lỗi Dọn Sách. Không thể làm trống giỏ hàng trên hệ thống.", {
           duration: 5000,
           style: VINTAGE_STYLE.error
@@ -272,7 +259,6 @@ export const CartProvider = ({ children }) => {
       // Trường hợp user chưa đăng nhập → chỉ xóa local cart
       setCartItems([]);
       sessionStorage.removeItem("cart");
-      // ✅ THAY THẾ alert() CLEAR LOCAL
       toast("Đã dọn sạch giỏ tạm thời.", {
         icon: '🧹',
         duration: 3000,
@@ -280,6 +266,83 @@ export const CartProvider = ({ children }) => {
       });
     }
   };
+
+  // =======================================================
+  // 🆕 HÀM CẬP NHẬT SỐ LƯỢNG SẢN PHẨM (Đã chuyển từ POST sang PUT)
+  // =======================================================
+  const updateItemQuantity = async (productId, newQuantity) => {
+    const quantity = Math.max(0, newQuantity); // Đảm bảo số lượng không âm
+
+    if (token) {
+      // ➡️ Đã Login: Gọi API Cập nhật
+      if (quantity === 0) {
+        // Nếu số lượng về 0, gọi hàm xóa sản phẩm
+        return removeFromCart(productId);
+      }
+
+      try {
+        // SỬ DỤNG API CẬP NHẬT: Đã đổi method sang PUT
+        const res = await fetch(
+          `http://localhost:8081/api/cart/update?productId=${productId}&quantity=${quantity}`,
+          {
+            method: "PUT", // ⬅️ THAY ĐỔI TẠI ĐÂY: Từ POST sang PUT
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!res.ok) {
+          const errData = await res.text();
+          console.error("Lỗi cập nhật giỏ hàng API:", res.status, errData);
+          throw new Error(`Cập nhật số lượng thất bại: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        const items = data.data?.items || [];
+
+        // Format và Cập nhật state với dữ liệu giỏ hàng mới trả về từ API
+        const updated = items.map((i) => ({
+          product: { id: i.productId, name: i.name, price: i.price, imageUrl: i.imageUrl },
+          quantity: i.quantity,
+        }));
+
+        setCartItems(updated);
+        sessionStorage.setItem("cart", JSON.stringify(updated));
+
+        toast.success(`Cập nhật số lượng thành công!`, {
+          duration: 1500,
+          style: VINTAGE_STYLE.success,
+        });
+
+      } catch (err) {
+        console.error("Lỗi cập nhật số lượng:", err);
+        toast.error("🚨 Lỗi Cập Nhật! Không thể điều chỉnh số lượng.", {
+          duration: 4000,
+          style: VINTAGE_STYLE.error,
+        });
+      }
+
+    } else {
+      // ➡️ Chưa Login: Cập nhật local storage 
+      let newCart;
+      if (quantity === 0) {
+        newCart = cartItems.filter((item) => (item.product?.id || item.id) !== productId);
+      } else {
+        newCart = cartItems.map((item) =>
+          (item.product?.id || item.id) === productId ? { ...item, quantity: quantity } : item
+        );
+      }
+
+      setCartItems(newCart);
+      sessionStorage.setItem("cart", JSON.stringify(newCart));
+
+      toast('Số lượng tạm thời đã được điều chỉnh.', {
+        duration: 1500,
+        icon: '🔄',
+        style: VINTAGE_STYLE.warning
+      });
+    }
+  };
+  // =======================================================
 
 
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0)
@@ -293,6 +356,7 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         clearCart,
+        updateItemQuantity, // 👈 Đã thêm hàm mới vào Context
         totalQuantity,
         totalPrice,
         totalTypes,

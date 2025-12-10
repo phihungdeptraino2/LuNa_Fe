@@ -345,3 +345,52 @@
     padding: 6px 8px;
   }
 }
+
+/* =======================================
+   SỬA ĐỔI: TÊN DANH MỤC (KHẮC PHỤC LỖI FONT & PHÙ HỢP THEME B&W VINTAGE)
+   ======================================= */
+.category-name-display {
+  /* KHẮC PHỤC LỖI FONT: Tạm thời chuyển sang font an toàn hơn cho hiển thị tiêu đề phụ */
+  font-family: 'Times New Roman', Times, serif;
+
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #1a1a1a;
+  text-transform: capitalize;
+
+  margin-top: -20px;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+
+  /* Hiệu ứng viền kép cổ điển (giữ nguyên) */
+  border-bottom: 3px double #1a1a1a;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Đảm bảo style .reset-button (nếu cần) */
+.filter-reset-group {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.reset-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #dc3545;
+  /* Màu đỏ */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.reset-button:hover {
+  background-color: #c82333;
+}

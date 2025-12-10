@@ -1,16 +1,21 @@
+// File: ../../components/cart/CartItem.js
+
 import React from "react";
 import { useCart } from "../../context/CartContext";
 import "./CartItem.css"
 
 const CartItem = ({ item }) => {
-  const { removeFromCart } = useCart();
+  // 🆕 Destructure thêm updateItemQuantity
+  const { removeFromCart, updateItemQuantity } = useCart();
 
   const BE_HOST = "http://localhost:8081";
 
-  // Lấy sản phẩm từ item (hỗ trợ cả user chưa login)
+  // Lấy sản phẩm và ID
   const product = item.product || item;
+  const productId = product.id;
+  const currentQuantity = item.quantity;
 
-  // Lấy ảnh: ưu tiên productImages.default, nếu không có dùng imageUrl trực tiếp
+  // Lấy ảnh: (Giữ nguyên logic)
   let imageSrc = "";
   if (product.productImages?.length > 0) {
     const defaultImg = product.productImages.find(img => img.default);
@@ -22,6 +27,13 @@ const CartItem = ({ item }) => {
   }
 
   const price = product.price ?? 0;
+
+  // Xử lý tăng/giảm số lượng
+  const handleQuantityChange = (delta) => {
+    const newQuantity = currentQuantity + delta;
+    // Gọi hàm cập nhật từ CartContext
+    updateItemQuantity(productId, newQuantity);
+  };
 
   return (
     <div className="cart-item">
@@ -42,12 +54,26 @@ const CartItem = ({ item }) => {
             currency: "VND",
           })}
         </p>
-        <p>Số lượng: {item.quantity}</p>
+        {/* 🆕 BỘ ĐIỀU KHIỂN SỐ LƯỢNG MỚI */}
+        <div className="quantity-control">
+          <button
+            onClick={() => handleQuantityChange(-1)}
+            disabled={currentQuantity <= 1}
+          >
+            -
+          </button>
+          <span className="current-quantity">{currentQuantity}</span>
+          <button
+            onClick={() => handleQuantityChange(1)}
+          >
+            +
+          </button>
+        </div>
       </div>
 
       <button
         className="remove-btn"
-        onClick={() => removeFromCart(product.id)}
+        onClick={() => removeFromCart(productId)}
       >
         Xóa
       </button>

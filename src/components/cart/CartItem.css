@@ -150,3 +150,72 @@
         margin-top: 10px;
     }
 }
+
+/* ======================================================= */
+/* KIỂM SOÁT SỐ LƯỢNG (BLACK/WHITE VINTAGE) */
+/* ======================================================= */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    /* Loại bỏ khoảng cách giữa các phần tử để tạo thành khối liền mạch */
+    margin-top: 10px;
+    border: 1px solid #1a1a1a;
+    /* Viền ngoài màu đen tối */
+    width: fit-content;
+    /* Giúp khối không bị trải dài */
+}
+
+.quantity-control button {
+    /* Thiết lập cho cả nút Tăng và Giảm */
+    background-color: #ffffff;
+    /* Nền trắng */
+    color: #1a1a1a;
+    /* Chữ đen */
+    border: none;
+    /* Xóa viền nội bộ */
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    line-height: 1;
+    /* Căn giữa ký tự */
+}
+
+/* Hiệu ứng di chuột (Hover) */
+.quantity-control button:hover {
+    background-color: #f0f0f0;
+    /* Hơi xám khi hover */
+}
+
+/* Nút bị vô hiệu hóa (disabled) */
+.quantity-control button:disabled {
+    cursor: not-allowed;
+    background-color: #fff;
+    color: #cccccc;
+    /* Màu xám nhạt cho text */
+    opacity: 0.8;
+}
+
+.current-quantity {
+    /* Phần hiển thị số lượng ở giữa */
+    background-color: #1a1a1a;
+    /* Nền đen tối (Đảo ngược màu so với nút) */
+    color: #fffaf0;
+    /* Chữ trắng ngà (vintage white) */
+    font-weight: bold;
+    padding: 6px 12px;
+    border-left: 1px solid #c9b19e;
+    /* Viền phân tách màu sepia */
+    border-right: 1px solid #c9b19e;
+    /* Viền phân tách màu sepia */
+    min-width: 30px;
+    text-align: center;
+    line-height: 1;
+}
+
+/* Điều chỉnh lại layout của CartItem tổng thể để căn chỉnh tốt hơn */
+.cart-item-info p {
+    margin: 5px 0;
+}

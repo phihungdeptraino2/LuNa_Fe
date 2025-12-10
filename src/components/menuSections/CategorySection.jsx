@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom"; // IMPORT useNavigate
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../../services/productService";
 import ProductCard from "../../components/ProductCard";
-import "./CategorySection.css";
+import "./CategorySection.css"; // Đảm bảo bạn thêm CSS mới vào file này
 
 // Giới hạn số lượng mục hiển thị ban đầu
 const MAX_ITEMS_DISPLAY = 10;
@@ -12,8 +12,11 @@ export default function CategorySection() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate(); // KHAI BÁO HOOK navigate
+  const navigate = useNavigate();
   const categoryId = searchParams.get("categoryId");
+
+  // State MỚI: Lưu tên danh mục để hiển thị tiêu đề
+  const [categoryName, setCategoryName] = useState("Tất cả sản phẩm");
 
   // State cho filter
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -28,16 +31,30 @@ export default function CategorySection() {
   const [showAllColors, setShowAllColors] = useState(false);
   const [showAllOrigins, setShowAllOrigins] = useState(false);
 
+  // 1. useEffect Lấy dữ liệu và Cập nhật Tên danh mục
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const data = await getAllProducts();
+
         const filteredByCategory = categoryId
           ? data.filter((p) => p.category.id.toString() === categoryId)
           : data;
+
         setAllProducts(filteredByCategory);
         setFilteredProducts(filteredByCategory);
+
+        // CẬP NHẬT LOGIC TÊN DANH MỤC
+        if (categoryId && filteredByCategory.length > 0) {
+          // Lấy tên từ sản phẩm đầu tiên đã được lọc
+          setCategoryName(filteredByCategory[0].category.name);
+        } else if (!categoryId) {
+          setCategoryName("Tất cả sản phẩm");
+        } else {
+          setCategoryName("Không tìm thấy sản phẩm trong danh mục này");
+        }
+
         // Cập nhật price range max
         const prices = filteredByCategory.map((p) => p.price);
         if (prices.length > 0) setPriceRange([Math.min(...prices), Math.max(...prices)]);
@@ -45,6 +62,7 @@ export default function CategorySection() {
         console.error(err);
         setAllProducts([]);
         setFilteredProducts([]);
+        setCategoryName("Lỗi tải dữ liệu");
       } finally {
         setLoading(false);
       }
@@ -52,7 +70,7 @@ export default function CategorySection() {
     fetchData();
   }, [categoryId]);
 
-  // Lọc khi filter thay đổi (Giữ nguyên logic này)
+  // 2. useEffect Lọc khi filter thay đổi
   useEffect(() => {
     let temp = [...allProducts];
 
@@ -61,10 +79,7 @@ export default function CategorySection() {
       temp = temp.filter((p) => selectedBrands.includes(p.brand.name));
     }
 
-    // Price: Cần lấy min/max price ban đầu của tất cả sản phẩm
-    const initialMinPrice = allProducts.length > 0 ? Math.min(...allProducts.map(p => p.price)) : 0;
-    const initialMaxPrice = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.price)) : 10000;
-
+    // Price
     temp = temp.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
 
     // Stock
@@ -105,7 +120,6 @@ export default function CategorySection() {
   // ******************************************************
   // ************* HÀM ĐẶT LẠI BỘ LỌC *******************
   // ******************************************************
-
   const handleResetFilters = () => {
     // 1. Đặt lại các state filter về giá trị mặc định
     setSelectedBrands([]);
@@ -126,11 +140,9 @@ export default function CategorySection() {
     setShowAllBrands(false);
     setShowAllColors(false);
     setShowAllOrigins(false);
-
-    // Lưu ý: Việc đặt lại filteredProducts sẽ diễn ra trong useEffect khi các state trên thay đổi.
   };
 
-  // Lấy danh sách unique cho filter options (Giữ nguyên)
+  // Lấy danh sách unique cho filter options (giữ nguyên)
   const brands = Array.from(new Set(allProducts.map((p) => p.brand.name)));
   const colors = Array.from(
     new Set(
@@ -145,7 +157,7 @@ export default function CategorySection() {
     )
   );
 
-  // Áp dụng giới hạn hiển thị (Giữ nguyên)
+  // Áp dụng giới hạn hiển thị (giữ nguyên)
   const visibleBrands = showAllBrands ? brands : brands.slice(0, MAX_ITEMS_DISPLAY);
   const visibleColors = showAllColors ? colors : colors.slice(0, MAX_ITEMS_DISPLAY);
   const visibleOrigins = showAllOrigins ? origins : origins.slice(0, MAX_ITEMS_DISPLAY);
@@ -161,6 +173,9 @@ export default function CategorySection() {
   return (
     <div className="category-section">
       <h2>Danh mục sản phẩm</h2>
+      {/* HIỂN THỊ TÊN DANH MỤC MỚI */}
+      <h3 className="category-name-display">{categoryName}</h3>
+
       <div className="category-container">
         {/* Sidebar Filter */}
         <div className="filter-sidebar">
@@ -312,7 +327,6 @@ export default function CategorySection() {
             <ProductCard
               key={product.id}
               product={product}
-              // THÊM SỰ KIỆN CHUYỂN HƯỚNG
               onSelect={() => handleProductSelect(product.id)}
             />
           ))}
