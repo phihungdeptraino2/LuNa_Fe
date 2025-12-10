@@ -117,12 +117,21 @@
 }
 
 /* --- Video Preview --- */
-.product-video-preview {
-  position: relative;
+/* Xóa hoặc sửa class .product-video-preview cũ đi, thay bằng cái này */
+
+.product-video-direct {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  cursor: pointer;
+  aspect-ratio: 16 / 9; /* Giữ tỷ lệ khung hình chuẩn Youtube */
   margin-top: 20px;
+  border: 2px solid #1a1a1a; /* Viền cho đẹp khớp theme */
+  background: #000;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+}
+
+.product-video-direct iframe {
+  display: block; /* Xóa khoảng trắng thừa dưới chân iframe */
+  width: 100%;
+  height: 100%;
 }
 
 .video-thumbnail {

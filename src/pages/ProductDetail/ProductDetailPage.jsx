@@ -158,18 +158,20 @@ const ProductDetailPage = () => {
             ))}
           </div>
           {videoUrl && (
-            <div
-              className="product-video-preview"
-              onClick={() => setShowVideo(true)}
-            >
-              <img
-                src={`https://img.youtube.com/vi/${getVideoId(videoUrl)}/0.jpg`}
-                alt="Video Preview"
-                className="video-thumbnail"
-              />
-              <div className="play-button">▶</div>
+            <div className="product-video-direct">
+              <iframe
+                width="100%"
+                height="100%"
+                // Thêm autoplay=1 và mute=1 để tự chạy
+                src={`https://www.youtube.com/embed/${getVideoId(videoUrl)}?autoplay=1&mute=1&loop=1&playlist=${getVideoId(videoUrl)}&controls=1`}
+                title="Product Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
           )}
+            
 
         </div>
 
