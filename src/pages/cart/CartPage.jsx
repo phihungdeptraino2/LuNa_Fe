@@ -51,7 +51,7 @@ const CartPage = () => {
       <div className="cart-empty">
         <h2>Giỏ hàng trống</h2>
         <p>Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
-        <button className="btn-shop" onClick={() => navigate("/")}>Tiếp tục mua sắm</button>
+        <button className="btn-checkout" onClick={() => navigate("/")}>Tiếp tục mua sắm</button>
       </div>
     )
   }

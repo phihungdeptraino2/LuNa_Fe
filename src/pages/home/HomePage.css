@@ -287,9 +287,19 @@ header {
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-
+.banner-img1 {
+  width: 98%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
 .banner-side:hover .banner-img,
 .banner-center:hover .banner-img {
+  transform: scale(1.03);
+}
+
+.banner-side:hover .banner-img1,
+.banner-center:hover .banner-img1 {
   transform: scale(1.03);
 }
 

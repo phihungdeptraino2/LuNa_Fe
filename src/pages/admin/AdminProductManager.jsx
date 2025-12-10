@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  getAdminProducts,
   deleteProduct,
   createProduct,
   updateProduct,
