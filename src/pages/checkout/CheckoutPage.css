@@ -1075,3 +1075,127 @@
     padding: 12px 30px;
   }
 }
+
+/* Thêm vào OrderReviewPage.css hoặc CheckoutPage.css */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* Đảm bảo nó nằm trên tất cả các thành phần khác */
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border: 5px solid #000;
+  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.5);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  font-size: 1.8rem;
+  color: #000;
+  margin-bottom: 25px;
+  border-bottom: 2px dashed #333;
+  padding-bottom: 10px;
+}
+
+.modal-message {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.modal-summary {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.modal-summary .total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: none;
+}
+
+.modal-summary .total-row span {
+  font-weight: normal;
+  font-style: italic;
+  color: #666;
+}
+
+.modal-summary .final-price {
+  font-size: 1.4rem;
+  color: darkred;
+}
+
+.modal-note {
+  font-size: 0.9rem;
+  color: #999;
+  font-style: italic;
+  margin-bottom: 30px;
+}
+
+/* Modal Actions (Buttons) */
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-confirm-modal,
+.btn-cancel-modal {
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-family: 'Georgia', serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 2px solid #000;
+  transition: all 0.2s ease;
+}
+
+.btn-confirm-modal {
+  background: #000;
+  color: #fff;
+}
+
+.btn-confirm-modal:hover:not(:disabled) {
+  background: #333;
+}
+
+.btn-cancel-modal {
+  background: #fff;
+  color: #000;
+}
+
+.btn-cancel-modal:hover:not(:disabled) {
+  background: #f0f0f0;
+}

@@ -29,7 +29,6 @@ import AdminUserManager from "./pages/admin/AdminUserManager"; // Thêm dòng n�
 
 import CartPage from "./pages/cart/CartPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
-import OrderReviewPage from "./pages/order/OrderReviewPage";
 import OrderSuccessPage from "./pages/order/OrderSuccessPage";
 import ReviewPage from "./pages/review/ReviewPage";
 import ProfilePage from "./pages/profile/ProfilePage";
@@ -64,7 +63,6 @@ function App() {
           <Route path="contact" element={<ContactSection />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="order-review" element={<OrderReviewPage />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
           <Route path="products/:id/reviews" element={<ReviewPage />} />
 

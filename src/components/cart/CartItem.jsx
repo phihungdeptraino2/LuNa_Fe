@@ -49,9 +49,9 @@ const CartItem = ({ item }) => {
         <h4>{product.name}</h4>
         <p>
           Giá:{" "}
-          {price.toLocaleString("vi-VN", {
+          {price.toLocaleString("en-US", {
             style: "currency",
-            currency: "VND",
+            currency: "USD",
           })}
         </p>
         {/* 🆕 BỘ ĐIỀU KHIỂN SỐ LƯỢNG MỚI */}

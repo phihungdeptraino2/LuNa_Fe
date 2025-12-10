@@ -112,7 +112,7 @@ const ProductDetailPage = () => {
   };
 
   const formatPrice = (price) =>
-    new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
 
   return (
     <div className="product-detail-container">

@@ -50,9 +50,9 @@ const OrderSuccessPage = () => {
           <div className="info-row">
             <span>Tổng tiền:</span>
             <strong className="amount">
-              {(order.total || 0).toLocaleString("vi-VN", {
+              {(order.total || 0).toLocaleString("en-US", {
                 style: "currency",
-                currency: "VND",
+                currency: "USD",
               })}
             </strong>
           </div>

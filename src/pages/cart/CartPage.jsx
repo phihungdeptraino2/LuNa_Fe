@@ -73,9 +73,9 @@ const CartPage = () => {
         <h3>
           Tổng tiền:{" "}
           <span className="total-price">
-            {totalPrice.toLocaleString("vi-VN", {
+            {totalPrice.toLocaleString("en-US", {
               style: "currency",
-              currency: "VND",
+              currency: "USD",
             })}
           </span>
         </h3>

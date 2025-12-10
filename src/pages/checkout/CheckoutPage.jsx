@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom"
 import "./CheckoutPage.css"
 
 const CheckoutPage = () => {
-  const { cartItems, totalPrice } = useCart()
+  // ✨ Đảm bảo lấy clearCart
+  const { cartItems, totalPrice, clearCart } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -18,6 +19,14 @@ const CheckoutPage = () => {
   const BE_HOST = "http://localhost:8081"
 
   const [showAddressForm, setShowAddressForm] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState("cod")
+
+  // ✨ BỔ SUNG STATE CHO MODAL XÁC NHẬN
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  // orderSnapshot giờ là bản nháp tạm thời (Temporary Draft)
+  const [orderSnapshot, setOrderSnapshot] = useState(null)
+  const [isProcessing, setIsProcessing] = useState(false) // Trạng thái đang xử lý API POST cuối cùng
+
   const [formData, setFormData] = useState({
     street: "",
     city: "",
@@ -25,11 +34,30 @@ const CheckoutPage = () => {
     province: "",
     isDefault: false,
   })
+
   const buildImageUrl = (url) => {
     if (!url) return "/placeholder.svg"
     if (url.startsWith("http")) return url // Nếu đã là URL đầy đủ
     return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`
   }
+
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
+
+
+  // Hàm chuyển đổi giá trị payment method sang tên tiếng Việt
+  const getPaymentMethodName = (method) => {
+    switch (method) {
+      case "cod":
+        return "Thanh toán khi nhận hàng (COD)";
+      case "bank":
+        return "Chuyển khoản ngân hàng";
+      case "card":
+        return "Thẻ tín dụng / Thẻ ghi nợ";
+      default:
+        return "Không rõ";
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -47,8 +75,6 @@ const CheckoutPage = () => {
       const token = localStorage.getItem("token")
       const userId = user?.id
 
-      console.log("[v0] Fetching addresses for user:", userId)
-
       const response = await fetch(`http://localhost:8081/api/users/${userId}/addresses`, {
         method: "GET",
         headers: {
@@ -62,8 +88,6 @@ const CheckoutPage = () => {
       }
 
       const data = await response.json()
-      console.log("[v0] Addresses data:", data.data)
-
       setAddresses(data.data || [])
 
       if (data.data && data.data.length > 0) {
@@ -103,8 +127,6 @@ const CheckoutPage = () => {
         isDefault: formData.isDefault,
       }
 
-      console.log("[v0] Submitting address:", requestBody)
-
       const response = await fetch(`http://localhost:8081/api/users/${userId}/addresses`, {
         method: "POST",
         headers: {
@@ -119,7 +141,6 @@ const CheckoutPage = () => {
       }
 
       const newAddress = await response.json()
-      console.log("[v0] New address saved:", newAddress.data)
 
       setAddresses([...addresses, newAddress.data])
       setSelectedAddress(newAddress.data)
@@ -138,16 +159,44 @@ const CheckoutPage = () => {
     }
   }
 
-  const handleCheckout = async () => {
+  // ✨ CẬP NHẬT LOGIC handleCheckout: CHỈ HIỂN THỊ MODAL
+  const handleCheckout = () => {
     if (!selectedAddress) {
       setError("Vui lòng chọn hoặc thêm địa chỉ giao hàng")
       return
     }
 
+    // Reset trạng thái lỗi và xử lý
+    setIsProcessing(false);
+    setError(null);
+
+    // Tạo bản nháp đơn hàng tạm thời cho Modal (chưa có ID thực từ DB)
+    // Giả định Total bằng totalPrice hiện tại trong giỏ hàng
+    const draftOrder = {
+      id: "TẠM TÍNH",
+      total: totalPrice,
+      // Thêm các trường cần thiết khác để hiển thị trong Modal (nếu có)
+    };
+
+    setOrderSnapshot(draftOrder);
+    setShowConfirmModal(true);
+  }
+
+  // ✨ BỔ SUNG HÀM XÁC NHẬN CUỐI CÙNG TRONG MODAL: GỌI API & CHUYỂN TRANG
+  const handleConfirmOrder = async () => {
+    if (!selectedAddress) {
+      setError("Lỗi: Không tìm thấy địa chỉ giao hàng được chọn.")
+      return
+    }
+
     try {
+      setIsProcessing(true) // Bắt đầu xử lý (disable các nút)
+      setError(null)
+
       const token = localStorage.getItem("token")
       const userId = user?.id
 
+      // BƯỚC 1: GỌI API TẠO ĐƠN HÀNG VÀ HOÀN TẤT
       const response = await fetch(`http://localhost:8081/api/orders/checkout`, {
         method: "POST",
         headers: {
@@ -156,21 +205,48 @@ const CheckoutPage = () => {
         },
         body: JSON.stringify({
           addressId: selectedAddress.id,
+          paymentMethod: paymentMethod,
         }),
       })
 
       if (!response.ok) {
-        throw new Error("Không thể tạo đơn hàng")
+        // Thử đọc chi tiết lỗi nếu có
+        const errorDetail = await response.text();
+        console.error("API Error Response:", errorDetail);
+        throw new Error("Không thể tạo đơn hàng. Vui lòng thử lại.");
       }
 
       const data = await response.json()
-      console.log("[v0] Order created:", data.data)
+      const finalOrder = data.data; // Đơn hàng cuối cùng với ID thật, tổng tiền, v.v.
 
-      navigate("/order-review", { state: { order: data.data, selectedAddress: selectedAddress } })
+      // BƯỚC 2: XÓA GIỎ HÀNG (Frontend) VÀ CHUYỂN TRANG
+      clearCart()
+
+      // Điều hướng sang trang thành công (Order Success Page)
+      navigate("/order-success", {
+        state: {
+          order: finalOrder, // Dữ liệu đơn hàng cuối cùng
+          paymentMethodName: getPaymentMethodName(paymentMethod),
+          itemsToDisplay: cartItems, // Truyền snapshot cartItems ban đầu
+        }
+      })
+
+      // Reset trạng thái (dù navigate đã reset)
+      setIsProcessing(false)
+      setShowConfirmModal(false)
+
     } catch (err) {
       console.error("Error creating order:", err)
-      setError("Không thể tạo đơn hàng. Vui lòng thử lại.")
+      setError(`Lỗi: ${err.message}`)
+      setIsProcessing(false) // Kết thúc xử lý nếu thất bại
     }
+  }
+
+  // Xử lý Hủy Modal (quay lại bước Checkout)
+  const handleCancelConfirmation = () => {
+    setShowConfirmModal(false);
+    setOrderSnapshot(null); // Xóa bản nháp
+    setIsProcessing(false);
   }
 
   if (cartItems.length === 0) {
@@ -190,7 +266,7 @@ const CheckoutPage = () => {
       {error && <div className="error-message">{error}</div>}
 
       <div className="checkout-content">
-        {/* ===== BÊN TRÁI: FORM ĐỊA CHỈ ===== */}
+        {/* ===== BÊN TRÁI: FORM ĐỊA CHỈ & THÔNG TIN KHÁCH HÀNG & THANH TOÁN ===== */}
         <div className="checkout-left">
           <div className="address-section">
             <h2>Địa chỉ giao hàng</h2>
@@ -233,63 +309,24 @@ const CheckoutPage = () => {
               <form className="address-form" onSubmit={handleAddressSubmit}>
                 <div className="form-group">
                   <label>Địa chỉ chi tiết (số nhà, tên đường) *</label>
-                  <input
-                    type="text"
-                    name="street"
-                    value={formData.street}
-                    onChange={handleFormChange}
-                    placeholder="Ví dụ: 123 Đường Nguyễn Huệ"
-                    required
-                  />
+                  <input type="text" name="street" value={formData.street} onChange={handleFormChange} placeholder="Ví dụ: 123 Đường Nguyễn Huệ" required />
                 </div>
-
                 <div className="form-group">
                   <label>Quận/Huyện *</label>
-                  <input
-                    type="text"
-                    name="district"
-                    value={formData.district}
-                    onChange={handleFormChange}
-                    placeholder="Ví dụ: Quận 1"
-                    required
-                  />
+                  <input type="text" name="district" value={formData.district} onChange={handleFormChange} placeholder="Ví dụ: Quận 1" required />
                 </div>
-
                 <div className="form-group">
                   <label>Thành phố (City) *</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleFormChange}
-                    placeholder="Ví dụ: Thành phố Hồ Chí Minh"
-                    required
-                  />
+                  <input type="text" name="city" value={formData.city} onChange={handleFormChange} placeholder="Ví dụ: Thành phố Hồ Chí Minh" required />
                 </div>
-
                 <div className="form-group">
                   <label>Tỉnh/Thành phố *</label>
-                  <input
-                    type="text"
-                    name="province"
-                    value={formData.province}
-                    onChange={handleFormChange}
-                    placeholder="Ví dụ: Hồ Chí Minh"
-                    required
-                  />
+                  <input type="text" name="province" value={formData.province} onChange={handleFormChange} placeholder="Ví dụ: Hồ Chí Minh" required />
                 </div>
-
                 <div className="form-group checkbox">
-                  <input
-                    type="checkbox"
-                    name="isDefault"
-                    checked={formData.isDefault}
-                    onChange={handleFormChange}
-                    id="isDefault"
-                  />
+                  <input type="checkbox" name="isDefault" checked={formData.isDefault} onChange={handleFormChange} id="isDefault" />
                   <label htmlFor="isDefault">Đặt làm địa chỉ mặc định</label>
                 </div>
-
                 <button type="submit" className="btn-save-address">
                   Lưu địa chỉ
                 </button>
@@ -297,7 +334,6 @@ const CheckoutPage = () => {
             )}
           </div>
 
-          {/* ===== THÔNG TIN KHÁCH HÀNG ===== */}
           <div className="customer-info">
             <h3>Thông tin khách hàng</h3>
             <p>
@@ -311,20 +347,37 @@ const CheckoutPage = () => {
             </p>
           </div>
 
-          {/* ===== PHƯƠNG THỨC THANH TOÁN ===== */}
           <div className="payment-method">
             <h3>Phương thức thanh toán</h3>
             <div className="payment-options">
               <label>
-                <input type="radio" name="payment" value="cod" defaultChecked />
+                <input
+                  type="radio"
+                  name="payment"
+                  value="cod"
+                  checked={paymentMethod === "cod"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
                 Thanh toán khi nhận hàng (COD)
               </label>
               <label>
-                <input type="radio" name="payment" value="bank" />
+                <input
+                  type="radio"
+                  name="payment"
+                  value="bank"
+                  checked={paymentMethod === "bank"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
                 Chuyển khoản ngân hàng
               </label>
               <label>
-                <input type="radio" name="payment" value="card" />
+                <input
+                  type="radio"
+                  name="payment"
+                  value="card"
+                  checked={paymentMethod === "card"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
                 Thẻ tín dụng / Thẻ ghi nợ
               </label>
             </div>
@@ -354,9 +407,9 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                   <p className="item-price">
-                    {(item.quantity * (item.product?.price || 0)).toLocaleString("vi-VN", {
+                    {(item.quantity * (item.product?.price || 0)).toLocaleString("en-US", {
                       style: "currency",
-                      currency: "VND",
+                      currency: "USD",
                     })}
                   </p>
                 </div>
@@ -366,44 +419,29 @@ const CheckoutPage = () => {
             <div className="summary-totals">
               <div className="total-row">
                 <span>Tạm tính:</span>
-                <span>
-                  {totalPrice.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </span>
+                <span>{formatPrice(totalPrice)}</span>
               </div>
               <div className="total-row">
                 <span>Phí vận chuyển:</span>
-                <span>
-                  {(0).toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </span>
+                <span>{formatPrice(0)}</span>
               </div>
               <div className="total-row">
                 <span>Giảm giá:</span>
-                <span>
-                  {(0).toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </span>
+                <span>{formatPrice(0)}</span>
               </div>
               <div className="total-row total-final">
                 <span>Tổng cộng:</span>
-                <span>
-                  {totalPrice.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })}
-                </span>
+                <span>{formatPrice(totalPrice)}</span>
               </div>
             </div>
 
-            <button className="btn-checkout" onClick={handleCheckout}>
-              Tiếp tục thanh toán
+            <button
+              className="btn-checkout"
+              onClick={handleCheckout}
+              // Vô hiệu hóa nút ngoài khi đang xử lý API cuối cùng hoặc chưa chọn địa chỉ
+              disabled={isProcessing || !selectedAddress}
+            >
+              {isProcessing ? "Đang xử lý..." : "Tiếp tục thanh toán"}
             </button>
 
             <button className="btn-back" onClick={() => navigate("/cart")}>
@@ -412,6 +450,47 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ===== MODAL XÁC NHẬN ĐƠN HÀNG MỚI ===== */}
+      {showConfirmModal && orderSnapshot && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Xác nhận Đơn hàng (Tạm tính)</h2>
+            <p className="modal-message">
+              Bạn đã chọn: <strong>{getPaymentMethodName(paymentMethod)}</strong>
+            </p>
+            <div className="modal-summary">
+              <div className="total-row">
+                <span>Địa chỉ giao hàng:</span>
+                <strong>{selectedAddress?.street}, {selectedAddress?.district}, {selectedAddress?.province}</strong>
+              </div>
+              <div className="total-row total-final">
+                <span>Tổng cộng:</span>
+                <strong className="final-price">{formatPrice(orderSnapshot.total)}</strong>
+              </div>
+            </div>
+            <p className="modal-note">
+              **Bấm "Xác nhận" để hoàn tất đơn hàng và tiến hành thanh toán.**
+            </p>
+            <div className="modal-actions">
+              <button
+                className="btn-confirm-modal"
+                onClick={handleConfirmOrder}
+                disabled={isProcessing}
+              >
+                {isProcessing ? "Đang gửi đơn..." : "Xác nhận và Đặt hàng"}
+              </button>
+              <button
+                className="btn-cancel-modal"
+                onClick={handleCancelConfirmation}
+                disabled={isProcessing}
+              >
+                Hủy bỏ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
