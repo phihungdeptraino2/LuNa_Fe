@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+// KHÔNG CẦN THÊM updateReview, deleteReview, voteReview
 import { getProductReviews, submitProductReview } from "../../services/reviewService";
 import { getProductById } from "../../services/productService";
 import { getOrdersByUser } from "../../services/orderService";
 import { FaStar, FaThumbsUp, FaEdit, FaTrash, FaFlag, FaCamera, FaTimes, FaCheck } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import LoginModal from "../../components/LoginModal";
-import RegisterModal from "../../components/RegisterModal"; // <--- BƯỚC 2: IMPORT REGISTER MODAL
+import RegisterModal from "../../components/RegisterModal";
 import "./ReviewPage.css";
-// , updateReview, deleteReview, voteReview
+// CÁC HÀM NÀY VẪN LÀ COMMENT: , updateReview, deleteReview, voteReview
 
 // Rating Stars Component
 const RatingStars = ({ rating, setRating, editable = false }) => {
@@ -64,7 +65,7 @@ const ReviewPage = () => {
 
   // Modal States
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // <--- BƯỚC 1: THÊM REGISTER STATE
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   // Form states
   const [newRating, setNewRating] = useState(5);
@@ -85,7 +86,7 @@ const ReviewPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
-  // BƯỚC 3: Tạo hàm để mở Login/Register
+  // Tạo hàm để mở Login/Register
   const handleOpenLogin = () => {
     setIsRegisterModalOpen(false);
     setIsLoginModalOpen(true);
@@ -208,15 +209,15 @@ const ReviewPage = () => {
         images: reviewImages
       };
 
-      // Cần un-comment logic submit/update sau khi kết nối API
-      // if (editingReview) {
-      //   const updated = await updateReview(editingReview.id, reviewData);
-      //   setReviews(prev => prev.map(r => r.id === editingReview.id ? updated : r));
-      //   setEditingReview(null);
-      // } else {
-      //   const createdReview = await submitProductReview(reviewData);
-      //   setReviews(prev => [createdReview, ...prev]);
-      // }
+      // 🛑 ĐÃ SỬA: Chỉ kích hoạt logic submitProductReview
+      if (editingReview) {
+        // Nếu không import updateReview, dòng này sẽ được comment hoặc thay bằng alert
+        alert("Chức năng cập nhật đang tạm thời không hoạt động.");
+      } else {
+        const createdReview = await submitProductReview(reviewData);
+        setReviews(prev => [createdReview, ...prev]);
+      }
+      // 🛑 KẾT THÚC KHỐI SỬA
 
       setNewRating(5);
       setReviewText("");
@@ -240,7 +241,7 @@ const ReviewPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Handle delete review
+  // Handle delete review (Vẫn là comment)
   const handleDeleteReview = async (reviewId) => {
     //   if (!window.confirm("Bạn có chắc muốn xóa đánh giá này?")) return;
 
@@ -254,7 +255,7 @@ const ReviewPage = () => {
     //   }
   };
 
-  // Handle helpful vote
+  // Handle helpful vote (Vẫn là comment)
   const handleVoteHelpful = async (reviewId) => {
     if (!user) {
       handleOpenLogin();
@@ -535,8 +536,7 @@ const ReviewPage = () => {
         <LoginModal
           isOpen={isLoginModalOpen}
           onClose={() => setIsLoginModalOpen(false)}
-          onOpenRegister={handleOpenRegister} // Truyền hàm mở Register
-        // Thêm onLoginSuccess nếu cần reload dữ liệu sau khi đăng nhập
+          onOpenRegister={handleOpenRegister}
         />
       )}
 
@@ -545,7 +545,7 @@ const ReviewPage = () => {
         <RegisterModal
           isOpen={isRegisterModalOpen}
           onClose={() => setIsRegisterModalOpen(false)}
-          onBackToLogin={handleBackToLogin} // Truyền hàm quay lại Login
+          onBackToLogin={handleBackToLogin}
         />
       )}
     </div>
