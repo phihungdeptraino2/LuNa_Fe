@@ -24,12 +24,12 @@ const AdminLayout = () => {
     <div
       style={{
         display: "flex",
-        height: "100vh", // <--- ĐỔI minHeight THÀNH height: Cố định chiều cao bằng màn hình
+        height: "100vh", // <--- Cố định chiều cao bằng màn hình
         overflow: "hidden", // <--- QUAN TRỌNG: Ngăn trang web cuộn, giữ Sidebar đứng yên
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
-      {/* SIDEBAR */}
+      {/* THANH BÊN (SIDEBAR) */}
       <aside
         style={{
           width: "260px",
@@ -55,57 +55,57 @@ const AdminLayout = () => {
             LUNA <span style={{ color: "#5a02c2" }}>ADMIN</span>
           </h2>
           <p style={{ fontSize: 12, color: "#555", marginTop: 5 }}>
-            Management System
+            Hệ thống quản lý
           </p>
         </div>
 
-        {/* Menu List */}
+        {/* Danh sách Menu */}
         <ul style={{ listStyle: "none", padding: 0, flex: 1 }}>
           <MenuItem
             to="/admin/dashboard"
             icon={<FaChartBar />}
-            label="Dashboard"
+            label="Bảng điều khiển"
             isActive={isActive("/admin/dashboard")}
           />
           <MenuItem
             to="/admin/products"
             icon={<FaBox />}
-            label="Products"
+            label="Sản phẩm"
             isActive={isActive("/admin/products")}
           />
           <MenuItem
             to="/admin/categories"
             icon={<FaList />}
-            label="Categories"
+            label="Danh mục"
             isActive={isActive("/admin/categories")}
           />
           <MenuItem
             to="/admin/brands"
             icon={<FaStore />}
-            label="Brands"
+            label="Thương hiệu"
             isActive={isActive("/admin/brands")}
           />
           <MenuItem
             to="/admin/orders"
             icon={<FaShoppingCart />}
-            label="Orders"
+            label="Đơn hàng"
             isActive={isActive("/admin/orders")}
           />
           <MenuItem
             to="/admin/users"
             icon={<FaUser />}
-            label="Users"
+            label="Người dùng"
             isActive={isActive("/admin/users")}
           />
           <MenuItem
             to="/admin/discounts"
             icon={<FaTags />}
-            label="Discounts"
+            label="Khuyến mãi"
             isActive={isActive("/admin/discounts")}
           />
         </ul>
 
-        {/* Footer Sidebar */}
+        {/* Chân trang Sidebar */}
         <div style={{ borderTop: "1px solid #333", paddingTop: 20 }}>
           <Link
             to="/"
@@ -122,7 +122,7 @@ const AdminLayout = () => {
             }}
             className="hover:text-white"
           >
-            <FaHome /> Visit Website
+            <FaHome /> Xem trang chủ
           </Link>
 
           <button
@@ -143,12 +143,12 @@ const AdminLayout = () => {
               transition: "background 0.2s",
             }}
           >
-            <FaSignOutAlt /> Logout
+            <FaSignOutAlt /> Đăng xuất
           </button>
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* NỘI DUNG CHÍNH (MAIN CONTENT) */}
       <main
         style={{
           flex: 1,
@@ -174,7 +174,9 @@ const AdminLayout = () => {
             zIndex: 10,
           }}
         >
-          <span style={{ fontWeight: "bold", color: "#333" }}>Admin Panel</span>
+          <span style={{ fontWeight: "bold", color: "#333" }}>
+            Bảng Quản Trị
+          </span>
         </header>
 
         <div style={{ padding: "30px" }}>

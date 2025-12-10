@@ -20,11 +20,11 @@ const AdminUserManager = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(API_BASE, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       console.log("Users API Response:", res.data);
-      
+
       if (res.data && res.data.data) {
         setUsers(res.data.data);
       }
@@ -37,7 +37,7 @@ const AdminUserManager = () => {
   };
 
   // --- FILTER USERS ---
-  const filteredUsers = users.filter(user => {
+  const filteredUsers = users.filter((user) => {
     const searchLower = searchTerm.toLowerCase();
     return (
       user.username?.toLowerCase().includes(searchLower) ||
@@ -48,27 +48,38 @@ const AdminUserManager = () => {
 
   // --- HELPER FUNCTIONS ---
   const formatDate = (date) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleDateString('vi-VN') + " " + 
-           new Date(date).toLocaleTimeString('vi-VN');
+    if (!date) return "Chưa cập nhật";
+    return (
+      new Date(date).toLocaleDateString("vi-VN") +
+      " " +
+      new Date(date).toLocaleTimeString("vi-VN")
+    );
   };
 
   const getRoleBadge = (roles) => {
-    if (!roles || roles.length === 0) return <span style={styles.badge}>USER</span>;
-    
+    // Nếu không có role, mặc định là NGƯỜI DÙNG
+    if (!roles || roles.length === 0)
+      return <span style={styles.badge}>NGƯỜI DÙNG</span>;
+
     return roles.map((role, index) => {
       const roleName = role.name || role;
       const isAdmin = roleName.includes("ADMIN");
+
+      // Chuyển đổi tên role sang tiếng Việt hiển thị
+      let displayName = roleName.replace("ROLE_", "");
+      if (displayName === "ADMIN") displayName = "QUẢN TRỊ VIÊN";
+      if (displayName === "USER") displayName = "NGƯỜI DÙNG";
+
       return (
-        <span 
+        <span
           key={index}
           style={{
             ...styles.badge,
             background: isAdmin ? "#fee2e2" : "#dbeafe",
-            color: isAdmin ? "#dc2626" : "#2563eb"
+            color: isAdmin ? "#dc2626" : "#2563eb",
           }}
         >
-          {roleName.replace("ROLE_", "")}
+          {displayName}
         </span>
       );
     });
@@ -78,21 +89,24 @@ const AdminUserManager = () => {
     <div style={styles.container}>
       {/* HEADER */}
       <div style={styles.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button 
-            onClick={() => navigate("/admin/dashboard")} 
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            onClick={() => navigate("/admin/dashboard")}
             style={styles.iconBtn}
+            title="Quay lại Dashboard"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h2 style={styles.title}>User Management</h2>
-            <p style={styles.subtitle}>Manage all registered users</p>
+            <h2 style={styles.title}>Quản Lý Người Dùng</h2>
+            <p style={styles.subtitle}>
+              Quản lý danh sách người dùng đã đăng ký
+            </p>
           </div>
         </div>
         <div style={styles.stats}>
           <User size={18} style={{ marginRight: 5 }} />
-          Total Users: {filteredUsers.length}
+          Tổng số: {filteredUsers.length} người dùng
         </div>
       </div>
 
@@ -100,7 +114,7 @@ const AdminUserManager = () => {
       <div style={styles.searchContainer}>
         <input
           type="text"
-          placeholder="Search by username, email, or fullname..."
+          placeholder="Tìm kiếm theo tên đăng nhập, email hoặc họ tên..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={styles.searchInput}
@@ -110,28 +124,34 @@ const AdminUserManager = () => {
       {/* TABLE */}
       <div style={styles.tableCard}>
         {loading ? (
-          <p style={{ padding: 30, textAlign: "center" }}>Loading users...</p>
+          <p style={{ padding: 30, textAlign: "center" }}>
+            Đang tải dữ liệu...
+          </p>
         ) : filteredUsers.length === 0 ? (
-          <p style={{ padding: 30, textAlign: "center" }}>No users found</p>
+          <p style={{ padding: 30, textAlign: "center" }}>
+            Không tìm thấy người dùng nào
+          </p>
         ) : (
           <table style={styles.table}>
             <thead>
               <tr style={styles.thRow}>
                 <th style={styles.th}>ID</th>
-                <th style={styles.th}>Username</th>
-                <th style={styles.th}>Full Name</th>
+                <th style={styles.th}>Tên đăng nhập</th>
+                <th style={styles.th}>Họ và tên</th>
                 <th style={styles.th}>Email</th>
-                <th style={styles.th}>Phone</th>
-                <th style={styles.th}>Roles</th>
-                <th style={styles.th}>Created Date</th>
+                <th style={styles.th}>Số điện thoại</th>
+                <th style={styles.th}>Vai trò</th>
+                <th style={styles.th}>Ngày tạo</th>
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map(user => (
+              {filteredUsers.map((user) => (
                 <tr key={user.id} style={styles.tr}>
                   <td style={styles.td}>#{user.id}</td>
                   <td style={styles.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
                       <div style={styles.avatar}>
                         <User size={18} />
                       </div>
@@ -139,27 +159,45 @@ const AdminUserManager = () => {
                     </div>
                   </td>
                   <td style={styles.td}>
-                    {user.fullname || <span style={{ color: '#999' }}>N/A</span>}
+                    {user.fullname || (
+                      <span style={{ color: "#999" }}>Chưa cập nhật</span>
+                    )}
                   </td>
                   <td style={styles.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 5 }}
+                    >
                       <Mail size={14} color="#6b7280" />
-                      {user.email || <span style={{ color: '#999' }}>N/A</span>}
+                      {user.email || (
+                        <span style={{ color: "#999" }}>Chưa cập nhật</span>
+                      )}
                     </div>
                   </td>
                   <td style={styles.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 5 }}
+                    >
                       <Phone size={14} color="#6b7280" />
-                      {user.phone || <span style={{ color: '#999' }}>N/A</span>}
+                      {user.phone || (
+                        <span style={{ color: "#999" }}>Chưa cập nhật</span>
+                      )}
                     </div>
                   </td>
                   <td style={styles.td}>
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
                       {getRoleBadge(user.roles)}
                     </div>
                   </td>
                   <td style={styles.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#6b7280' }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 5,
+                        fontSize: 13,
+                        color: "#6b7280",
+                      }}
+                    >
                       <Calendar size={14} />
                       {formatDate(user.createdAt)}
                     </div>
@@ -180,24 +218,24 @@ const styles = {
     padding: "20px",
     background: "#f3f4f6",
     minHeight: "100vh",
-    fontFamily: "'Segoe UI', sans-serif"
+    fontFamily: "'Segoe UI', sans-serif",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20
+    marginBottom: 20,
   },
   title: {
     margin: 0,
     color: "#1f2937",
     fontSize: 24,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   subtitle: {
     margin: "5px 0 0 0",
     color: "#6b7280",
-    fontSize: 14
+    fontSize: 14,
   },
   stats: {
     display: "flex",
@@ -207,7 +245,7 @@ const styles = {
     padding: "10px 20px",
     borderRadius: 8,
     fontWeight: "bold",
-    fontSize: 14
+    fontSize: 14,
   },
   iconBtn: {
     background: "none",
@@ -217,10 +255,10 @@ const styles = {
     borderRadius: 6,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   searchContainer: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   searchInput: {
     width: "100%",
@@ -229,38 +267,38 @@ const styles = {
     border: "1px solid #e5e7eb",
     background: "white",
     fontSize: 14,
-    outline: "none"
+    outline: "none",
   },
   tableCard: {
     background: "white",
     borderRadius: 12,
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    overflowX: "auto"
+    overflowX: "auto",
   },
   table: {
     width: "100%",
     borderCollapse: "collapse",
-    minWidth: 900
+    minWidth: 900,
   },
   thRow: {
     background: "#f9fafb",
-    borderBottom: "1px solid #e5e7eb"
+    borderBottom: "1px solid #e5e7eb",
   },
   th: {
     padding: "15px",
     textAlign: "left",
     fontSize: 13,
     color: "#6b7280",
-    fontWeight: 600
+    fontWeight: 600,
   },
   tr: {
     borderBottom: "1px solid #f3f4f6",
-    transition: "background 0.2s"
+    transition: "background 0.2s",
   },
   td: {
     padding: "15px",
     fontSize: 14,
-    color: "#374151"
+    color: "#374151",
   },
   avatar: {
     width: 32,
@@ -270,15 +308,15 @@ const styles = {
     color: "#3730a3",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   badge: {
     padding: "4px 10px",
     borderRadius: 20,
     fontSize: 11,
     fontWeight: "bold",
-    display: "inline-block"
-  }
+    display: "inline-block",
+  },
 };
 
 export default AdminUserManager;

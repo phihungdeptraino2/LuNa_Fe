@@ -51,7 +51,6 @@ const AdminProductManager = () => {
       setLoading(true);
       const data = await getAllProducts();
       setProducts(data);
-      
     } catch (error) {
       toast.error("Lỗi khi tải danh sách sản phẩm!");
     } finally {
@@ -101,18 +100,20 @@ const AdminProductManager = () => {
     setSelectedFiles([]);
     setShowModal(true);
   };
+
   const BE_HOST = "http://localhost:8081";
   const buildImageUrl = (url) => {
-  if (!url) {
-    console.warn("⚠️ Empty URL received");
-    return "";
-  }
-  
-  const fullUrl = `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
-  console.log("🖼️ Image URL:", fullUrl);
-  
-  return fullUrl;
-};
+    if (!url) {
+      console.warn("⚠️ URL trống");
+      return "";
+    }
+
+    const fullUrl = `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
+    // console.log("🖼️ Image URL:", fullUrl);
+
+    return fullUrl;
+  };
+
   // Mở Modal Edit
   const handleEdit = (product) => {
     setIsEditing(true);
@@ -128,7 +129,7 @@ const AdminProductManager = () => {
       categoryId: product.category ? product.category.id : "",
       brandId: product.brand ? product.brand.id : "",
     });
-    setSelectedFiles([]); // Reset file upload (Edit ảnh là luồng riêng hoặc làm sau)
+    setSelectedFiles([]);
     setShowModal(true);
   };
 
@@ -155,13 +156,12 @@ const AdminProductManager = () => {
       }
 
       // 2. Upload ảnh (Nếu có file được chọn)
-      // Lưu ý: Backend trả về object product đã lưu, ta lấy ID từ đó
       if (selectedFiles.length > 0 && savedProduct) {
         try {
           await uploadProductImages(savedProduct.id, selectedFiles);
-          toast.success(`Đã upload ${selectedFiles.length} ảnh.`);
+          toast.success(`Đã tải lên ${selectedFiles.length} ảnh.`);
         } catch (imgError) {
-          toast.error("Lỗi khi upload ảnh: " + imgError.message);
+          toast.error("Lỗi khi tải ảnh: " + imgError.message);
         }
       }
 
@@ -195,9 +195,11 @@ const AdminProductManager = () => {
       >
         <div>
           <h2 style={{ fontSize: 24, fontWeight: "bold", margin: 0 }}>
-            Product Management
+            Quản Lý Sản Phẩm
           </h2>
-          <p style={{ color: "#888", fontSize: 14 }}>Manage your catalog</p>
+          <p style={{ color: "#888", fontSize: 14 }}>
+            Quản lý danh mục hàng hóa của bạn
+          </p>
         </div>
         <button
           onClick={handleAddNew}
@@ -215,7 +217,7 @@ const AdminProductManager = () => {
             boxShadow: "0 4px 10px rgba(90, 2, 194, 0.3)",
           }}
         >
-          <FaPlus /> Add New Product
+          <FaPlus /> Thêm Sản Phẩm Mới
         </button>
       </div>
 
@@ -223,7 +225,7 @@ const AdminProductManager = () => {
       <div style={{ marginBottom: 20, position: "relative" }}>
         <input
           type="text"
-          placeholder="Search products by name..."
+          placeholder="Tìm kiếm sản phẩm theo tên..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -261,26 +263,26 @@ const AdminProductManager = () => {
               }}
             >
               <th style={{ padding: 15 }}>ID</th>
-              <th style={{ padding: 15 }}>Product Name</th>
-              <th style={{ padding: 15 }}>Category</th>
-              <th style={{ padding: 15 }}>Brand</th>
-              <th style={{ padding: 15 }}>Price</th>
-              <th style={{ padding: 15 }}>Stock</th>
-              <th style={{ padding: 15 }}>Status</th>
-              <th style={{ padding: 15, textAlign: "right" }}>Actions</th>
+              <th style={{ padding: 15 }}>Tên Sản Phẩm</th>
+              <th style={{ padding: 15 }}>Danh Mục</th>
+              <th style={{ padding: 15 }}>Thương Hiệu</th>
+              <th style={{ padding: 15 }}>Giá</th>
+              <th style={{ padding: 15 }}>Kho</th>
+              <th style={{ padding: 15 }}>Trạng Thái</th>
+              <th style={{ padding: 15, textAlign: "right" }}>Hành Động</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan="8" style={{ padding: 30, textAlign: "center" }}>
-                  Loading...
+                  Đang tải dữ liệu...
                 </td>
               </tr>
             ) : filteredProducts.length === 0 ? (
               <tr>
                 <td colSpan="8" style={{ padding: 30, textAlign: "center" }}>
-                  No products found.
+                  Không tìm thấy sản phẩm nào.
                 </td>
               </tr>
             ) : (
@@ -320,32 +322,23 @@ const AdminProductManager = () => {
                             justifyContent: "center",
                           }}
                         >
-                          {/* LOG TRỰC TIẾP */}
-                          {console.log(`Product #${product.id}:`, product.productImages)}
-                          
                           {product.productImages?.[0] ? (
-                            <>
-                              {console.log("Image URL:", buildImageUrl(product.productImages[0].imageUrl))}
-                              <img
-                                src={buildImageUrl(product.productImages[0].imageUrl)}
-                                alt={product.name}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                }}
-                                onLoad={() => console.log("✅ Image loaded:", product.name)}
-                                onError={(e) => {
-                                  console.error("❌ Image failed:", product.name);
-                                  console.error("Failed URL:", e.target.src);
-                                }}
-                              />
-                            </>
+                            <img
+                              src={buildImageUrl(
+                                product.productImages[0].imageUrl
+                              )}
+                              alt={product.name}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                              }}
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                              }}
+                            />
                           ) : (
-                            <>
-                              {console.log("⚠️ No image for:", product.name)}
-                              <FaBox style={{ color: "#999" }} />
-                            </>
+                            <FaBox style={{ color: "#999" }} />
                           )}
                         </div>
                         <span style={{ fontWeight: "600" }}>
@@ -360,9 +353,9 @@ const AdminProductManager = () => {
                       {product.brand?.name || "N/A"}
                     </td>
                     <td style={{ padding: 15, fontWeight: "bold" }}>
-                      {new Intl.NumberFormat("en-US", {
+                      {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
-                        currency: "USD",
+                        currency: "VND",
                       }).format(product.price)}
                     </td>
                     <td style={{ padding: 15 }}>
@@ -385,7 +378,7 @@ const AdminProductManager = () => {
                           color: isProductActive ? "#2e7d32" : "#546e7a",
                         }}
                       >
-                        {isProductActive ? "Active" : "Hidden"}
+                        {isProductActive ? "Hoạt động" : "Ẩn"}
                       </span>
                     </td>
                     <td style={{ padding: 15, textAlign: "right" }}>
@@ -399,7 +392,7 @@ const AdminProductManager = () => {
                           cursor: "pointer",
                           fontSize: 16,
                         }}
-                        title="Edit"
+                        title="Sửa"
                       >
                         <FaEdit />
                       </button>
@@ -412,7 +405,7 @@ const AdminProductManager = () => {
                           cursor: "pointer",
                           fontSize: 16,
                         }}
-                        title="Delete"
+                        title="Xóa"
                       >
                         <FaTrash />
                       </button>
@@ -469,7 +462,7 @@ const AdminProductManager = () => {
             </button>
 
             <h2 style={{ marginTop: 0, marginBottom: 20 }}>
-              {isEditing ? "Edit Product" : "Add New Product"}
+              {isEditing ? "Cập Nhật Sản Phẩm" : "Thêm Sản Phẩm Mới"}
             </h2>
 
             <form
@@ -481,7 +474,7 @@ const AdminProductManager = () => {
                 <label
                   style={{ display: "block", marginBottom: 5, fontWeight: 600 }}
                 >
-                  Product Name
+                  Tên sản phẩm
                 </label>
                 <input
                   type="text"
@@ -509,7 +502,7 @@ const AdminProductManager = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Category
+                    Danh mục
                   </label>
                   <select
                     value={formData.categoryId}
@@ -524,7 +517,7 @@ const AdminProductManager = () => {
                     }}
                     required
                   >
-                    <option value="">Select Category</option>
+                    <option value="">Chọn danh mục</option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -541,7 +534,7 @@ const AdminProductManager = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Brand
+                    Thương hiệu
                   </label>
                   <select
                     value={formData.brandId}
@@ -556,7 +549,7 @@ const AdminProductManager = () => {
                     }}
                     required
                   >
-                    <option value="">Select Brand</option>
+                    <option value="">Chọn thương hiệu</option>
                     {brands.map((b) => (
                       <option key={b.id} value={b.id}>
                         {b.name}
@@ -576,7 +569,7 @@ const AdminProductManager = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Price
+                    Giá bán
                   </label>
                   <input
                     type="number"
@@ -606,7 +599,7 @@ const AdminProductManager = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Stock
+                    Số lượng kho
                   </label>
                   <input
                     type="number"
@@ -633,7 +626,7 @@ const AdminProductManager = () => {
                 <label
                   style={{ display: "block", marginBottom: 5, fontWeight: 600 }}
                 >
-                  Description
+                  Mô tả
                 </label>
                 <textarea
                   rows="3"
@@ -662,7 +655,7 @@ const AdminProductManager = () => {
                   style={{ width: 18, height: 18 }}
                 />
                 <label htmlFor="isActive" style={{ cursor: "pointer" }}>
-                  Active Product
+                  Kích hoạt sản phẩm
                 </label>
               </div>
 
@@ -683,7 +676,7 @@ const AdminProductManager = () => {
                     color: "#5a02c2",
                   }}
                 >
-                  <FaCloudUploadAlt /> Upload Images
+                  <FaCloudUploadAlt /> Tải ảnh lên
                 </label>
                 <input
                   type="file"
@@ -693,7 +686,7 @@ const AdminProductManager = () => {
                 />
                 {selectedFiles.length > 0 && (
                   <p style={{ fontSize: 12, marginTop: 5 }}>
-                    Selected: {selectedFiles.length} files
+                    Đã chọn: {selectedFiles.length} tệp
                   </p>
                 )}
               </div>
@@ -718,7 +711,7 @@ const AdminProductManager = () => {
                     cursor: "pointer",
                   }}
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="submit"
@@ -732,7 +725,7 @@ const AdminProductManager = () => {
                     cursor: "pointer",
                   }}
                 >
-                  {isEditing ? "Update Product" : "Create Product"}
+                  {isEditing ? "Cập Nhật" : "Tạo Mới"}
                 </button>
               </div>
             </form>

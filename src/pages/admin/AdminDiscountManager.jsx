@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { FaPlus, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 
 const AdminDiscountManager = () => {
-  // Dữ liệu giả lập (Sau này gọi API)
+  // Dữ liệu giả lập (Vẫn giữ key tiếng Anh để mô phỏng API trả về, nhưng hiển thị sẽ map sang tiếng Việt)
   const [discounts, setDiscounts] = useState([
     {
       id: 1,
-      code: "WELCOME2025",
+      code: "CHAO2025",
       percent: 10,
       startDate: "2025-01-01",
       endDate: "2025-12-31",
@@ -14,7 +14,7 @@ const AdminDiscountManager = () => {
     },
     {
       id: 2,
-      code: "SUMMER_SALE",
+      code: "HE_SOI_DONG",
       percent: 20,
       startDate: "2025-06-01",
       endDate: "2025-08-31",
@@ -30,6 +30,20 @@ const AdminDiscountManager = () => {
     },
   ]);
 
+  // Hàm helper để hiển thị trạng thái tiếng Việt
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case "Active":
+        return "Đang hoạt động";
+      case "Inactive":
+        return "Ngừng hoạt động";
+      case "Scheduled":
+        return "Sắp diễn ra";
+      default:
+        return status;
+    }
+  };
+
   return (
     <div style={{ fontFamily: "'Segoe UI', sans-serif" }}>
       {/* Header Trang */}
@@ -43,10 +57,10 @@ const AdminDiscountManager = () => {
       >
         <div>
           <h2 style={{ margin: 0, fontSize: 24, color: "#333" }}>
-            Discount Management
+            Quản Lý Khuyến Mãi
           </h2>
           <p style={{ color: "#888", fontSize: 14, marginTop: 5 }}>
-            Create and manage coupon codes
+            Tạo và quản lý các mã giảm giá
           </p>
         </div>
         <button
@@ -64,7 +78,7 @@ const AdminDiscountManager = () => {
             boxShadow: "0 4px 10px rgba(90, 2, 194, 0.3)",
           }}
         >
-          <FaPlus /> Add New Coupon
+          <FaPlus /> Thêm Mã Mới
         </button>
       </div>
 
@@ -73,7 +87,7 @@ const AdminDiscountManager = () => {
         <div style={{ position: "relative", flex: 1 }}>
           <input
             type="text"
-            placeholder="Search coupon code..."
+            placeholder="Tìm kiếm mã giảm giá..."
             style={{
               width: "100%",
               padding: "12px 40px 12px 15px",
@@ -96,9 +110,10 @@ const AdminDiscountManager = () => {
             cursor: "pointer",
           }}
         >
-          <option>All Status</option>
-          <option>Active</option>
-          <option>Inactive</option>
+          <option>Tất cả trạng thái</option>
+          <option>Đang hoạt động</option>
+          <option>Ngừng hoạt động</option>
+          <option>Sắp diễn ra</option>
         </select>
       </div>
 
@@ -116,12 +131,12 @@ const AdminDiscountManager = () => {
             }}
           >
             <th style={{ padding: "15px" }}>ID</th>
-            <th style={{ padding: "15px" }}>Code</th>
-            <th style={{ padding: "15px" }}>Discount</th>
-            <th style={{ padding: "15px" }}>Start Date</th>
-            <th style={{ padding: "15px" }}>End Date</th>
-            <th style={{ padding: "15px" }}>Status</th>
-            <th style={{ padding: "15px", textAlign: "right" }}>Actions</th>
+            <th style={{ padding: "15px" }}>Mã Code</th>
+            <th style={{ padding: "15px" }}>Mức Giảm</th>
+            <th style={{ padding: "15px" }}>Ngày Bắt Đầu</th>
+            <th style={{ padding: "15px" }}>Ngày Kết Thúc</th>
+            <th style={{ padding: "15px" }}>Trạng Thái</th>
+            <th style={{ padding: "15px", textAlign: "right" }}>Hành Động</th>
           </tr>
         </thead>
         <tbody>
@@ -173,6 +188,7 @@ const AdminDiscountManager = () => {
                     borderRadius: 20,
                     fontSize: 12,
                     fontWeight: "bold",
+                    whiteSpace: "nowrap",
                     background:
                       item.status === "Active"
                         ? "#e8f5e9"
@@ -187,7 +203,7 @@ const AdminDiscountManager = () => {
                         : "#ef6c00",
                   }}
                 >
-                  {item.status}
+                  {getStatusLabel(item.status)}
                 </span>
               </td>
               <td style={{ padding: "15px", textAlign: "right" }}>
@@ -200,7 +216,7 @@ const AdminDiscountManager = () => {
                     cursor: "pointer",
                     fontSize: 16,
                   }}
-                  title="Edit"
+                  title="Sửa"
                 >
                   <FaEdit />
                 </button>
@@ -212,7 +228,7 @@ const AdminDiscountManager = () => {
                     cursor: "pointer",
                     fontSize: 16,
                   }}
-                  title="Delete"
+                  title="Xóa"
                 >
                   <FaTrash />
                 </button>
