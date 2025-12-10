@@ -24,7 +24,7 @@ export default function AboutSection() {
         {/* Hero Section */}
         <div className="hero-section">
           <div className="container">
-            <h1 className="main-title">🎵 Harmony Music Store 🎵</h1>
+            <h1 className="main-title">🎵 LuNa Music Store 🎵</h1>
             <p className="subtitle">Nơi Âm Nhạc Trở Thành Hiện Thực</p>
             <div className="divider"></div>
           </div>
@@ -41,7 +41,7 @@ export default function AboutSection() {
                     Câu Chuyện Của Chúng Tôi
                   </h2>
                   <p>
-                    Từ năm 2010, Harmony Music Store đã trở thành ngôi nhà thứ hai của hàng nghìn nhạc sĩ, từ những người mới bắt đầu đến các nghệ sĩ chuyên nghiệp. Chúng tôi tin rằng mỗi người đều có một giai điệu riêng trong tâm hồn.
+                    Từ năm 2010, LuNa Music Store đã trở thành ngôi nhà thứ hai của hàng nghìn nhạc sĩ, từ những người mới bắt đầu đến các nghệ sĩ chuyên nghiệp. Chúng tôi tin rằng mỗi người đều có một giai điệu riêng trong tâm hồn.
                   </p>
                   <p>
                     Với hơn 15 năm kinh nghiệm, chúng tôi tự hào mang đến những nhạc cụ chất lượng cao từ các thương hiệu nổi tiếng thế giới, cùng đội ngũ tư vấn chuyên nghiệp và nhiệt tình.

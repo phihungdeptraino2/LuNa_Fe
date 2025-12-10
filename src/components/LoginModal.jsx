@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom"; // Nhớ import useNavigat
 import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
 import "./LoginModal.css";
 
-const LoginModal = ({ isOpen, onClose , onOpenRegister}) => {
+const LoginModal = ({ isOpen, onClose, onOpenRegister }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

@@ -25,14 +25,13 @@ import AdminDiscountManager from "./pages/admin/AdminDiscountManager";
 import AdminOrderManager from "./pages/admin/AdminOrderManager";
 import AdminBrandManager from "./pages/admin/AdminBrandManager"
 import AdminCategoryManager from "./pages/admin/AdminCategoryManager";
-//
+import AdminUserManager from "./pages/admin/AdminUserManager"; // Thêm dòng này (nếu chưa có)
 
 import CartPage from "./pages/cart/CartPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
 import OrderReviewPage from "./pages/order/OrderReviewPage";
 import OrderSuccessPage from "./pages/order/OrderSuccessPage";
 import ReviewPage from "./pages/review/ReviewPage";
-import AdminUserManager from "./pages/admin/AdminUserManager";
 import ProfilePage from "./pages/profile/ProfilePage";
 
 // --- ROUTE BẢO VỆ ADMIN ---
@@ -42,7 +41,7 @@ const AdminRoute = ({ children }) => {
   if (loading) return <div>Loading...</div>;
 
   if (!user || !user.roles || !user.roles.includes("ADMIN")) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />; // Giả định có route /login
   }
 
   return children;
@@ -52,7 +51,7 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* ----- PUBLIC + CUSTOMER ROUTES ----- */}
+        {/* ----- PUBLIC + CUSTOMER ROUTES (Sử dụng MainLayout) ----- */}
         <Route path="/" element={<MainLayout />}>
           {/* Public pages */}
           <Route index element={<Navigate to="home" replace />} />
@@ -70,6 +69,7 @@ function App() {
           <Route path="products/:id/reviews" element={<ReviewPage />} />
 
           {/* Customer pages */}
+          {/* Đặt các route /customer/* vào đây, vì chúng dùng chung MainLayout */}
           <Route path="customer/home" element={<HomePage />} />
           <Route path="customer/about" element={<AboutSection />} />
           <Route path="customer/category" element={<CategorySection />} />
@@ -79,7 +79,10 @@ function App() {
           <Route path="customer/contact" element={<ContactSection />} />
           <Route path="customer/cart" element={<CartPage />} />
           <Route path="customer/checkout" element={<CheckoutPage />} />
-          <Route path="/customer/profile" element={<ProfilePage />} />
+
+          {/* *** ĐỊNH TUYẾN PROFILE CHÍNH XÁC *** */}
+          <Route path="customer/profile" element={<ProfilePage />} />
+
           <Route
             path="customer"
             element={<Navigate to="customer/home" replace />}
@@ -105,7 +108,7 @@ function App() {
           <Route path="orders" element={<AdminOrderManager />} />
           <Route path="brands" element={<AdminBrandManager />} />
           <Route path="categories" element={<AdminCategoryManager />} />
-          <Route path="/admin/users" element={<AdminUserManager />} />
+          <Route path="users" element={<AdminUserManager />} /> {/* Sửa path tuyệt đối thành tương đối */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

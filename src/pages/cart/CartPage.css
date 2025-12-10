@@ -758,3 +758,24 @@
     font-size: 1.1rem;
   }
 }
+
+/* CSS cho lớp phủ nền (backdrop/overlay) của Modal */
+.modal-overlay {
+  /* Vị trí cố định: Giữ nguyên vị trí ngay cả khi cuộn trang */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* Tạo nền mờ (optional) */
+  background-color: rgba(0, 0, 0, 0.6);
+
+  /* Đảm bảo nó nằm trên tất cả nội dung khác (Mục 2) */
+  z-index: 1000;
+
+  /* Căn giữa Modal bên trong */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -5,8 +5,11 @@ import { getProductById } from "../../services/productService";
 import { getOrdersByUser } from "../../services/orderService";
 import { FaStar, FaThumbsUp, FaEdit, FaTrash, FaFlag, FaCamera, FaTimes, FaCheck } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import LoginModal from "../../components/LoginModal";
+import RegisterModal from "../../components/RegisterModal"; // <--- BƯỚC 2: IMPORT REGISTER MODAL
 import "./ReviewPage.css";
 // , updateReview, deleteReview, voteReview
+
 // Rating Stars Component
 const RatingStars = ({ rating, setRating, editable = false }) => {
   return (
@@ -59,6 +62,10 @@ const ReviewPage = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Modal States
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); // <--- BƯỚC 1: THÊM REGISTER STATE
+
   // Form states
   const [newRating, setNewRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
@@ -77,6 +84,24 @@ const ReviewPage = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
+
+  // BƯỚC 3: Tạo hàm để mở Login/Register
+  const handleOpenLogin = () => {
+    setIsRegisterModalOpen(false);
+    setIsLoginModalOpen(true);
+  };
+
+  const handleOpenRegister = () => {
+    setIsLoginModalOpen(false);
+    setIsRegisterModalOpen(true);
+  };
+
+  // Hàm này được truyền vào RegisterModal
+  const handleBackToLogin = () => {
+    setIsRegisterModalOpen(false);
+    setIsLoginModalOpen(true);
+  };
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -141,7 +166,7 @@ const ReviewPage = () => {
       alert("Tối đa 5 ảnh!");
       return;
     }
-    
+
     files.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -160,7 +185,7 @@ const ReviewPage = () => {
     e.preventDefault();
 
     if (!user) {
-      alert("Vui lòng đăng nhập để đánh giá sản phẩm.");
+      handleOpenLogin();
       return;
     }
 
@@ -183,13 +208,14 @@ const ReviewPage = () => {
         images: reviewImages
       };
 
+      // Cần un-comment logic submit/update sau khi kết nối API
       // if (editingReview) {
-      //   const updated = await updateReview(editingReview.id, reviewData);
-      //   setReviews(prev => prev.map(r => r.id === editingReview.id ? updated : r));
-      //   setEditingReview(null);
+      //   const updated = await updateReview(editingReview.id, reviewData);
+      //   setReviews(prev => prev.map(r => r.id === editingReview.id ? updated : r));
+      //   setEditingReview(null);
       // } else {
-      //   const createdReview = await submitProductReview(reviewData);
-      //   setReviews(prev => [createdReview, ...prev]);
+      //   const createdReview = await submitProductReview(reviewData);
+      //   setReviews(prev => [createdReview, ...prev]);
       // }
 
       setNewRating(5);
@@ -215,38 +241,39 @@ const ReviewPage = () => {
   };
 
   // Handle delete review
- const handleDeleteReview = async (reviewId) => {
-  //   if (!window.confirm("Bạn có chắc muốn xóa đánh giá này?")) return;
+  const handleDeleteReview = async (reviewId) => {
+    //   if (!window.confirm("Bạn có chắc muốn xóa đánh giá này?")) return;
 
-  //   try {
-  //     await deleteReview(reviewId);
-  //     setReviews(prev => prev.filter(r => r.id !== reviewId));
-  //     alert("Đã xóa đánh giá!");
-  //   } catch (error) {
-  //     console.error("Error deleting review:", error);
-  //     alert("Lỗi xóa đánh giá.");
-  //   }
-   };
+    //   try {
+    //     await deleteReview(reviewId);
+    //     setReviews(prev => prev.filter(r => r.id !== reviewId));
+    //     alert("Đã xóa đánh giá!");
+    //   } catch (error) {
+    //     console.error("Error deleting review:", error);
+    //     alert("Lỗi xóa đánh giá.");
+    //   }
+  };
 
   // Handle helpful vote
   const handleVoteHelpful = async (reviewId) => {
     if (!user) {
-      alert("Vui lòng đăng nhập để vote!");
+      handleOpenLogin();
       return;
     }
 
+    // Cần un-comment logic vote sau khi kết nối API
     // try {
-    //   const updated = await voteReview(reviewId);
-    //   setReviews(prev => prev.map(r => r.id === reviewId ? updated : r));
+    //   const updated = await voteReview(reviewId);
+    //   setReviews(prev => prev.map(r => r.id === reviewId ? updated : r));
     // } catch (error) {
-    //   console.error("Error voting:", error);
+    //   console.error("Error voting:", error);
     // }
   };
 
   // Handle report review
   const handleReportReview = (reviewId) => {
     if (!user) {
-      alert("Vui lòng đăng nhập!");
+      handleOpenLogin();
       return;
     }
     // TODO: Implement report functionality
@@ -367,7 +394,7 @@ const ReviewPage = () => {
         ) : (
           <p>
             Vui lòng{" "}
-            <strong onClick={() => navigate("/login")} style={{ cursor: "pointer", color: "blue" }}>
+            <strong onClick={handleOpenLogin} style={{ cursor: "pointer", color: "blue" }}>
               đăng nhập
             </strong>{" "}
             để viết đánh giá.
@@ -401,6 +428,7 @@ const ReviewPage = () => {
             <option value="helpful">Hữu ích nhất</option>
           </select>
         </div>
+
       </div>
 
       {/* Review List */}
@@ -500,6 +528,25 @@ const ReviewPage = () => {
             Sau →
           </button>
         </div>
+      )}
+
+      {/* BƯỚC 4: Render Login Modal và truyền hàm mở Register */}
+      {isLoginModalOpen && (
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onOpenRegister={handleOpenRegister} // Truyền hàm mở Register
+        // Thêm onLoginSuccess nếu cần reload dữ liệu sau khi đăng nhập
+        />
+      )}
+
+      {/* BƯỚC 5: Render Register Modal và truyền hàm quay lại Login */}
+      {isRegisterModalOpen && (
+        <RegisterModal
+          isOpen={isRegisterModalOpen}
+          onClose={() => setIsRegisterModalOpen(false)}
+          onBackToLogin={handleBackToLogin} // Truyền hàm quay lại Login
+        />
       )}
     </div>
   );

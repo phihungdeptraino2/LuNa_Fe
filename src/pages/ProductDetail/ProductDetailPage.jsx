@@ -104,11 +104,11 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (!stockAvailable) {
-      alert("Sản phẩm tạm thời hết hàng.");
+      // alert("Sản phẩm tạm thời hết hàng.");
       return;
     }
     addToCart(product, quantity);
-    alert(`Đã thêm ${quantity} x ${product.name} vào giỏ hàng.`);
+    // alert(`Đã thêm ${quantity} x ${product.name} vào giỏ hàng.`);
   };
 
   const formatPrice = (price) =>
