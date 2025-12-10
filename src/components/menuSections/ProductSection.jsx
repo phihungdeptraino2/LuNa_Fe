@@ -3,7 +3,7 @@ import { getAllProducts } from "../../services/productService";
 import "./ProductSection.css"; // Import CSS riêng
 import ProductCard from "../../components/ProductCard";
 import { Link } from "react-router-dom";
-
+import { FaMusic } from "react-icons/fa";
 const ProductSection = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,50 +73,106 @@ const ProductSection = () => {
 
   // Search Icon SVG
   const SearchIcon = () => (
-    <svg className="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <svg
+      className="search-icon"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
     </svg>
   );
 
   // Sliders Icon SVG
   const SlidersIcon = () => (
-    <svg className="control-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+    <svg
+      className="control-icon"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+      />
     </svg>
   );
 
   // Grid Icon SVG
   const GridIcon = () => (
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+      />
     </svg>
   );
 
   // List Icon SVG
   const ListIcon = () => (
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6h16M4 12h16M4 18h16"
+      />
     </svg>
   );
 
   // Trending Icon SVG
   const TrendingIcon = () => (
-    <svg className="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    <svg
+      className="section-icon"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
     </svg>
   );
 
-  if (loading) return <p style={{ textAlign: "center", margin: "20px" }}>Loading products...</p>;
-  if (products.length === 0) return <p style={{ textAlign: "center", margin: "20px" }}>No products available.</p>;
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", margin: "20px" }}>Loading products...</p>
+    );
+  if (products.length === 0)
+    return (
+      <p style={{ textAlign: "center", margin: "20px" }}>
+        No products available.
+      </p>
+    );
 
   return (
     <div className="modern-product-section">
       {/* Hero Banner */}
-      <div className="hero-banner">
-        <div className="hero-content">
-          <h1>Discover Our Collection</h1>
-          <p>Premium quality products curated just for you</p>
+      <div className="vintage-header-container">
+        <div className="header-divider">
+          <span className="line"></span>
+
+          {/* THAY THẾ nốt nhạc cũ bằng FaMusic */}
+          <FaMusic className="music-icon" />
+
+          <span className="line"></span>
         </div>
+        <h1 className="vintage-main-title">DISCOVER OUR COLLECTION</h1>
+        <p className="vintage-subtitle">
+          "Premium quality products curated just for you"
+        </p>
       </div>
 
       {/* Featured Products Section */}
@@ -126,8 +182,12 @@ const ProductSection = () => {
           <h2>Trending Now</h2>
         </div>
         <div className="featured-grid">
-          {featuredProducts.map(product => (
-            <Link key={product.id} to={`/products/${product.id}`} className="featured-card">
+          {featuredProducts.map((product) => (
+            <Link
+              key={product.id}
+              to={`/products/${product.id}`}
+              className="featured-card"
+            >
               <ProductCard product={product} />
             </Link>
           ))}
@@ -181,12 +241,16 @@ const ProductSection = () => {
 
       {/* Results Info */}
       <div className="results-info">
-        <p>Showing {indexOfFirst + 1}-{Math.min(indexOfLast, sortedProducts.length)} of {sortedProducts.length} products</p>
+        <p>
+          Showing {indexOfFirst + 1}-
+          {Math.min(indexOfLast, sortedProducts.length)} of{" "}
+          {sortedProducts.length} products
+        </p>
       </div>
 
       {/* Products Grid/List */}
       <div className={`products-container ${viewMode}`}>
-        {currentProducts.map(product => (
+        {currentProducts.map((product) => (
           <Link key={product.id} to={`/products/${product.id}`}>
             <ProductCard product={product} />
           </Link>
@@ -203,7 +267,7 @@ const ProductSection = () => {
           >
             Previous
           </button>
-          
+
           <div className="pagination-numbers">
             {[...Array(totalPages)].map((_, idx) => {
               const pageNum = idx + 1;
@@ -222,8 +286,15 @@ const ProductSection = () => {
                     {pageNum}
                   </button>
                 );
-              } else if (pageNum === currentPage - 2 || pageNum === currentPage + 2) {
-                return <span key={idx} className="pagination-dots">...</span>;
+              } else if (
+                pageNum === currentPage - 2 ||
+                pageNum === currentPage + 2
+              ) {
+                return (
+                  <span key={idx} className="pagination-dots">
+                    ...
+                  </span>
+                );
               }
               return null;
             })}

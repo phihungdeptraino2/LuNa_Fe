@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../../services/productService";
 import ProductCard from "../../components/ProductCard";
 import "./CategorySection.css"; // Đảm bảo bạn thêm CSS mới vào file này
-
+import { FaMusic } from "react-icons/fa";
 // Giới hạn số lượng mục hiển thị ban đầu
 const MAX_ITEMS_DISPLAY = 10;
 
@@ -57,7 +57,8 @@ export default function CategorySection() {
 
         // Cập nhật price range max
         const prices = filteredByCategory.map((p) => p.price);
-        if (prices.length > 0) setPriceRange([Math.min(...prices), Math.max(...prices)]);
+        if (prices.length > 0)
+          setPriceRange([Math.min(...prices), Math.max(...prices)]);
       } catch (err) {
         console.error(err);
         setAllProducts([]);
@@ -80,7 +81,9 @@ export default function CategorySection() {
     }
 
     // Price
-    temp = temp.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    temp = temp.filter(
+      (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
+    );
 
     // Stock
     if (inStockOnly) {
@@ -91,7 +94,9 @@ export default function CategorySection() {
     if (selectedColors.length > 0) {
       temp = temp.filter((p) =>
         p.productAttributes.some(
-          (attr) => attr.attributeName === "Màu sắc" && selectedColors.includes(attr.attributeValue)
+          (attr) =>
+            attr.attributeName === "Màu sắc" &&
+            selectedColors.includes(attr.attributeValue)
         )
       );
     }
@@ -100,7 +105,9 @@ export default function CategorySection() {
     if (selectedOrigins.length > 0) {
       temp = temp.filter((p) =>
         p.productAttributes.some(
-          (attr) => attr.attributeName === "Xuất xứ" && selectedOrigins.includes(attr.attributeValue)
+          (attr) =>
+            attr.attributeName === "Xuất xứ" &&
+            selectedOrigins.includes(attr.attributeValue)
         )
       );
     }
@@ -109,13 +116,22 @@ export default function CategorySection() {
     if (minRating > 0) {
       temp = temp.filter((p) => {
         if (p.reviews.length === 0) return false;
-        const avg = p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length;
+        const avg =
+          p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length;
         return avg >= minRating;
       });
     }
 
     setFilteredProducts(temp);
-  }, [allProducts, selectedBrands, priceRange, inStockOnly, selectedColors, selectedOrigins, minRating]);
+  }, [
+    allProducts,
+    selectedBrands,
+    priceRange,
+    inStockOnly,
+    selectedColors,
+    selectedOrigins,
+    minRating,
+  ]);
 
   // ******************************************************
   // ************* HÀM ĐẶT LẠI BỘ LỌC *******************
@@ -146,21 +162,33 @@ export default function CategorySection() {
   const brands = Array.from(new Set(allProducts.map((p) => p.brand.name)));
   const colors = Array.from(
     new Set(
-      allProducts
-        .flatMap((p) => p.productAttributes.filter((a) => a.attributeName === "Màu sắc").map((a) => a.attributeValue))
+      allProducts.flatMap((p) =>
+        p.productAttributes
+          .filter((a) => a.attributeName === "Màu sắc")
+          .map((a) => a.attributeValue)
+      )
     )
   );
   const origins = Array.from(
     new Set(
-      allProducts
-        .flatMap((p) => p.productAttributes.filter((a) => a.attributeName === "Xuất xứ").map((a) => a.attributeValue))
+      allProducts.flatMap((p) =>
+        p.productAttributes
+          .filter((a) => a.attributeName === "Xuất xứ")
+          .map((a) => a.attributeValue)
+      )
     )
   );
 
   // Áp dụng giới hạn hiển thị (giữ nguyên)
-  const visibleBrands = showAllBrands ? brands : brands.slice(0, MAX_ITEMS_DISPLAY);
-  const visibleColors = showAllColors ? colors : colors.slice(0, MAX_ITEMS_DISPLAY);
-  const visibleOrigins = showAllOrigins ? origins : origins.slice(0, MAX_ITEMS_DISPLAY);
+  const visibleBrands = showAllBrands
+    ? brands
+    : brands.slice(0, MAX_ITEMS_DISPLAY);
+  const visibleColors = showAllColors
+    ? colors
+    : colors.slice(0, MAX_ITEMS_DISPLAY);
+  const visibleOrigins = showAllOrigins
+    ? origins
+    : origins.slice(0, MAX_ITEMS_DISPLAY);
 
   // Hàm xử lý chuyển hướng
   const handleProductSelect = (productId) => {
@@ -168,13 +196,27 @@ export default function CategorySection() {
   };
 
   if (loading) return <p>Loading products...</p>;
-  if (allProducts.length === 0) return <p>No products found in this category.</p>;
+  if (allProducts.length === 0)
+    return <p>No products found in this category.</p>;
 
   return (
     <div className="category-section">
-      <h2>Danh mục sản phẩm</h2>
-      {/* HIỂN THỊ TÊN DANH MỤC MỚI */}
-      <h3 className="category-name-display">{categoryName}</h3>
+      <div className="luna-header-wrapper">
+        <div className="luna-divider">
+          <span className="line"></span>
+
+          {/* Thay thế <span>♫</span> cũ bằng component FaMusic */}
+          <FaMusic className="music-icon" />
+
+          <span className="line"></span>
+        </div>
+
+        <h1 className="luna-main-title">{categoryName}</h1>
+
+        <p className="luna-tagline">
+          "Nơi lưu giữ và thăng hoa những giá trị âm nhạc nguyên bản"
+        </p>
+      </div>
 
       <div className="category-container">
         {/* Sidebar Filter */}
@@ -183,10 +225,7 @@ export default function CategorySection() {
 
           {/* NÚT ĐẶT LẠI */}
           <div className="filter-reset-group">
-            <button
-              className="reset-button"
-              onClick={handleResetFilters}
-            >
+            <button className="reset-button" onClick={handleResetFilters}>
               Đặt lại Bộ lọc
             </button>
           </div>
@@ -201,8 +240,10 @@ export default function CategorySection() {
                   value={b}
                   checked={selectedBrands.includes(b)}
                   onChange={(e) => {
-                    if (e.target.checked) setSelectedBrands([...selectedBrands, b]);
-                    else setSelectedBrands(selectedBrands.filter((x) => x !== b));
+                    if (e.target.checked)
+                      setSelectedBrands([...selectedBrands, b]);
+                    else
+                      setSelectedBrands(selectedBrands.filter((x) => x !== b));
                   }}
                 />
                 {b}
@@ -214,7 +255,9 @@ export default function CategorySection() {
                 className="show-more-btn"
                 onClick={() => setShowAllBrands(!showAllBrands)}
               >
-                {showAllBrands ? "Thu gọn (Hide)" : `Xem thêm (${brands.length - MAX_ITEMS_DISPLAY} nữa)`}
+                {showAllBrands
+                  ? "Thu gọn (Hide)"
+                  : `Xem thêm (${brands.length - MAX_ITEMS_DISPLAY} nữa)`}
               </button>
             )}
           </div>
@@ -225,13 +268,17 @@ export default function CategorySection() {
             <input
               type="number"
               value={priceRange[0]}
-              onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+              onChange={(e) =>
+                setPriceRange([Number(e.target.value), priceRange[1]])
+              }
             />
             <span> - </span>
             <input
               type="number"
               value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+              onChange={(e) =>
+                setPriceRange([priceRange[0], Number(e.target.value)])
+              }
             />
           </div>
 
@@ -258,8 +305,10 @@ export default function CategorySection() {
                   value={c}
                   checked={selectedColors.includes(c)}
                   onChange={(e) => {
-                    if (e.target.checked) setSelectedColors([...selectedColors, c]);
-                    else setSelectedColors(selectedColors.filter((x) => x !== c));
+                    if (e.target.checked)
+                      setSelectedColors([...selectedColors, c]);
+                    else
+                      setSelectedColors(selectedColors.filter((x) => x !== c));
                   }}
                 />
                 {c}
@@ -271,7 +320,9 @@ export default function CategorySection() {
                 className="show-more-btn"
                 onClick={() => setShowAllColors(!showAllColors)}
               >
-                {showAllColors ? "Thu gọn (Hide)" : `Xem thêm (${colors.length - MAX_ITEMS_DISPLAY} nữa)`}
+                {showAllColors
+                  ? "Thu gọn (Hide)"
+                  : `Xem thêm (${colors.length - MAX_ITEMS_DISPLAY} nữa)`}
               </button>
             )}
           </div>
@@ -286,8 +337,12 @@ export default function CategorySection() {
                   value={o}
                   checked={selectedOrigins.includes(o)}
                   onChange={(e) => {
-                    if (e.target.checked) setSelectedOrigins([...selectedOrigins, o]);
-                    else setSelectedOrigins(selectedOrigins.filter((x) => x !== o));
+                    if (e.target.checked)
+                      setSelectedOrigins([...selectedOrigins, o]);
+                    else
+                      setSelectedOrigins(
+                        selectedOrigins.filter((x) => x !== o)
+                      );
                   }}
                 />
                 {o}
@@ -299,7 +354,9 @@ export default function CategorySection() {
                 className="show-more-btn"
                 onClick={() => setShowAllOrigins(!showAllOrigins)}
               >
-                {showAllOrigins ? "Thu gọn (Hide)" : `Xem thêm (${origins.length - MAX_ITEMS_DISPLAY} nữa)`}
+                {showAllOrigins
+                  ? "Thu gọn (Hide)"
+                  : `Xem thêm (${origins.length - MAX_ITEMS_DISPLAY} nữa)`}
               </button>
             )}
           </div>

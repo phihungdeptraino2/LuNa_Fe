@@ -123,7 +123,7 @@ const styles = {
     maxWidth: "1100px",
     margin: "0 auto",
     padding: "60px 20px",
-    backgroundColor: "#fdfbf7",
+    backgroundColor: "white",
     fontFamily: "'Lora', serif",
     color: "#1a1a1a",
   },

@@ -6,71 +6,100 @@
 .modern-product-section {
   background: #ffffff;
   min-height: 100vh;
-  font-family: 'Lora', 'Times New Roman', serif;
+  font-family: "Lora", "Times New Roman", serif;
 }
 
 /* ============================================
    HERO BANNER
    ============================================ */
-.hero-banner {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  padding: 100px 40px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  border-bottom: 4px solid #1a1a1a;
-}
-
-/* Vintage paper texture overlay */
-.hero-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    repeating-linear-gradient(0deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.03) 2px,
-      rgba(255, 255, 255, 0.03) 4px);
-  pointer-events: none;
-}
 
 /* Musical note decoration */
-.hero-banner::after {
-  content: '♪ ♫ ♪';
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 3rem;
-  color: rgba(255, 255, 255, 0.1);
-  letter-spacing: 40px;
-}
+/* ============================================
+   VINTAGE HEADER STYLE (NEW)
+   ============================================ */
+/* ============================================
+   VINTAGE HEADER STYLE (MATCHING SERVICE SECTION)
+   ============================================ */
 
-.hero-content {
+.vintage-header-container {
+  text-align: center;
+  /* Giống ServiceSection: marginBottom 70px */
+  margin-bottom: 70px;
   position: relative;
-  z-index: 1;
+  /* Để nền trong suốt để hòa vào màu nền kem chung của trang, bỏ nền trắng cứng */
+  background: transparent;
+  padding: 0 20px;
+  color: #1a1a1a;
+  padding-top: 60px;
 }
 
-.hero-content h1 {
-  font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 4rem;
-  font-weight: 900;
-  color: #ffffff;
-  margin-bottom: 20px;
-  letter-spacing: 6px;
+/* Phần đường kẻ và nốt nhạc */
+.header-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  /* Giống ServiceSection: khoảng cách xuống tiêu đề là 15px */
+  margin-bottom: 15px;
+}
+
+.header-divider .line {
+  display: block;
+  width: 80px;
+  height: 1px;
+  background-color: #1a1a1a;
+  opacity: 1; /* Bỏ opacity 0.7 để nét đen rõ hơn giống mẫu */
+}
+
+.header-divider .music-icon {
+  /* Giống ServiceSection: 16px và nghiêng -10 độ */
+  font-size: 16px; /* Kích thước chuẩn từ ServiceSection */
+  color: #1a1a1a;
+  transform: rotate(-10deg); /* Xoay nghiêng giống ServiceSection */
+
+  /* Căn chỉnh icon SVG cho thẳng hàng với dòng kẻ */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Tiêu đề chính */
+.vintage-main-title {
+  font-family: "Playfair Display", serif;
+  /* Giống ServiceSection: 42px (thay vì 3.5rem ~ 56px quá to) */
+  font-size: 42px;
+  font-weight: 400;
+  color: #1a1a1a;
   text-transform: uppercase;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  /* Giống ServiceSection: 4px */
+  letter-spacing: 4px;
+  margin: 0 0 10px 0;
+  line-height: 1.2;
 }
 
-.hero-content p {
-  font-size: 1.3rem;
-  color: #e0e0e0;
-  letter-spacing: 2px;
+/* Tiêu đề phụ (Slogan) */
+.vintage-subtitle {
+  /* QUAN TRỌNG: ServiceSection dùng Playfair Display cho slogan, không phải Lora */
+  font-family: "Playfair Display", serif;
+  font-size: 18px;
   font-style: italic;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto;
+  letter-spacing: normal;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .vintage-header-container {
+    margin-bottom: 40px;
+  }
+  .vintage-main-title {
+    font-size: 28px; /* Thu nhỏ hợp lý trên mobile */
+    letter-spacing: 2px;
+  }
+  .header-divider .line {
+    width: 50px;
+  }
 }
 
 /* ============================================
@@ -93,7 +122,7 @@
 
 .section-header::before,
 .section-header::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 2px;
   background: #1a1a1a;
@@ -101,7 +130,7 @@
 }
 
 .section-header h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 2.5rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -176,7 +205,7 @@
   border: none;
   background: transparent;
   padding: 15px 0;
-  font-family: 'Lora', serif;
+  font-family: "Lora", serif;
   font-size: 1rem;
   color: #1a1a1a;
   outline: none;
@@ -221,7 +250,7 @@
   border: none;
   background: transparent;
   padding: 14px 10px;
-  font-family: 'Lora', serif;
+  font-family: "Lora", serif;
   font-size: 0.95rem;
   color: #1a1a1a;
   cursor: pointer;
@@ -313,7 +342,7 @@
 }
 
 /* Ensure all product cards have same height */
-.products-container.grid>* {
+.products-container.grid > * {
   height: 100%;
 }
 
@@ -343,7 +372,7 @@
 }
 
 .pagination-btn {
-  font-family: 'Lora', serif;
+  font-family: "Lora", serif;
   font-size: 1rem;
   font-weight: 600;
   padding: 12px 30px;
@@ -380,7 +409,7 @@
 .pagination-numbers button {
   width: 44px;
   height: 44px;
-  font-family: 'Lora', serif;
+  font-family: "Lora", serif;
   font-size: 1rem;
   font-weight: 600;
   background: #f8f8f8;
@@ -622,10 +651,10 @@
 /* ============================================
    LOADING & EMPTY STATE
    ============================================ */
-.modern-product-section>p {
+.modern-product-section > p {
   text-align: center;
   margin: 60px 20px;
-  font-family: 'Lora', serif;
+  font-family: "Lora", serif;
   font-size: 1.2rem;
   color: #666;
   letter-spacing: 1px;
@@ -644,7 +673,7 @@
 
 /* Musical ornament for section breaks */
 .featured-section::after {
-  content: '♪';
+  content: "♪";
   display: block;
   text-align: center;
   font-size: 2rem;
