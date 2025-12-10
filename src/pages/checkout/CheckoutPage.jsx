@@ -423,15 +423,15 @@ const CheckoutPage = () => {
               </div>
               <div className="total-row">
                 <span>Phí vận chuyển:</span>
-                <span>{formatPrice(0)}</span>
+                <span>{formatPrice(totalPrice * 0.05)}</span>
               </div>
               <div className="total-row">
-                <span>Giảm giá:</span>
-                <span>{formatPrice(0)}</span>
+                <span>Thuế:</span>
+                <span>{formatPrice(totalPrice * 0.05)}</span>
               </div>
               <div className="total-row total-final">
                 <span>Tổng cộng:</span>
-                <span>{formatPrice(totalPrice)}</span>
+                <span>{formatPrice(totalPrice + totalPrice*0.1)}</span>
               </div>
             </div>
 
@@ -466,7 +466,7 @@ const CheckoutPage = () => {
               </div>
               <div className="total-row total-final">
                 <span>Tổng cộng:</span>
-                <strong className="final-price">{formatPrice(orderSnapshot.total)}</strong>
+                <strong className="final-price">{formatPrice(orderSnapshot.total + orderSnapshot.total*0.1)}</strong>
               </div>
             </div>
             <p className="modal-note">
