@@ -15,6 +15,7 @@ const CheckoutPage = () => {
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const BE_HOST = "http://localhost:8081"
 
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [formData, setFormData] = useState({
@@ -24,6 +25,11 @@ const CheckoutPage = () => {
     province: "",
     isDefault: false,
   })
+  const buildImageUrl = (url) => {
+    if (!url) return "/placeholder.svg"
+    if (url.startsWith("http")) return url // Nếu đã là URL đầy đủ
+    return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`
+  }
 
   useEffect(() => {
     if (!user) {
@@ -334,7 +340,14 @@ const CheckoutPage = () => {
               {cartItems.map((item) => (
                 <div key={item.product?.id} className="summary-item">
                   <div className="item-info">
-                    <img src={item.product?.imageUrl || "/placeholder.svg"} alt={item.product?.name} />
+                    <img
+                      src={buildImageUrl(item.product?.imageUrl)}
+                      alt={item.product?.name}
+                      onError={(e) => {
+                        e.target.onerror = null
+                        e.target.src = "/placeholder.svg"
+                      }}
+                    />
                     <div className="item-details">
                       <p className="item-name">{item.product?.name}</p>
                       <p className="item-quantity">x{item.quantity}</p>
