@@ -174,7 +174,7 @@ const styles = {
     maxWidth: "1100px",
     margin: "0 auto",
     padding: "60px 20px",
-    backgroundColor: "#fdfbf7", // Màu kem giấy cũ
+    backgroundColor: "white", // Màu kem giấy cũ
     fontFamily: "'Lora', serif",
     color: "#1a1a1a",
   },

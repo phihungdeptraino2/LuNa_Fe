@@ -1,49 +1,91 @@
 /* CategorySection.css - Black White Vintage Classic Music Theme */
 
 /* =======================================
-   BASE & LAYOUT
+   1. BASE & LAYOUT
    ======================================= */
 .category-section {
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: 'Georgia', 'Garamond', serif;
+  font-family: "Georgia", "Garamond", serif; /* Font chung cho toàn trang */
   background: linear-gradient(to bottom, #fafafa 0%, #f5f5f5 100%);
   min-height: 100vh;
 }
 
-.category-section h2 {
-  font-size: 42px;
-  font-weight: 400;
-  letter-spacing: 2px;
+/* =======================================
+   2. NEW HEADER STYLE (LUNA VINTAGE)
+   Thay thế hoàn toàn cho header cũ
+   ======================================= */
+.luna-header-wrapper {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 60px;
+  padding-top: 20px;
+  font-family: "Times New Roman", Times, serif; /* Font riêng cho tiêu đề để giống ảnh */
   color: #1a1a1a;
-  text-transform: uppercase;
+}
+
+/* Phần nốt nhạc và đường kẻ */
+.luna-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.luna-divider .line {
+  display: block;
+  width: 80px;
+  height: 1px;
+  background-color: #333;
+}
+
+.luna-divider .music-icon {
+  font-size: 16px; /* Kích thước icon */
+  color: #1a1a1a; /* Màu sắc */
+  transform: rotate(-10deg); /* Xoay nghiêng */
+
+  /* Căn chỉnh cho icon SVG */
+  display: inline-block;
+  vertical-align: middle;
   position: relative;
-  padding-bottom: 20px;
+  top: -1px; /* Tinh chỉnh nhỏ để icon nằm chính giữa dòng kẻ */
 }
 
-.category-section h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 2px;
-  background: #1a1a1a;
+/* Tiêu đề chính (Tên danh mục) */
+.luna-main-title {
+  /* Sử dụng stack font ưu tiên các font serif sang trọng, cổ điển (kiểu Didot/Bodoni) */
+
+  font-family: "'Playfair Display', serif";
+  font-size: 46px;
+  text-transform: uppercase;
+  letter-spacing: 5px; /* Tăng khoảng cách chữ thêm một chút để giống ảnh hơn */
+  font-weight: 400; /* Giữ nguyên độ dày vừa phải */
+  margin: 0 0 15px 0; /* Tăng khoảng cách dưới một chút */
+  line-height: 1.1;
+  color: #1a1a1a;
 }
 
-/* QUAN TRỌNG: Cấu trúc container (Hoàn nguyên padding-left) */
+/* Slogan in nghiêng */
+.luna-tagline {
+  font-size: 18px;
+  font-style: italic;
+  color: #555;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* =======================================
+   3. CONTAINER & SIDEBAR LAYOUT
+   ======================================= */
 .category-container {
   display: flex;
   gap: 30px;
   align-items: flex-start;
-  /* KHÔNG CÓ padding-left: 310px; */
 }
 
-/* ===== FILTER SIDEBAR (ĐÃ CHUYỂN SANG STICKY) ===== */
+/* Sidebar Sticky */
 .filter-sidebar {
   width: 280px;
   background: #ffffff;
@@ -51,20 +93,24 @@
   border: 2px solid #1a1a1a;
   border-radius: 0;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
-
-  /* 💥 ĐIỀU CHỈNH CHÍNH: DÙNG STICKY */
   position: sticky;
-  /* Đặt top 20px hoặc 0px. Nếu Header của bạn cố định, hãy đặt cao hơn chiều cao Header. 
-       Tôi dùng 20px để tạo khoảng cách an toàn. */
-  top: 20px;
-
-  /* Hoàn nguyên các thuộc tính fixed không cần thiết */
-  left: auto;
-  margin-left: 0;
-
-  /* max-height: calc(100vh - (top + bottom margin)) */
+  top: 20px; /* Cách mép trên màn hình khi cuộn */
   max-height: calc(100vh - 40px);
   overflow-y: auto;
+}
+
+/* Custom Scrollbar cho Sidebar */
+.filter-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.filter-sidebar::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+.filter-sidebar::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+}
+.filter-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #000;
 }
 
 .filter-sidebar h3 {
@@ -79,7 +125,11 @@
   border-bottom: 3px double #ffffff;
 }
 
-/* ===== NHÓM RESET BUTTON ===== */
+/* =======================================
+   4. FILTER COMPONENTS
+   ======================================= */
+
+/* Nút Reset */
 .filter-reset-group {
   padding: 15px 20px 0;
   border-bottom: 1px solid #e0e0e0;
@@ -113,7 +163,7 @@
   transform: translate(1px, 1px);
 }
 
-/* ===== FILTER GROUPS ===== */
+/* Nhóm Filter (Brand, Color...) */
 .filter-group {
   padding: 15px 20px;
   border-bottom: 1px solid #e0e0e0;
@@ -139,21 +189,9 @@
   border-bottom: 1px solid #1a1a1a;
 }
 
-/* ===== CHECKBOXES & RADIO BUTTONS (1 cột) ===== */
+/* Checkbox & Radio Styles */
 .filter-group.multi-select-grid {
   display: block;
-}
-
-.filter-group.multi-select-grid label {
-  width: 100%;
-  padding: 5px 0;
-  margin: 0;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .filter-group label {
@@ -164,8 +202,9 @@
   font-size: 14px;
   color: #333;
   transition: all 0.2s ease;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   text-align: left;
+  width: 100%;
 }
 
 .filter-group label:hover {
@@ -184,14 +223,14 @@
   border: 2px solid #1a1a1a;
 }
 
-/* ===== PRICE INPUTS ===== */
+/* Price Inputs */
 .filter-group.price-filter {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 5px;
+  flex-wrap: wrap;
 }
-
 .filter-group.price-filter h4 {
   width: 100%;
 }
@@ -203,7 +242,7 @@
   border: 2px solid #1a1a1a;
   background: #ffffff;
   font-size: 13px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-weight: 600;
   text-align: center;
   transition: all 0.2s ease;
@@ -221,7 +260,7 @@
   color: #1a1a1a;
 }
 
-/* ===== SHOW MORE BUTTON ===== */
+/* Show More Button */
 .show-more-btn {
   width: 100%;
   text-align: left;
@@ -236,37 +275,16 @@
   letter-spacing: 0.5px;
   text-decoration: underline;
   transition: color 0.2s ease;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 .show-more-btn:hover {
   color: #444;
 }
 
-.filter-group.multi-select-grid .show-more-btn {
-  width: 100%;
-  display: block;
-}
-
-/* ===== SCROLLBAR STYLING ===== */
-.filter-sidebar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.filter-sidebar::-webkit-scrollbar-track {
-  background: #f0f0f0;
-}
-
-.filter-sidebar::-webkit-scrollbar-thumb {
-  background: #1a1a1a;
-  border-radius: 0;
-}
-
-.filter-sidebar::-webkit-scrollbar-thumb:hover {
-  background: #000;
-}
-
-/* ===== PRODUCTS GRID ===== */
+/* =======================================
+   5. PRODUCTS GRID
+   ======================================= */
 .category-grid {
   flex: 1;
   display: grid;
@@ -275,8 +293,8 @@
   padding: 10px;
 }
 
-/* ===== LOADING & EMPTY STATES ===== */
-.category-section>p {
+/* Loading/Empty State */
+.category-section > p {
   text-align: center;
   font-size: 20px;
   color: #666;
@@ -285,21 +303,19 @@
   letter-spacing: 1px;
 }
 
-/* ===== RESPONSIVE DESIGN (Hoàn nguyên filter về relative/sticky) ===== */
+/* =======================================
+   6. RESPONSIVE DESIGN
+   ======================================= */
 @media (max-width: 1024px) {
   .category-container {
     flex-direction: column;
-    /* Hoàn nguyên padding-left */
     padding-left: 0;
   }
 
   .filter-sidebar {
     width: 100%;
-    /* Chuyển sang relative/không dính trên mobile */
-    position: relative;
+    position: relative; /* Hủy sticky trên mobile/tablet */
     top: auto;
-    left: auto;
-    margin-left: 0;
     max-height: none;
     margin-bottom: 30px;
   }
@@ -307,16 +323,22 @@
   .category-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
-
-  .filter-group.multi-select-grid label {
-    width: 100%;
-  }
 }
 
 @media (max-width: 768px) {
-  .category-section h2 {
+  /* Điều chỉnh Header trên mobile */
+  .luna-main-title {
     font-size: 32px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+  }
+
+  .luna-tagline {
+    font-size: 15px;
+    padding: 0 10px;
+  }
+
+  .luna-divider .line {
+    width: 50px;
   }
 
   .filter-sidebar h3 {
@@ -344,53 +366,4 @@
     width: 70px;
     padding: 6px 8px;
   }
-}
-
-/* =======================================
-   SỬA ĐỔI: TÊN DANH MỤC (KHẮC PHỤC LỖI FONT & PHÙ HỢP THEME B&W VINTAGE)
-   ======================================= */
-.category-name-display {
-  /* KHẮC PHỤC LỖI FONT: Tạm thời chuyển sang font an toàn hơn cho hiển thị tiêu đề phụ */
-  font-family: 'Times New Roman', Times, serif;
-
-  font-size: 28px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  text-align: center;
-  color: #1a1a1a;
-  text-transform: capitalize;
-
-  margin-top: -20px;
-  margin-bottom: 30px;
-  padding-bottom: 10px;
-
-  /* Hiệu ứng viền kép cổ điển (giữ nguyên) */
-  border-bottom: 3px double #1a1a1a;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Đảm bảo style .reset-button (nếu cần) */
-.filter-reset-group {
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.reset-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #dc3545;
-  /* Màu đỏ */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.reset-button:hover {
-  background-color: #c82333;
 }
