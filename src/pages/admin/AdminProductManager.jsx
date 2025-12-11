@@ -353,9 +353,9 @@ const AdminProductManager = () => {
                       {product.brand?.name || "N/A"}
                     </td>
                     <td style={{ padding: 15, fontWeight: "bold" }}>
-                      {new Intl.NumberFormat("vi-VN", {
+                      {new Intl.NumberFormat("en-US", {
                         style: "currency",
-                        currency: "VND",
+                        currency: "USD",
                       }).format(product.price)}
                     </td>
                     <td style={{ padding: 15 }}>

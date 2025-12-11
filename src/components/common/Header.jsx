@@ -122,8 +122,23 @@ const Header = ({ user, logout, handleUserIconClick }) => {
           {searchResults.length > 0 && (
             <div className="search-dropdown">
               {searchResults.map((p) => {
-                const img = p.productImages?.find((img) => img.default)?.imageUrl;
-                const imgUrl = img ? `${BE_HOST}${img.startsWith("/") ? img : "/" + img}` : "";
+
+                console.log("🔍 Product:", p); // Log toàn bộ object
+
+                const imgObj = p.productImages?.find((img) => img.default);
+
+                console.log("🖼️ Default image object:", imgObj);
+
+                const img = imgObj?.imageUrl;
+
+                console.log("📌 Raw imageUrl from backend:", img);
+
+                // Build URL
+                const imgUrl = img
+                  ? `${BE_HOST}${img.startsWith("/") ? img : "/" + img}`
+                  : null;
+
+                console.log("➡️ Final imgUrl sent to <img>:", imgUrl);
 
                 return (
                   <Link
@@ -132,17 +147,26 @@ const Header = ({ user, logout, handleUserIconClick }) => {
                     className="search-item"
                     onClick={() => setSearchTerm("")}
                   >
-                    <img src={imgUrl} alt={p.name} className="search-item-img" />
+                    {/* Log trường hợp ảnh null */}
+                    {imgUrl ? (
+                      <img src={imgUrl} alt={p.name} className="search-item-img" />
+                    ) : (
+                      <>
+                        {console.log("⚠️ Product has NO valid image:", p.id, p.name)}
+                      </>
+                    )}
 
                     <div className="search-item-info">
                       <span className="search-item-name">{p.name}</span>
                       <span className="search-item-price">${p.price}</span>
                     </div>
+
                   </Link>
                 );
               })}
             </div>
           )}
+
         </div>
 
         {/* User Actions */}

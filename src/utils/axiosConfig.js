@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8081/api",
+  baseURL: "http://192.168.1.98:8081/api",
 
   // SỬA TẠM THÀNH FALSE
   // Lý do: Để trình duyệt không chặn CORS khi Server đang trả về "*"
