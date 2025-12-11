@@ -57,11 +57,10 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  // Hàm format tiền tệ VNĐ
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat("vi-VN", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "VND",
+      currency: "USD",
     }).format(value);
   };
 

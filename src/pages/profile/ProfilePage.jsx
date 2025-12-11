@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { FaUser, FaEnvelope, FaPhone, FaKey, FaEdit, FaSave, FaTimes, FaCheck, FaShoppingBag, FaBox, FaTruck, FaCheckCircle } from "react-icons/fa";
 import "./ProfilePage.css";
 import { BE_HOST } from "../../utils/constants";
+import { useNavigate } from "react-router-dom";
 
 
 const PROFILE_API_URL = `${BE_HOST}/api/auth/me`;
@@ -12,6 +13,7 @@ const ORDERS_API_URL = `${BE_HOST}/api/orders/my-orders`;
 
 export default function ProfilePage() {
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const isAdmin = user?.roles?.includes("ADMIN");
     const isCustomer = user?.roles?.includes("CUSTOMER");
@@ -137,9 +139,9 @@ export default function ProfilePage() {
     };
 
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', {
+        return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'VND'
+            currency: 'USD'
         }).format(price);
     };
 
@@ -329,14 +331,31 @@ export default function ProfilePage() {
                                             <strong>Ngày đặt:</strong> {formatDate(order.orderDate)}
                                         </div>
 
-                                        <div className="order-items">
+                        
+                                            <div className="order-items">
                                             {order.items.map((item, idx) => (
                                                 <div key={idx} className="order-item">
                                                     <div className="item-info">
                                                         <span className="item-name">{item.productName}</span>
                                                         <span className="item-quantity">x{item.quantity}</span>
                                                     </div>
-                                                    <div className="item-price">{formatPrice(item.subtotal)}</div>
+                                                    
+                                                    {/* START: THÊM ĐOẠN NÀY */}
+                                                    <div className="item-actions">
+                                                        <div className="item-price">{formatPrice(item.subtotal)}</div>
+                                                        
+                                                        {/* Chỉ hiện nút Đánh giá khi đơn đã giao thành công */}
+                                                        {order.status === "DELIVERED" && (
+                                                            <button 
+                                                                className="btn-write-review"
+                                                                onClick={() => navigate(`/products/${item.productId}/reviews`)}
+                                                            >
+                                                                <FaEdit /> Đánh giá
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    {/* END: KẾT THÚC ĐOẠN THÊM */}
+                                                    
                                                 </div>
                                             ))}
                                         </div>

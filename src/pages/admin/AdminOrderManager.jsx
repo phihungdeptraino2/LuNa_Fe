@@ -101,9 +101,9 @@ const AdminOrderManager = () => {
 
   // --- HELPER FUNCTIONS ---
   const formatCurrency = (val) =>
-    new Intl.NumberFormat("vi-VN", {
+    new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "VND",
+      currency: "USD",
     }).format(val || 0);
 
   const formatDate = (date) =>

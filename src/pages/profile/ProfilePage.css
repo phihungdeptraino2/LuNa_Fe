@@ -30,7 +30,43 @@
     opacity: 0.3;
     pointer-events: none;
 }
+/* Container cho phần giá và nút bấm để căn chỉnh đẹp hơn */
+.item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
 
+/* Style cho nút Viết đánh giá */
+.btn-write-review {
+    background-color: #ff9800; /* Màu cam nổi bật */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.btn-write-review:hover {
+    background-color: #e68900;
+}
+
+/* Mobile responsive: Nếu màn hình nhỏ thì chỉnh lại chút */
+@media (max-width: 768px) {
+    .order-item {
+        align-items: flex-start;
+    }
+    
+    .item-actions {
+        margin-left: auto; /* Đẩy sang phải */
+    }
+}
 .profile-page-container::after {
     content: '';
     position: fixed;

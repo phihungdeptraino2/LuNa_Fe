@@ -1,7 +1,7 @@
 // src/utils/constants.js
 
 // URL gốc của Backend (để dành cho việc hiển thị ảnh)
-export const BE_HOST = "http://192.168.1.98:8081";
+export const BE_HOST = "http://10.180.181.224:8081";
 
 // Hàm tiện ích để build URL ảnh
 export const getImageUrl = (path) => {
