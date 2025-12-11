@@ -4,11 +4,15 @@ import { useAuth } from "../../context/AuthContext";
 import { FaUser, FaEnvelope, FaPhone, FaKey, FaEdit, FaSave, FaTimes, FaCheck, FaShoppingBag, FaBox, FaTruck, FaCheckCircle } from "react-icons/fa";
 import "./ProfilePage.css";
 
-const API_URL = "http://localhost:8081/api/auth/me";
-const ORDERS_API_URL = "http://localhost:8081/api/orders/my-orders";
+const BASE_URL = "http://localhost:8081/api";
+const PROFILE_API_URL = `${BASE_URL}/auth/me`;
+const ORDERS_API_URL = `${BASE_URL}/orders/my-orders`;
 
 export default function ProfilePage() {
     const { user } = useAuth();
+
+    const isAdmin = user?.roles?.includes("ADMIN");
+    const isCustomer = user?.roles?.includes("CUSTOMER");
 
     const [profileData, setProfileData] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -21,18 +25,19 @@ export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("info"); // "info" hoặc "orders"
 
     useEffect(() => {
+        const token = user?.token || localStorage.getItem("token");
+
+        if (!user || !token) {
+            console.error("❌ No user or token found!");
+            setError("Bạn cần đăng nhập để xem trang này.");
+            setLoading(false);
+            setOrdersLoading(false);
+            return;
+        }
+
         const fetchProfile = async () => {
-            const token = user?.token || localStorage.getItem("token");
-
-            if (!token) {
-                console.error("❌ No token found!");
-                setError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại.");
-                setLoading(false);
-                return;
-            }
-
             try {
-                const res = await axios.get(API_URL, {
+                const res = await axios.get(PROFILE_API_URL, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -49,12 +54,8 @@ export default function ProfilePage() {
         };
 
         const fetchOrders = async () => {
-            const token = user?.token || localStorage.getItem("token");
-
-            if (!token) {
-                setOrdersLoading(false);
-                return;
-            }
+            // Thay đổi logic: Admin cũng có thể xem đơn hàng của mình
+            // Giả định API ORDERS_API_URL luôn trả về đơn hàng của user dựa trên token
 
             try {
                 const res = await axios.get(ORDERS_API_URL, {
@@ -70,19 +71,19 @@ export default function ProfilePage() {
             }
         };
 
-        if (user) {
-            fetchProfile();
-            fetchOrders();
-        } else {
-            setLoading(false);
-            setOrdersLoading(false);
-        }
-    }, [user]);
+        fetchProfile();
+
+        // GỌI fetchOrders cho TẤT CẢ user đã đăng nhập, bao gồm Admin.
+        fetchOrders();
+
+    }, [user]); // Bỏ isAdmin/isCustomer ra khỏi dependency array vì đã có user
 
     const handleSave = async (e) => {
         e.preventDefault();
         setSuccessMessage("");
         setError("");
+
+        // LOGIC GỌI API CẬP NHẬT Ở ĐÂY 
 
         try {
             setProfileData(editData);
@@ -156,7 +157,7 @@ export default function ProfilePage() {
         );
     }
 
-    if (!user) {
+    if (!user || error && !profileData) {
         return (
             <div className="profile-page-container" style={{
                 minHeight: '100vh',
@@ -166,23 +167,7 @@ export default function ProfilePage() {
                 justifyContent: 'center'
             }}>
                 <p className="error-message" style={{ color: 'white', fontSize: '1.5rem' }}>
-                    Bạn cần đăng nhập để xem trang này.
-                </p>
-            </div>
-        );
-    }
-
-    if (error && !profileData) {
-        return (
-            <div className="profile-page-container" style={{
-                minHeight: '100vh',
-                paddingTop: '150px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                <p className="error-message" style={{ color: 'white', fontSize: '1.5rem' }}>
-                    {error}
+                    {error || "Bạn cần đăng nhập để xem trang này."}
                 </p>
             </div>
         );
@@ -194,7 +179,7 @@ export default function ProfilePage() {
 
     return (
         <div className="profile-page-container">
-            <h1 className="profile-header">Thông tin Cá nhân</h1>
+            <h1 className="profile-header">Thông tin Cá nhân ({isAdmin ? "Admin" : (isCustomer ? "Customer" : "User")})</h1>
 
             {/* Tabs */}
             <div className="profile-tabs">
@@ -204,6 +189,8 @@ export default function ProfilePage() {
                 >
                     <FaUser /> Thông tin
                 </button>
+
+                {/* SỬA: BỎ ĐIỀU KIỆN isCustomer để Admin cũng thấy tab Orders */}
                 <button
                     className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
                     onClick={() => setActiveTab("orders")}
@@ -311,7 +298,8 @@ export default function ProfilePage() {
                     </>
                 )}
 
-                {/* TAB ĐỐN HÀNG */}
+                {/* TAB ĐƠN HÀNG */}
+                {/* Đã bỏ điều kiện isCustomer */}
                 {activeTab === "orders" && (
                     <div className="orders-section">
                         {ordersLoading ? (

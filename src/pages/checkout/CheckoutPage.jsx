@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 import "./CheckoutPage.css"
 
 const CheckoutPage = () => {
-  // ✨ Đảm bảo lấy clearCart
+  // Lấy dữ liệu và context cần thiết
   const { cartItems, totalPrice, clearCart } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -21,9 +21,8 @@ const CheckoutPage = () => {
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("cod")
 
-  // ✨ BỔ SUNG STATE CHO MODAL XÁC NHẬN
+  // State cho Modal xác nhận
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  // orderSnapshot giờ là bản nháp tạm thời (Temporary Draft)
   const [orderSnapshot, setOrderSnapshot] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false) // Trạng thái đang xử lý API POST cuối cùng
 
@@ -35,12 +34,14 @@ const CheckoutPage = () => {
     isDefault: false,
   })
 
+  // Hàm xây dựng URL hình ảnh
   const buildImageUrl = (url) => {
     if (!url) return "/placeholder.svg"
-    if (url.startsWith("http")) return url // Nếu đã là URL đầy đủ
+    if (url.startsWith("http")) return url
     return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`
   }
 
+  // Hàm định dạng giá tiền
   const formatPrice = (price) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
 
@@ -59,6 +60,7 @@ const CheckoutPage = () => {
     }
   };
 
+  // Điều hướng nếu chưa đăng nhập và tải địa chỉ
   useEffect(() => {
     if (!user) {
       navigate("/login")
@@ -68,6 +70,7 @@ const CheckoutPage = () => {
     fetchUserAddresses()
   }, [user, navigate])
 
+  // Lấy địa chỉ của người dùng
   const fetchUserAddresses = async () => {
     if (!user || !user.id) return
     try {
@@ -92,7 +95,11 @@ const CheckoutPage = () => {
 
       if (data.data && data.data.length > 0) {
         const defaultAddr = data.data.find((addr) => addr.isDefault)
+        // Chọn địa chỉ mặc định hoặc địa chỉ đầu tiên
         setSelectedAddress(defaultAddr || data.data[0])
+      } else {
+        // Nếu không có địa chỉ nào, set selectedAddress = null
+        setSelectedAddress(null);
       }
 
       setError(null)
@@ -104,6 +111,7 @@ const CheckoutPage = () => {
     }
   }
 
+  // Xử lý thay đổi form địa chỉ mới
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData({
@@ -112,12 +120,13 @@ const CheckoutPage = () => {
     })
   }
 
+  // Gửi form thêm địa chỉ mới
   const handleAddressSubmit = async (e) => {
     e.preventDefault()
 
     try {
       const token = localStorage.getItem("token")
-      const userId = user?.id || 2
+      const userId = user?.id
 
       const requestBody = {
         street: formData.street,
@@ -142,10 +151,12 @@ const CheckoutPage = () => {
 
       const newAddress = await response.json()
 
+      // Thêm địa chỉ mới vào state và chọn nó
       setAddresses([...addresses, newAddress.data])
       setSelectedAddress(newAddress.data)
       setShowAddressForm(false)
 
+      // Reset form
       setFormData({
         street: "",
         city: "",
@@ -159,30 +170,28 @@ const CheckoutPage = () => {
     }
   }
 
-  // ✨ CẬP NHẬT LOGIC handleCheckout: CHỈ HIỂN THỊ MODAL
+  // Xử lý Checkout: Kiểm tra điều kiện và mở Modal xác nhận
   const handleCheckout = () => {
     if (!selectedAddress) {
-      setError("Vui lòng chọn hoặc thêm địa chỉ giao hàng")
-      return
+      setError("Vui lòng chọn hoặc thêm địa chỉ giao hàng");
+      return; // Dừng lại nếu chưa chọn địa chỉ
     }
 
-    // Reset trạng thái lỗi và xử lý
+    // Reset lỗi và chuẩn bị cho Modal
     setIsProcessing(false);
     setError(null);
 
-    // Tạo bản nháp đơn hàng tạm thời cho Modal (chưa có ID thực từ DB)
-    // Giả định Total bằng totalPrice hiện tại trong giỏ hàng
+    // Tạo bản nháp đơn hàng
     const draftOrder = {
       id: "TẠM TÍNH",
       total: totalPrice,
-      // Thêm các trường cần thiết khác để hiển thị trong Modal (nếu có)
     };
 
     setOrderSnapshot(draftOrder);
     setShowConfirmModal(true);
   }
 
-  // ✨ BỔ SUNG HÀM XÁC NHẬN CUỐI CÙNG TRONG MODAL: GỌI API & CHUYỂN TRANG
+  // Xử lý Xác nhận cuối cùng trong Modal: Gọi API tạo đơn hàng
   const handleConfirmOrder = async () => {
     if (!selectedAddress) {
       setError("Lỗi: Không tìm thấy địa chỉ giao hàng được chọn.")
@@ -190,11 +199,10 @@ const CheckoutPage = () => {
     }
 
     try {
-      setIsProcessing(true) // Bắt đầu xử lý (disable các nút)
+      setIsProcessing(true)
       setError(null)
 
       const token = localStorage.getItem("token")
-      const userId = user?.id
 
       // BƯỚC 1: GỌI API TẠO ĐƠN HÀNG VÀ HOÀN TẤT
       const response = await fetch(`http://localhost:8081/api/orders/checkout`, {
@@ -210,45 +218,44 @@ const CheckoutPage = () => {
       })
 
       if (!response.ok) {
-        // Thử đọc chi tiết lỗi nếu có
         const errorDetail = await response.text();
         console.error("API Error Response:", errorDetail);
         throw new Error("Không thể tạo đơn hàng. Vui lòng thử lại.");
       }
 
       const data = await response.json()
-      const finalOrder = data.data; // Đơn hàng cuối cùng với ID thật, tổng tiền, v.v.
+      const finalOrder = data.data;
 
-      // BƯỚC 2: XÓA GIỎ HÀNG (Frontend) VÀ CHUYỂN TRANG
+      // BƯỚC 2: XÓA GIỎ HÀNG VÀ CHUYỂN TRANG
       clearCart()
 
-      // Điều hướng sang trang thành công (Order Success Page)
       navigate("/order-success", {
         state: {
-          order: finalOrder, // Dữ liệu đơn hàng cuối cùng
+          order: finalOrder,
           paymentMethodName: getPaymentMethodName(paymentMethod),
-          itemsToDisplay: cartItems, // Truyền snapshot cartItems ban đầu
+          itemsToDisplay: cartItems,
         }
       })
 
-      // Reset trạng thái (dù navigate đã reset)
+      // Reset trạng thái
       setIsProcessing(false)
       setShowConfirmModal(false)
 
     } catch (err) {
       console.error("Error creating order:", err)
       setError(`Lỗi: ${err.message}`)
-      setIsProcessing(false) // Kết thúc xử lý nếu thất bại
+      setIsProcessing(false)
     }
   }
 
-  // Xử lý Hủy Modal (quay lại bước Checkout)
+  // Xử lý Hủy Modal
   const handleCancelConfirmation = () => {
     setShowConfirmModal(false);
-    setOrderSnapshot(null); // Xóa bản nháp
+    setOrderSnapshot(null);
     setIsProcessing(false);
   }
 
+  // Hiển thị nếu giỏ hàng trống
   if (cartItems.length === 0) {
     return (
       <div className="checkout-empty">
@@ -270,6 +277,20 @@ const CheckoutPage = () => {
         <div className="checkout-left">
           <div className="address-section">
             <h2>Địa chỉ giao hàng</h2>
+
+            {/* CẢNH BÁO: CHƯA CÓ ĐỊA CHỈ NÀO ĐƯỢC LƯU */}
+            {!loading && addresses.length === 0 && (
+              <div className="error-message address-warning">
+                ⚠️ Bạn chưa có địa chỉ giao hàng nào được lưu. Vui lòng thêm địa chỉ mới.
+              </div>
+            )}
+
+            {/* CẢNH BÁO: CÓ ĐỊA CHỈ NHƯNG CHƯA CHỌN */}
+            {!loading && addresses.length > 0 && !selectedAddress && (
+              <div className="error-message address-warning">
+                ⚠️ Vui lòng chọn một địa chỉ giao hàng đã lưu để tiếp tục.
+              </div>
+            )}
 
             {loading ? (
               <div>Đang tải địa chỉ...</div>
@@ -431,7 +452,8 @@ const CheckoutPage = () => {
               </div>
               <div className="total-row total-final">
                 <span>Tổng cộng:</span>
-                <span>{formatPrice(totalPrice + totalPrice*0.1)}</span>
+                {/* Giả định: Tổng cộng = Tạm tính + Phí vận chuyển + Thuế = Tạm tính + Tạm tính * 0.1 */}
+                <span>{formatPrice(totalPrice + totalPrice * 0.1)}</span>
               </div>
             </div>
 
@@ -451,7 +473,7 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* ===== MODAL XÁC NHẬN ĐƠN HÀNG MỚI ===== */}
+      {/* ===== MODAL XÁC NHẬN ĐƠN HÀNG ===== */}
       {showConfirmModal && orderSnapshot && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -466,7 +488,7 @@ const CheckoutPage = () => {
               </div>
               <div className="total-row total-final">
                 <span>Tổng cộng:</span>
-                <strong className="final-price">{formatPrice(orderSnapshot.total + orderSnapshot.total*0.1)}</strong>
+                <strong className="final-price">{formatPrice(orderSnapshot.total + orderSnapshot.total * 0.1)}</strong>
               </div>
             </div>
             <p className="modal-note">

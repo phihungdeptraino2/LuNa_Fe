@@ -78,8 +78,11 @@ function App() {
           <Route path="customer/cart" element={<CartPage />} />
           <Route path="customer/checkout" element={<CheckoutPage />} />
 
+
+
           {/* *** ĐỊNH TUYẾN PROFILE CHÍNH XÁC *** */}
           <Route path="customer/profile" element={<ProfilePage />} />
+          <Route path="/admin/profile" element={<ProfilePage />} />
 
           <Route
             path="customer"

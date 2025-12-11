@@ -24,6 +24,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
 
   const isCustomer = user?.roles?.includes("CUSTOMER");
   const isAdmin = user?.roles?.includes("ADMIN");
+  // Prefix được sử dụng cho các link điều hướng chung (Home, Products,...)
   const prefix = isCustomer ? "/customer" : "";
 
   const menus = [
@@ -35,9 +36,8 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     { name: "Liên hệ", path: `${prefix}/contact` },
   ];
 
-  // Lấy categories và products (giữ nguyên)
+  // Lấy categories và products
   useEffect(() => {
-    // ... (Code fetch categories và products giữ nguyên)
     const fetchCategories = async () => {
       try {
         const res = await axios.get("http://localhost:8081/api/categories");
@@ -61,7 +61,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
   }, []);
 
 
-  // Debounce search (giữ nguyên)
+  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchTerm.trim() === "") {
@@ -81,14 +81,13 @@ const Header = ({ user, logout, handleUserIconClick }) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      // Ngưỡng cuộn để kích hoạt thay đổi Hướng (tăng từ 10 lên 50 để dứt khoát hơn)
+      // Ngưỡng cuộn để kích hoạt thay đổi Hướng
       const scrollDirectionThreshold = 50;
 
-      // 1. Xác định Header đã cuộn hay chưa (để giảm kích thước) - Giữ nguyên 10px để thu gọn nhanh
+      // 1. Xác định Header đã cuộn hay chưa (để giảm kích thước)
       setIsScrolled(currentScrollY > 10);
 
       // 2. Xác định hướng cuộn (dùng cho ẩn/hiện)
-      // Chỉ thay đổi hướng khi đã cuộn đủ 50px TỪ LẦN THAY ĐỔI CUỐI CÙNG
       if (Math.abs(currentScrollY - lastScrollY) > scrollDirectionThreshold) {
         if (currentScrollY > lastScrollY) {
           // Cuộn xuống: Ẩn Header
@@ -98,7 +97,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
           setScrollDirection('up');
         }
 
-        // Cập nhật lastScrollY CHỈ KHI HƯỚNG CUỘN ĐÃ ĐƯỢC XÁC NHẬN thay vì mỗi lần cuộn
+        // Cập nhật lastScrollY CHỈ KHI HƯỚNG CUỘN ĐÃ ĐƯỢC XÁC NHẬN
         setLastScrollY(currentScrollY);
       }
     };
@@ -124,7 +123,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
   return (
     <header className={headerClass.trim()}> {/* Thêm className động */}
       <div className="main-header">
-        {/* ... (Các phần còn lại của main-header giữ nguyên) ... */}
+        {/* Logo */}
         <div className="logo">
           <Link to={isCustomer ? "/customer/home" : "/"}>
             <span className="logo-luna">Luna</span>
@@ -192,12 +191,13 @@ const Header = ({ user, logout, handleUserIconClick }) => {
               <FaPowerOff className="header-icon clickable" />
               {isPowerDropdownOpen && (
                 <div className="dropdown-menu power-menu">
-                  {isCustomer && (
-                    <Link to={`${prefix}/profile`} className="dropdown-item">
-                      Profile
-                    </Link>
-                  )}
-  
+                  {/* SỬA LẦN 2: Admin -> /admin/profile, Customer -> /customer/profile */}
+                  <Link
+                    to={isAdmin ? "/admin/profile" : `${prefix}/profile`}
+                    className="dropdown-item"
+                  >
+                    Profile
+                  </Link>
 
                   {isAdmin && (
                     <Link to="/admin/dashboard" className="dropdown-item">
@@ -206,8 +206,8 @@ const Header = ({ user, logout, handleUserIconClick }) => {
                   )}
 
                   <Link to={`${prefix}/settings`} className="dropdown-item" onClick={(e) => e.preventDefault()}>Settings</Link>
-                  {isAdmin && <Link to="/admin/dashboard" className="dropdown-item">Dashboard</Link>}
-                  <div className="dropdown-item" onClick={handleUserIconClick}>Logout</div>
+
+                  <div className="dropdown-item" onClick={logout}>Logout</div>
                 </div>
               )}
             </div>
@@ -215,7 +215,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
         </div>
       </div>
 
-      {/* Category Nav (Giữ nguyên) */}
+      {/* Category Nav */}
       <nav className="category-bar">
         {menus.map((menu) => {
           if (menu.name === "Danh mục sản phẩm") {
