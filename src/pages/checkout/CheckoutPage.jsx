@@ -5,6 +5,8 @@ import { useCart } from "../../context/CartContext"
 import { useAuth } from "../../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import "./CheckoutPage.css"
+import { BE_HOST } from "../../utils/constants";
+
 
 const CheckoutPage = () => {
   // Lấy dữ liệu và context cần thiết
@@ -16,7 +18,6 @@ const CheckoutPage = () => {
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const BE_HOST = "http://localhost:8081"
 
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("cod")
@@ -78,13 +79,13 @@ const CheckoutPage = () => {
       const token = localStorage.getItem("token")
       const userId = user?.id
 
-      const response = await fetch(`http://localhost:8081/api/users/${userId}/addresses`, {
+      const response = await fetch(`${BE_HOST}/api/users/${userId}/addresses`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      })
+      });
 
       if (!response.ok) {
         throw new Error("Không thể lấy địa chỉ")
@@ -136,14 +137,14 @@ const CheckoutPage = () => {
         isDefault: formData.isDefault,
       }
 
-      const response = await fetch(`http://localhost:8081/api/users/${userId}/addresses`, {
+      const response = await fetch(`${BE_HOST}/api/users/${userId}/addresses`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      })
+      });
 
       if (!response.ok) {
         throw new Error("Không thể lưu địa chỉ")
@@ -205,7 +206,7 @@ const CheckoutPage = () => {
       const token = localStorage.getItem("token")
 
       // BƯỚC 1: GỌI API TẠO ĐƠN HÀNG VÀ HOÀN TẤT
-      const response = await fetch(`http://localhost:8081/api/orders/checkout`, {
+      const response = await fetch(`${BE_HOST}/api/orders/checkout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

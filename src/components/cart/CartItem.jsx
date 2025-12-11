@@ -3,12 +3,12 @@
 import React from "react";
 import { useCart } from "../../context/CartContext";
 import "./CartItem.css"
+import { BE_HOST } from "../../utils/constants";
+
 
 const CartItem = ({ item }) => {
   // 🆕 Destructure thêm updateItemQuantity
   const { removeFromCart, updateItemQuantity } = useCart();
-
-  const BE_HOST = "http://localhost:8081";
 
   // Lấy sản phẩm và ID
   const product = item.product || item;

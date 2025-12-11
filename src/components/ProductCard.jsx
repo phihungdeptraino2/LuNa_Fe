@@ -1,19 +1,19 @@
 import React from "react";
 import "./ProductCard.css"
+import { BE_HOST } from "../utils/constants";
+
 
 const ProductCard = ({ product, onSelect }) => {
   const defaultImage = product.productImages.find(img => img.default)?.imageUrl || "";
 
-  const BE_HOST = "http://localhost:8081";
-
-const imageSrc = defaultImage
-  ? `${BE_HOST}${defaultImage.startsWith("/") ? defaultImage : `/${defaultImage}`}`
-  : "";
+  const imageSrc = defaultImage
+    ? `${BE_HOST}${defaultImage.startsWith("/") ? defaultImage : `/${defaultImage}`}`
+    : "";
 
   return (
-    <div 
+    <div
       className="product-card"
-      onClick={() => onSelect && onSelect(product)} 
+      onClick={() => onSelect && onSelect(product)}
       style={{ cursor: "pointer" }}
     >
       <div className="card-img-container">

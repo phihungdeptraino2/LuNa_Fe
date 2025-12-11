@@ -3,10 +3,12 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { FaUser, FaEnvelope, FaPhone, FaKey, FaEdit, FaSave, FaTimes, FaCheck, FaShoppingBag, FaBox, FaTruck, FaCheckCircle } from "react-icons/fa";
 import "./ProfilePage.css";
+import { BE_HOST } from "../../utils/constants";
 
-const BASE_URL = "http://localhost:8081/api";
-const PROFILE_API_URL = `${BASE_URL}/auth/me`;
-const ORDERS_API_URL = `${BASE_URL}/orders/my-orders`;
+
+const PROFILE_API_URL = `${BE_HOST}/api/auth/me`;
+const ORDERS_API_URL = `${BE_HOST}/api/orders/my-orders`;
+
 
 export default function ProfilePage() {
     const { user } = useAuth();

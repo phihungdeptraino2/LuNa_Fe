@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import "../../pages/home/HomePage.css";
 import "./CyberWeekCarousel.css"
 
+import { BE_HOST } from "../../utils/constants";
+
 const CyberWeekCarousel = ({ products, loading }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const scrollContainerRef = useRef(null);
@@ -38,7 +40,7 @@ const CyberWeekCarousel = ({ products, loading }) => {
     if (!raw) return "https://via.placeholder.com/200";
 
     if (!raw.startsWith("http")) {
-      return `http://localhost:8081${raw}`;
+      return `${BE_HOST}${raw}`;
     }
 
     return raw;

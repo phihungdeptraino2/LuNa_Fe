@@ -8,6 +8,8 @@ import { FaStar, FaShoppingCart, FaHeart, FaCheck, FaShippingFast, FaShieldAlt, 
 import { productVideos } from "../../data/productVideos";
 import ProductCard from "../../components/ProductCard";
 import "./ProductDetailPage.css";
+import { BE_HOST } from "../../utils/constants";
+
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -23,7 +25,6 @@ const ProductDetailPage = () => {
   const [mainImage, setMainImage] = useState("");
   const [relatedProducts, setRelatedProducts] = useState([]);
 
-  const BE_HOST = "http://localhost:8081";
   const videoUrl = productVideos[id];
 
   const getVideoId = (url) => {
@@ -171,7 +172,7 @@ const ProductDetailPage = () => {
               ></iframe>
             </div>
           )}
-            
+
 
         </div>
 

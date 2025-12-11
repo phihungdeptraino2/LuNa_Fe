@@ -18,6 +18,8 @@ import {
   FaCloudUploadAlt,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { BE_HOST } from "../../utils/constants";
+
 
 const AdminProductManager = () => {
   const [products, setProducts] = useState([]);
@@ -100,8 +102,6 @@ const AdminProductManager = () => {
     setSelectedFiles([]);
     setShowModal(true);
   };
-
-  const BE_HOST = "http://localhost:8081";
   const buildImageUrl = (url) => {
     if (!url) {
       console.warn("⚠️ URL trống");

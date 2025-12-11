@@ -5,6 +5,7 @@ import { useCart } from "../../context/CartContext";
 import axios from "axios";
 import "../../pages/home/HomePage.css";
 import "./Header.css";
+import { BE_HOST } from "../../utils/constants";  // 🔥 Import BE_HOST
 
 const Header = ({ user, logout, handleUserIconClick }) => {
   const location = useLocation();
@@ -17,14 +18,12 @@ const Header = ({ user, logout, handleUserIconClick }) => {
   const [isCategoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [isPowerDropdownOpen, setPowerDropdownOpen] = useState(false);
 
-  // Thêm state cho hiệu ứng cuộn
   const [isScrolled, setIsScrolled] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState('up');
+  const [scrollDirection, setScrollDirection] = useState("up");
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const isCustomer = user?.roles?.includes("CUSTOMER");
   const isAdmin = user?.roles?.includes("ADMIN");
-  // Prefix được sử dụng cho các link điều hướng chung (Home, Products,...)
   const prefix = isCustomer ? "/customer" : "";
 
   const menus = [
@@ -36,11 +35,11 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     { name: "Liên hệ", path: `${prefix}/contact` },
   ];
 
-  // Lấy categories và products
+  // Fetch categories & products
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:8081/api/categories");
+        const res = await axios.get(`${BE_HOST}/api/categories`);
         setCategories(res.data.data);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -49,7 +48,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
 
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:8081/api/products");
+        const res = await axios.get(`${BE_HOST}/api/products`);
         setProducts(res.data.data);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -59,7 +58,6 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     fetchCategories();
     fetchProducts();
   }, []);
-
 
   // Debounce search
   useEffect(() => {
@@ -77,51 +75,31 @@ const Header = ({ user, logout, handleUserIconClick }) => {
     return () => clearTimeout(timer);
   }, [searchTerm, products]);
 
-  // LOGIC XỬ LÝ SCROLL (Hiệu ứng ẩn/hiện Header)
+  // Scroll hide/show effect
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      // Ngưỡng cuộn để kích hoạt thay đổi Hướng
       const scrollDirectionThreshold = 50;
 
-      // 1. Xác định Header đã cuộn hay chưa (để giảm kích thước)
       setIsScrolled(currentScrollY > 10);
 
-      // 2. Xác định hướng cuộn (dùng cho ẩn/hiện)
       if (Math.abs(currentScrollY - lastScrollY) > scrollDirectionThreshold) {
-        if (currentScrollY > lastScrollY) {
-          // Cuộn xuống: Ẩn Header
-          setScrollDirection('down');
-        } else if (currentScrollY < lastScrollY) {
-          // Cuộn lên: Hiện Header
-          setScrollDirection('up');
-        }
-
-        // Cập nhật lastScrollY CHỈ KHI HƯỚNG CUỘN ĐÃ ĐƯỢC XÁC NHẬN
+        setScrollDirection(currentScrollY > lastScrollY ? "down" : "up");
         setLastScrollY(currentScrollY);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // Xây dựng class name động cho thẻ <header>
-  let headerClass = '';
-  if (isScrolled) {
-    headerClass += ' scrolled';
-  }
-  if (scrollDirection === 'down') {
-    headerClass += ' scroll-down';
-  } else if (scrollDirection === 'up') {
-    headerClass += ' scroll-up';
-  }
+  let headerClass = "";
+  if (isScrolled) headerClass += " scrolled";
+  if (scrollDirection === "down") headerClass += " scroll-down";
+  else headerClass += " scroll-up";
 
   return (
-    <header className={headerClass.trim()}> {/* Thêm className động */}
+    <header className={headerClass.trim()}>
       <div className="main-header">
         {/* Logo */}
         <div className="logo">
@@ -143,24 +121,26 @@ const Header = ({ user, logout, handleUserIconClick }) => {
 
           {searchResults.length > 0 && (
             <div className="search-dropdown">
-              {searchResults.map((p) => (
-                <Link
-                  key={p.id}
-                  to={`${prefix}/products/${p.id}`}
-                  className="search-item"
-                  onClick={() => setSearchTerm("")}
-                >
-                  <img
-                    src={`http://localhost:8081${p.productImages.find((img) => img.default)?.imageUrl || ""}`}
-                    alt={p.name}
-                    className="search-item-img"
-                  />
-                  <div className="search-item-info">
-                    <span className="search-item-name">{p.name}</span>
-                    <span className="search-item-price">${p.price}</span>
-                  </div>
-                </Link>
-              ))}
+              {searchResults.map((p) => {
+                const img = p.productImages?.find((img) => img.default)?.imageUrl;
+                const imgUrl = img ? `${BE_HOST}${img.startsWith("/") ? img : "/" + img}` : "";
+
+                return (
+                  <Link
+                    key={p.id}
+                    to={`${prefix}/products/${p.id}`}
+                    className="search-item"
+                    onClick={() => setSearchTerm("")}
+                  >
+                    <img src={imgUrl} alt={p.name} className="search-item-img" />
+
+                    <div className="search-item-info">
+                      <span className="search-item-name">{p.name}</span>
+                      <span className="search-item-price">${p.price}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
@@ -189,9 +169,9 @@ const Header = ({ user, logout, handleUserIconClick }) => {
               onMouseLeave={() => setPowerDropdownOpen(false)}
             >
               <FaPowerOff className="header-icon clickable" />
+
               {isPowerDropdownOpen && (
                 <div className="dropdown-menu power-menu">
-                  {/* SỬA LẦN 2: Admin -> /admin/profile, Customer -> /customer/profile */}
                   <Link
                     to={isAdmin ? "/admin/profile" : `${prefix}/profile`}
                     className="dropdown-item"
@@ -205,9 +185,17 @@ const Header = ({ user, logout, handleUserIconClick }) => {
                     </Link>
                   )}
 
-                  <Link to={`${prefix}/settings`} className="dropdown-item" onClick={(e) => e.preventDefault()}>Settings</Link>
+                  <Link
+                    to={`${prefix}/settings`}
+                    className="dropdown-item"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    Settings
+                  </Link>
 
-                  <div className="dropdown-item" onClick={logout}>Logout</div>
+                  <div className="dropdown-item" onClick={logout}>
+                    Logout
+                  </div>
                 </div>
               )}
             </div>
@@ -215,7 +203,7 @@ const Header = ({ user, logout, handleUserIconClick }) => {
         </div>
       </div>
 
-      {/* Category Nav */}
+      {/* Category nav */}
       <nav className="category-bar">
         {menus.map((menu) => {
           if (menu.name === "Danh mục sản phẩm") {
