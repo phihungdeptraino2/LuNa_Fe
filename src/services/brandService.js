@@ -1,29 +1,25 @@
-import axios from "axios";
+// Giả sử file cấu hình axios instance của bạn nằm ở "../utils/axiosConfig"
+// Hãy đổi đường dẫn này nếu bạn lưu file ở chỗ khác
+import axios from "../utils/axiosConfig";
 
-// Đảm bảo URL này khớp với port backend của bạn (8080 hoặc 8081)
-const API_URL = "http://localhost:8081/api/admin/brands";
-
-const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-  return { headers: { Authorization: `Bearer ${token}` } };
-};
+const ENDPOINT = "/admin/brands";
 
 export const getBrands = async () => {
-  const res = await axios.get(API_URL, getAuthHeader());
-  return res.data.data; // Lấy data từ ApiResponse
+  // baseURL đã có "/api", nên url chỉ cần nối thêm "/admin/brands"
+  const res = await axios.get(ENDPOINT);
+  return res.data.data; // Giữ lại việc lấy .data.data nếu backend trả về dạng ApiResponse
 };
 
 export const createBrand = async (brandData) => {
-  const res = await axios.post(API_URL, brandData, getAuthHeader());
+  const res = await axios.post(ENDPOINT, brandData);
   return res.data.data;
 };
 
 export const updateBrand = async (id, brandData) => {
-  const res = await axios.put(`${API_URL}/${id}`, brandData, getAuthHeader());
+  const res = await axios.put(`${ENDPOINT}/${id}`, brandData);
   return res.data.data;
 };
 
 export const deleteBrand = async (id) => {
-  const res = await axios.delete(`${API_URL}/${id}`, getAuthHeader());
-  return res.data;
+  return await axios.delete(`${ENDPOINT}/${id}`);
 };

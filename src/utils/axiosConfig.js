@@ -1,28 +1,3 @@
-// import axios from "axios";
-
-// const instance = axios.create({
-//   baseURL: "http://localhost:8081/api", // Port của Spring Boot
-//   withCredentials: true, // QUAN TRỌNG: Để CartController nhận được Session (Cookie)
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
-// // Tự động thêm Token vào Header cho các request cần bảo mật (Review, User info)
-// instance.interceptors.request.use(
-//   (config) => {
-//     const token = localStorage.getItem("token"); // Lấy token từ bộ nhớ trình duyệt
-//     if (token) {
-//       config.headers["Authorization"] = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );
-
-// export default instance;
 import axios from "axios";
 
 const instance = axios.create({

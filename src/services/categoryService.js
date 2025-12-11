@@ -1,30 +1,25 @@
-import axios from "axios";
+import axios from "../utils/axiosConfig";
 
-// Đổi port 8081 nếu server bạn chạy port khác
-const API_URL = "http://localhost:8081/api/admin/categories";
-
-const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-  return { headers: { Authorization: `Bearer ${token}` } };
-};
+// Base URL trong config đã là ".../api", nên ở đây chỉ cần đuôi
+const ENDPOINT = "/admin/categories";
 
 export const getCategories = async () => {
-  const res = await axios.get(API_URL, getAuthHeader());
-  // Tùy vào backend trả về, có thể là res.data hoặc res.data.data
-  return res.data.data || res.data; 
+  const res = await axios.get(ENDPOINT);
+  // Lấy data từ cấu trúc ApiResponse của backend
+  return res.data.data;
 };
 
 export const createCategory = async (categoryData) => {
-  const res = await axios.post(API_URL, categoryData, getAuthHeader());
-  return res.data.data || res.data;
+  const res = await axios.post(ENDPOINT, categoryData);
+  return res.data.data;
 };
 
 export const updateCategory = async (id, categoryData) => {
-  const res = await axios.put(`${API_URL}/${id}`, categoryData, getAuthHeader());
-  return res.data.data || res.data;
+  const res = await axios.put(`${ENDPOINT}/${id}`, categoryData);
+  return res.data.data;
 };
 
 export const deleteCategory = async (id) => {
-  const res = await axios.delete(`${API_URL}/${id}`, getAuthHeader());
-  return res.data;
+  // Với delete thường chỉ cần status 200, return cả response hoặc data tùy ý
+  return await axios.delete(`${ENDPOINT}/${id}`);
 };

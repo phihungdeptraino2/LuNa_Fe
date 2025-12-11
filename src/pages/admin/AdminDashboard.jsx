@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   LineChart,
   Line,
@@ -21,49 +20,36 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+// 1. Import Service API
+import { getDashboardStats } from "../../services/dashboardService";
+// (Lưu ý: chỉnh lại đường dẫn ../ cho đúng thư mục của bạn)
+
+// 2. Import Hàm xử lý ảnh chung
+import { getImageUrl } from "../../utils/constants";
+// (Lưu ý: chỉnh lại đường dẫn ../ cho đúng thư mục của bạn)
+
 const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cấu hình URL backend của bạn
-  const API_URL = "http://localhost:8081/api/admin/dashboard";
-  const BE_HOST = "http://localhost:8081";
-
-  // 🔧 Hàm build URL hình ảnh giống AdminProductManager
-  const buildImageUrl = (url) => {
-    if (!url) return "";
-    return `${BE_HOST}${url.startsWith("/") ? url : `/${url}`}`;
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Lấy token từ localStorage (Giả sử bạn lưu token khi login là 'accessToken')
-        const token = localStorage.getItem("token");
+        setLoading(true);
+        // Gọi API qua Service (Ngắn gọn, sạch sẽ)
+        const data = await getDashboardStats();
 
-        const response = await axios.get(API_URL, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Header xác thực JWT
-          },
-        });
-
-        // Dựa vào cấu trúc ApiResponse builder trong Java: response.data.data
-        if (response.data && response.data.data) {
-          const data = response.data.data;
-          
-          // 🔍 LOG để debug
-          console.log("=== DASHBOARD DATA ===");
-          console.log("Top Products:", data.topSellingProducts);
-          
+        console.log("Dashboard Data:", data);
+        if (data) {
           setDashboardData(data);
         }
-        setLoading(false);
       } catch (err) {
         console.error("Lỗi tải dashboard:", err);
         setError(
-          "Không thể tải dữ liệu dashboard. Vui lòng kiểm tra quyền Admin."
+          "Không thể tải dữ liệu. Vui lòng kiểm tra quyền Admin hoặc kết nối mạng."
         );
+      } finally {
         setLoading(false);
       }
     };
@@ -184,46 +170,30 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {topSellingProducts.map((product) => {
-                // 🔍 LOG để debug từng sản phẩm
-                console.log(`Product #${product.id}:`, product.image);
-                
-                return (
-                  <tr key={product.id} style={styles.tr}>
-                    <td style={styles.td}>
-                      <div style={styles.imageContainer}>
-                        {product.image ? (
-                          <img
-                            src={buildImageUrl(product.image)}
-                            alt={product.name}
-                            style={styles.productImg}
-                            onLoad={() => console.log("✅ Image loaded:", product.name)}
-                            onError={(e) => {
-                              console.error("❌ Image failed:", product.name);
-                              console.error("Failed URL:", e.target.src);
-                              // Fallback to placeholder
-                              e.target.src = "https://via.placeholder.com/50";
-                            }}
-                          />
-                        ) : (
-                          <img
-                            src="https://via.placeholder.com/50"
-                            alt={product.name}
-                            style={styles.productImg}
-                          />
-                        )}
-                      </div>
-                    </td>
-                    <td style={styles.td}>{product.name}</td>
-                    <td style={styles.td} align="center">
-                      {product.totalSold}
-                    </td>
-                    <td style={styles.td}>
-                      {formatCurrency(product.totalRevenue)}
-                    </td>
-                  </tr>
-                );
-              })}
+              {topSellingProducts.map((product) => (
+                <tr key={product.id} style={styles.tr}>
+                  <td style={styles.td}>
+                    <div style={styles.imageContainer}>
+                      {/* Sử dụng hàm getImageUrl thay vì buildImageUrl */}
+                      <img
+                        src={getImageUrl(product.image)}
+                        alt={product.name}
+                        style={styles.productImg}
+                        onError={(e) => {
+                          e.target.src = "https://via.placeholder.com/50";
+                        }}
+                      />
+                    </div>
+                  </td>
+                  <td style={styles.td}>{product.name}</td>
+                  <td style={styles.td} align="center">
+                    {product.totalSold}
+                  </td>
+                  <td style={styles.td}>
+                    {formatCurrency(product.totalRevenue)}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -274,7 +244,7 @@ const StatCard = ({ title, value, icon, bgColor }) => (
   </div>
 );
 
-// CSS Styles (Inline Object)
+// CSS Styles
 const styles = {
   container: {
     padding: "20px",
@@ -349,7 +319,7 @@ const styles = {
   },
   tablesGrid: {
     display: "grid",
-    gridTemplateColumns: "2fr 1fr", // Cột bên trái rộng gấp đôi
+    gridTemplateColumns: "2fr 1fr",
     gap: "20px",
   },
   tableCard: {
@@ -381,7 +351,6 @@ const styles = {
     fontSize: "14px",
     color: "#374151",
   },
-  // 🎨 Style container cho image
   imageContainer: {
     width: "50px",
     height: "50px",

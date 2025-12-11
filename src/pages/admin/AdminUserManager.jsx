@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Mail, Phone, Calendar, Shield } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, Calendar } from "lucide-react";
+
+// Import service vừa tạo
+import { getAllUsers } from "../../services/userService";
 
 const AdminUserManager = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-
-  const API_BASE = "http://localhost:8081/api/admin/users";
 
   // --- FETCH USERS ---
   useEffect(() => {
@@ -18,18 +18,17 @@ const AdminUserManager = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(API_BASE, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      setLoading(true);
+      // Gọi qua Service, không cần xử lý token ở đây nữa
+      const data = await getAllUsers();
 
-      console.log("Users API Response:", res.data);
-
-      if (res.data && res.data.data) {
-        setUsers(res.data.data);
+      console.log("Users Data:", data);
+      if (data) {
+        setUsers(data);
       }
     } catch (error) {
       console.error("Lỗi tải danh sách users:", error);
+      // Bạn có thể dùng toast notification ở đây nếu muốn đẹp hơn alert
       alert("Không thể tải danh sách người dùng");
     } finally {
       setLoading(false);
@@ -57,15 +56,14 @@ const AdminUserManager = () => {
   };
 
   const getRoleBadge = (roles) => {
-    // Nếu không có role, mặc định là NGƯỜI DÙNG
     if (!roles || roles.length === 0)
       return <span style={styles.badge}>NGƯỜI DÙNG</span>;
 
     return roles.map((role, index) => {
+      // Xử lý trường hợp role là object hoặc string
       const roleName = role.name || role;
       const isAdmin = roleName.includes("ADMIN");
 
-      // Chuyển đổi tên role sang tiếng Việt hiển thị
       let displayName = roleName.replace("ROLE_", "");
       if (displayName === "ADMIN") displayName = "QUẢN TRỊ VIÊN";
       if (displayName === "USER") displayName = "NGƯỜI DÙNG";
@@ -212,7 +210,7 @@ const AdminUserManager = () => {
   );
 };
 
-// STYLES
+// STYLES (Giữ nguyên như cũ)
 const styles = {
   container: {
     padding: "20px",
